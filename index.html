@@ -6407,7 +6407,7 @@ async function importData(type) {
               list.appendChild(div);
             }
           });
- }       
+    
 		
 document.addEventListener('click', function (e) {
     // Only close if not clicking on any category input or autocomplete item
@@ -6428,17 +6428,17 @@ document.addEventListener('click', function (e) {
         });
     }
 });
-
- function addCategory() {
-  var c = document.getElementById('newCategory').value.trim();
-  if (!c) return alert(translations[currentLanguage]['pleaseEnterCategory']);
-  if (allCategories.includes(c)) return alert(translations[currentLanguage]['categoryExists']);
-  allCategories.push(c);
-  saveCategories();
-  updateCategorySelects();
-  document.getElementById('newCategory').value = '';
-  alert(translations[currentLanguage]['categoryAdded'] + c);
-}
+   }
+        function addCategory() {
+          var c = document.getElementById('newCategory').value.trim();
+          if (!c) return alert(translations[currentLanguage]['pleaseEnterCategory']);
+          if (allCategories.includes(c)) return alert(translations[currentLanguage]['categoryExists']);
+          allCategories.push(c);
+          saveCategories();
+          updateCategorySelects();
+          document.getElementById('newCategory').value = '';
+          alert(translations[currentLanguage]['categoryAdded'] + c);
+        }
 
         function saveProduct() {
           var code = document.getElementById('newProductCode').value.trim();
@@ -7515,29 +7515,24 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <script>
-// Add this before </body>
 window.addEventListener('load', () => {
-  if (!('serviceWorker' in navigator)) return;
+    if (!('serviceWorker' in navigator)) return;
 
-  const isHttp =
-    location.protocol === 'http:' ||
-    location.protocol === 'https:';
+    const isHttp =
+        location.protocol === 'http:' ||
+        location.protocol === 'https:';
 
-  if (!isHttp) {
-    console.warn(
-      'Service Worker disabled: must be served over http/https'
-    );
-    return;
-  }
-</script>
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
+    if (!isHttp) {
+        console.warn(
+            'Service Worker disabled: must be served over http/https'
+        );
+        return;
+    }
+
     navigator.serviceWorker.register('sw.js')
-      .then(() => console.log('Service Worker registered'))
-      .catch(err => console.error('SW failed:', err));
-  });
-}
+        .then(() => console.log('Service Worker registered'))
+        .catch(err => console.error('SW failed:', err));
+});
 </script>
 </body>
 </html>
