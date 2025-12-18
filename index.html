@@ -6407,7 +6407,7 @@ async function importData(type) {
               list.appendChild(div);
             }
           });
-        
+ }       
 		
 document.addEventListener('click', function (e) {
     // Only close if not clicking on any category input or autocomplete item
@@ -6428,17 +6428,17 @@ document.addEventListener('click', function (e) {
         });
     }
 });
-   }
-        function addCategory() {
-          var c = document.getElementById('newCategory').value.trim();
-          if (!c) return alert(translations[currentLanguage]['pleaseEnterCategory']);
-          if (allCategories.includes(c)) return alert(translations[currentLanguage]['categoryExists']);
-          allCategories.push(c);
-          saveCategories();
-          updateCategorySelects();
-          document.getElementById('newCategory').value = '';
-          alert(translations[currentLanguage]['categoryAdded'] + c);
-        }
+
+ function addCategory() {
+  var c = document.getElementById('newCategory').value.trim();
+  if (!c) return alert(translations[currentLanguage]['pleaseEnterCategory']);
+  if (allCategories.includes(c)) return alert(translations[currentLanguage]['categoryExists']);
+  allCategories.push(c);
+  saveCategories();
+  updateCategorySelects();
+  document.getElementById('newCategory').value = '';
+  alert(translations[currentLanguage]['categoryAdded'] + c);
+}
 
         function saveProduct() {
           var code = document.getElementById('newProductCode').value.trim();
