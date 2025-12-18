@@ -3300,7 +3300,7 @@ function closeCashDenominationModal() {
         modal.remove();
     }
 }
-
+ /* TEST CUT */
 // Function to close change denomination modal
 function closeChangeDenominationModal() {
     var modal = document.getElementById('changeDenominationModal');
@@ -3888,7 +3888,7 @@ function installApp() {
         });
     }
 }
-/* TEST CUT */
+
 // ========== URL PARAMETER HANDLING ==========
 function checkUrlParams() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -6999,10 +6999,540 @@ function generatePDF(specificDate = null) {
         ]);
       });
     });
-/* DEBUG STOP */
 
+    // Optimize column widths for portrait
+    doc.autoTable({
+      startY: yPosition,
+      head: [tableData[0]],
+      body: tableData.slice(1),
+      theme: 'grid',
+      headStyles: {
+        fillColor: [59, 130, 246],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold'
+      },
+      styles: {
+        fontSize: 8,
+        cellPadding: 2,
+        overflow: 'linebreak',
+        cellWidth: 'wrap'
+      },
+      columnStyles: {
+        0: { // Tr #
+          cellWidth: 12,
+          halign: 'center',
+          fontSize: 7
+        },
+        1: { // Person
+          cellWidth: 15,
+          halign: 'center',
+          fontSize: 7
+        },
+        2: { // Item
+          cellWidth: 'auto',
+          minCellWidth: 80,
+          maxCellWidth: 95,
+          overflow: 'linebreak',
+          fontSize: 7
+        },
+        3: { // Qty
+          cellWidth: 12,
+          halign: 'center',
+          fontSize: 7
+        },
+        4: { // Price
+          cellWidth: 18,
+          halign: 'right',
+          fontSize: 7
+        },
+        5: { // Total
+          cellWidth: 18,
+          halign: 'right',
+          fontSize: 7
+        },
+        6: { // Payment
+          cellWidth: 18,
+          halign: 'center',
+          fontSize: 7
+        }
+      },
+      margin: { horizontal: 5 },
+      tableWidth: 'wrap',
+      didParseCell: function (data) {
+        if (data.row.index > 0) {
+          var owner = data.row.raw[1];
+          if (owner === 'KO') data.cell.styles.fillColor = [225, 245, 254];
+          else if (owner === 'FR') data.cell.styles.fillColor = [232, 245, 233];
+        }
+        if (data.column.index === 2 && data.cell.raw.length > 30) {
+          data.cell.styles.fontSize = 6;
+        }
+      },
+      willDrawCell: function (data) {
+        if (data.column.index === 2 && data.cell.raw) {
+          var text = data.cell.raw;
+          if (text.length > 40) {
+            var lines = doc.splitTextToSize(text, 85);
+            data.cell.text = lines;
+            data.row.height = 4 * lines.length;
+          }
+        }
+      }
+    });
+
+    yPosition = doc.lastAutoTable.finalY + 15;
+    doc.setFontSize(14);
+    doc.setTextColor(59, 130, 246);
+    doc.text(t.summary, 105, yPosition, {
+      align: 'center'
+    });
+    yPosition += 8;
+
+    // Calculate Summary
+    var kc = 0,
+      kca = 0,
+      kcd = 0,
+      kt = 0;
+    var fc = 0,
+      fca = 0,
+      fcd = 0,
+      ft = 0;
+    dayTransactions.forEach(tran => {
+      if (tran.name === 'Both') {
+        var ki = 0,
+          fi = 0;
+        tran.items.forEach(i => {
+          if (i.owner === 'Kotie') ki += i.total;
+          else fi += i.total;
+        });
+        var kp = tran.totalAmount > 0 ? ki / tran.totalAmount : 0;
+        var fp = tran.totalAmount > 0 ? fi / tran.totalAmount : 0;
+        kca += tran.cashAmount * kp;
+        kcd += (tran.cardAmount + (tran.cardAmount2 || 0)) * kp;
+        kt += ki;
+        fca += tran.cashAmount * fp;
+        fcd += (tran.cardAmount + (tran.cardAmount2 || 0)) * fp;
+        ft += fi;
+        if (ki > 0) kc++;
+        if (fi > 0) fc++;
+      } else {
+        var amt = tran.totalAmount;
+        var ca = tran.cashAmount;
+        var cd = tran.cardAmount + (tran.cardAmount2 || 0);
+        if (tran.name === 'Kotie') {
+          kca += ca;
+          kcd += cd;
+          kt += amt;
+          kc++;
+        } else {
+          fca += ca;
+          fcd += cd;
+          ft += amt;
+          fc++;
+        }
+      }
+    });
+
+    const summaryData = [
+      [t.name, t.transactions, t.cash, t.card, t.total],
+      ['Kotie', kc.toString(), 'R' + kca.toFixed(2), 'R' + kcd.toFixed(2), 'R' + kt.toFixed(2)],
+      ['Francois', fc.toString(), 'R' + fca.toFixed(2), 'R' + fcd.toFixed(2), 'R' + ft.toFixed(2)],
+      [t.dayTotal, dayTransactions.length.toString(), 'R' + (kca + fca).toFixed(2), 'R' + (kcd + fcd).toFixed(2), 'R' + (kt + ft).toFixed(2)]
+    ];
+
+    // FIXED: Create a separate table for the TOTAL row to ensure perfect alignment
+    // First, draw the main table (Kotie and Francois rows)
+    doc.autoTable({
+      startY: yPosition,
+      head: [summaryData[0]],
+      body: summaryData.slice(1, 3),
+      theme: 'grid',
+      headStyles: {
+        fillColor: [59, 130, 246],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold',
+        fontSize: 8,
+        halign: 'center'
+      },
+      styles: {
+        fontSize: 8,
+        cellPadding: 2,
+        overflow: 'linebreak',
+        lineColor: [200, 200, 200],
+        lineWidth: 0.1
+      },
+      columnStyles: {
+        0: { // Name
+          cellWidth: 40,
+          fontStyle: 'bold',
+          halign: 'left'
+        },
+        1: { // Transactions
+          cellWidth: 25,
+          halign: 'center'
+        },
+        2: { // Cash
+          cellWidth: 30,
+          halign: 'right'
+        },
+        3: { // Card
+          cellWidth: 30,
+          halign: 'right'
+        },
+        4: { // Total
+          cellWidth: 30,
+          halign: 'right'
+        }
+      },
+      didParseCell: function (data) {
+        if (data.row.index === 1) { // Kotie row
+          data.cell.styles.fillColor = [225, 245, 254]; // Light blue
+        } else if (data.row.index === 2) { // Francois row
+          data.cell.styles.fillColor = [232, 245, 233]; // Light green
+        }
+      }
+    });
+
+    yPosition = doc.lastAutoTable.finalY;
+
+    // Now draw the TOTAL row separately with exact same column widths
+    doc.autoTable({
+      startY: yPosition,
+      head: [], // No header for this table
+      body: [summaryData[3]],
+      theme: 'grid',
+      styles: {
+        fontSize: 8,
+        cellPadding: 2,
+        fontStyle: 'bold',
+        lineColor: [200, 200, 200],
+        lineWidth: 0.1
+      },
+      headStyles: {
+        fillColor: [30, 64, 175], // Dark blue
+        textColor: [255, 255, 255], // White text
+        fontStyle: 'bold'
+      },
+      bodyStyles: {
+        fillColor: [30, 64, 175], // Dark blue for total row
+        textColor: [255, 255, 255] // White text
+      },
+      columnStyles: {
+        0: { // Name
+          cellWidth: 40,
+          fontStyle: 'bold',
+          halign: 'left'
+        },
+        1: { // Transactions
+          cellWidth: 25,
+          halign: 'center'
+        },
+        2: { // Cash
+          cellWidth: 30,
+          halign: 'right'
+        },
+        3: { // Card
+          cellWidth: 30,
+          halign: 'right'
+        },
+        4: { // Total
+          cellWidth: 30,
+          halign: 'right'
+        }
+      }
+    });
+
+    // Add Cash Reconciliation Section
+    yPosition = doc.lastAutoTable.finalY + 15;
+    doc.setFontSize(14);
+    doc.setTextColor(22, 163, 74);
+    doc.text(t.cashReconciliation, 105, yPosition, {
+      align: 'center'
+    });
+    yPosition += 8;
+
+    var totalCash = kca + fca;
+    var totalInTill = totalCash + floatAmount;
+    var cashToBank = totalCash;
+
+    // Create separate rows for better visual separation
+    const cashData = [
+      [t.cashSales, 'R ' + totalCash.toFixed(2)],
+      [t.startingFloat, 'R ' + floatAmount.toFixed(2)],
+      [t.totalInTill, 'R ' + totalInTill.toFixed(2)],
+      [t.floatToKeep, 'R ' + floatAmount.toFixed(2)],
+      [t.cashToBank, 'R ' + cashToBank.toFixed(2)]
+    ];
+
+    doc.autoTable({
+      startY: yPosition,
+      head: [[t.name, t.total]],
+      body: cashData.slice(0, 3), // First 3 rows: Cash Sales, Starting Float, Total in Till
+      theme: 'striped', // Use striped theme for better separation
+      headStyles: {
+        fillColor: [22, 163, 74],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold',
+        fontSize: 8
+      },
+      styles: {
+        fontSize: 8,
+        cellPadding: 3
+      },
+      columnStyles: {
+        0: {
+          cellWidth: 65,
+          fontStyle: 'bold'
+        },
+        1: {
+          cellWidth: 40,
+          halign: 'right'
+        }
+      },
+      didParseCell: function (data) {
+        // Regular rows - white background
+        if (data.row.index >= 0 && data.row.index <= 2) {
+          data.cell.styles.fillColor = [255, 255, 255];
+        }
+      }
+    });
+
+    // First special row: Float to Keep (light yellow background)
+    yPosition = doc.lastAutoTable.finalY;
+    doc.autoTable({
+      startY: yPosition,
+      body: [[cashData[3][0], cashData[3][1]]],
+      theme: 'plain',
+      styles: {
+        fontSize: 8,
+        cellPadding: 3
+      },
+      columnStyles: {
+        0: {
+          cellWidth: 65,
+          fontStyle: 'bold'
+        },
+        1: {
+          cellWidth: 40,
+          halign: 'right'
+        }
+      },
+      didParseCell: function (data) {
+        // Float to Keep row - light yellow background
+        data.cell.styles.fillColor = [254, 243, 199]; // Light yellow
+        data.cell.styles.textColor = [180, 93, 4]; // Dark orange text
+        data.cell.styles.fontStyle = 'bold';
+      }
+    });
+
+    // Second special row: CASH TO BANK (light green background)
+    yPosition = doc.lastAutoTable.finalY;
+    doc.autoTable({
+      startY: yPosition,
+      body: [[cashData[4][0], cashData[4][1]]],
+      theme: 'plain',
+      styles: {
+        fontSize: 9, // Slightly larger for emphasis
+        cellPadding: 4,
+        fontStyle: 'bold'
+      },
+      columnStyles: {
+        0: {
+          cellWidth: 65,
+          fontStyle: 'bold'
+        },
+        1: {
+          cellWidth: 40,
+          halign: 'right'
+        }
+      },
+      didParseCell: function (data) {
+        // CASH TO BANK row - light green background
+        data.cell.styles.fillColor = [220, 252, 231]; // Light green
+        data.cell.styles.textColor = [22, 163, 74]; // Green text
+        data.cell.styles.fontStyle = 'bold';
+        if (data.column.index === 1) {
+          data.cell.styles.fontSize = 10; // Larger font for amount
+        }
+      }
+    });
+
+    // Add page number if needed
+    const pageCount = doc.internal.getNumberOfPages();
+    if (pageCount > 1) {
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(150, 150, 150);
+        doc.text(t.page + ' ' + i + ' ' + t.of + ' ' + pageCount, 200, 287, { align: 'right' });
+      }
+    }
+
+    // Use language-specific filename
+    const filename = isAfrikaans ? 'verslag_' + day + '.pdf' : 'report_' + day + '.pdf';
+    doc.save(filename);
+    
+    if(!specificDate) alert(translations[currentLanguage]['pdfGenerated']);
+  } catch (error) {
+    console.error('PDF generation error:', error);
+    alert(translations[currentLanguage]['pdfError'] + error.message);
+  }
+}
+
+// Clear all data function
+function clearData() {
+    if (!confirm(translations[currentLanguage]['confirmClearAll'])) return;
+
+    // Clear sales & reports
+    allTransactions = [];
+    purchasedItems = [];
+    dailyReconciliations = [];
+    currentTransactionNumber = 1;
+
+    // IMPORTANT: Reset till back to float
+    initializeTillFromFloat();
+
+    // Persist everything
+    saveData();
+    saveTransactionNumber();
+    saveReconciliations();
+    saveTillState();
+
+    // Update UI
+    updateTransactionNumberDisplay();
+    updateStats();
+    updateReport();
+    renderFloatBreakdown();
+    renderReconciliationHistory();
+
+    alert(translations[currentLanguage]['dataCleared']);
+}
+
+
+// Download functions
+function downloadCompleteBackup() {
+    exportData('complete');
+}
+
+function downloadProductsAsText() {
+    exportData('products');
+}
+
+function downloadSalesData() {
+    exportData('sales');
+}
+
+function importProductsOnly() {
+    importData('products');
+}
+
+function importSalesOnly() {
+    importData('sales');
+}
+
+// File upload handlers
+async function handleProductsOnlyUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+        
+        if (data.exportType !== 'products') {
+            throw new Error(translations[currentLanguage]['invalidProductFile']);
+        }
+        
+        if (!confirm(translations[currentLanguage]['currentProductsReplaced'])) {
+            return;
+        }
+        
+        allProducts = data.products || [];
+        allCategories = data.categories || allCategories;
+        productQuantities = data.quantities || {};
+        floatAmount = data.floatAmount || 700.00;
+        floatDenominations = data.floatDenominations || floatDenominations;
+        
+        saveProducts();
+        saveCategories();
+        saveQuantityData();
+        saveFloatData();
+        
+        filteredProducts = [...allProducts];
+        renderProductsTable();
+        updateProductList();
+        renderFloatBreakdown();
+        
+        alert(translations[currentLanguage]['productsUploaded']);
+    } catch (error) {
+        alert(translations[currentLanguage]['errorReadingFile'] + error.message);
+    } finally {
+        e.target.value = '';
+    }
+}
+
+async function handleSalesOnlyUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+        
+        if (data.exportType !== 'sales') {
+            throw new Error(translations[currentLanguage]['invalidReportFile']);
+        }
+        
+        if (!confirm(translations[currentLanguage]['currentSalesReplaced'])) {
+            return;
+        }
+        
+        allTransactions = data.transactions || [];
+        currentTransactionNumber = data.transactionNumber || 1;
+        dailyReconciliations = data.reconciliations || [];
+        
+        saveData();
+        saveTransactionNumber();
+        saveReconciliations();
+        
+        updateStats();
+        updateReport();
+        updateTransactionNumberDisplay();
+        renderReconciliationHistory();
+        
+        alert(translations[currentLanguage]['salesUploaded']);
+    } catch (error) {
+        alert(translations[currentLanguage]['errorReadingFile'] + error.message);
+    } finally {
+        e.target.value = '';
+    }
+}
+
+// Initialize the app
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialization code already exists above
+});
+</script>
+
+<script>
+window.addEventListener('load', () => {
+    if (!('serviceWorker' in navigator)) return;
+
+    const isHttp =
+        location.protocol === 'http:' ||
+        location.protocol === 'https:';
+
+    if (!isHttp) {
+        console.warn(
+            'Service Worker disabled: must be served over http/https'
+        );
+        return;
+    }
+
+    navigator.serviceWorker.register('sw.js')
+        .then(() => console.log('Service Worker registered'))
+        .catch(err => console.error('SW failed:', err));
+});
 </script>
 </body>
 </html>
-
-
