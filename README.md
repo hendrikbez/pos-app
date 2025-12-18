@@ -1,7 +1,10 @@
 Purpose
 This document explains, step by step, how to turn a local HTML file into a real Android app using
+
 GitHub Pages and Progressive Web App (PWA) technology. It includes all pitfalls that were
+
 encountered and how to avoid them.
+
 What You Need
 • A GitHub account
 • Your HTML app files
