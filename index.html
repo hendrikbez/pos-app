@@ -2440,51 +2440,353 @@ const translations = {
   }
 };
 
+Object.assign(translations.en, {
+  // General UI and prompts
+  selectDateDropdown: "-- Select a Date --",
+  selectNameFirst: "Please select a name above to view products.",
+  noProducts: "No products yet",
+  addProductsImport: "Add products in Products tab or import a backup.",
+  tryDifferentSearch: "Try a different search or clear filters.",
+  firstFindProduct: "Please find a product first",
+  productBelongsTo: "This product belongs to ",
+  changeNameOrProduct: ". Change the selected name or choose another product.",
+  productNotFound: "Product not found: ",
+  notFound: "",
+  remove: "Remove",
+  noProductsFound: "No products found",
+
+  // Products table / actions
+  edit: "Edit",
+
+  // Backups / imports / errors
+  errorReadingBackup: "Error reading backup: ",
+  invalidBackup: "Invalid backup file",
+  currentDataReplaced: "Current data will be replaced. Proceed?",
+  backupRestored: "Backup restored",
+  productsUploaded: "Products uploaded",
+  invalidProductFile: "Invalid products file",
+  currentProductsReplaced: "Current products will be replaced. Proceed?",
+  invalidReportFile: "Invalid sales file",
+  currentSalesReplaced: "Current sales will be replaced. Proceed?",
+  salesUploaded: "Sales uploaded",
+
+  // New day flow
+  newDayDetected: "New day detected. Generate report for",
+
+  // Edit transaction modal labels
+  editTransactionTitle: "Edit Transaction",
+  warningReverseCash: "If you change price or payment method from a cash sale we will reverse old till denominations and ask for new entries.",
+  itemsLabel: "Items",
+  totalLabel: "Total",
+  saveChanges: "Save Changes",
+
+  // Report/PDF table headings (complementing your pdfTranslations usage)
+  person: "Person",
+  item: "Item",
+  toBank: "To Bank",
+
+  // Misc used in UI blocks (denomination sections)
+  notes: "Notes",
+  coins: "Coins",
+
+  // Placeholders that appear in UI but missed in en
+  amount: "Amount",
+
+  // Extra small ones used in some strings
+  dataManagement: "Data Management",   // you already have this, keep if duplicate
+  total: "TOTAL",                      // you already have this, keep if duplicate
+  code: "Code",                         // already used in Products table columns
+  
+   // Pagination and navigation
+  previous: "Previous",
+  next: "Next",
+
+  // Products management
+  noItemAvailable: "No items available",
+  noItemAvailableEnd: " in this category.",
+  addCategory: "Add Category",
+  newProduct: "New Product",
+  selectOwner: "Select Owner",
+  saveProduct: "Save Product",
+  cancel: "Cancel",
+  allCategories: "All Categories",
+  allOwners: "All Owners",
+  stock: "Stock",
+  actions: "Actions",
+
+  // Import/Export
+  downloadProductsOnly: "Download Products Only",
+  importProductsOnly: "Import Products Only",
+  downloadSalesOnly: "Download Sales Only",
+  importSalesOnly: "Import Sales Only",
+
+  // Report tab
+  selectSavedDate: "Select a Saved Date",
+  viewingReportFor: "Viewing Report for",
+  cashReconciliation: "Cash Reconciliation",
+  totalCashSales: "Total Cash Sales",
+  startingFloat: "Starting Float",
+  totalInTill: "Total in Till",
+  floatToKeep: "Float to Keep",
+  cashToBank: "Cash to Bank",
+  countDenominations: "Count Denominations",
+  calculateCashToBank: "Calculate Cash to Bank",
+
+  // Float management
+  floatManagement: "Float Management",
+  currentFloat: "Current Float",
+  floatAmount: "Float Amount",
+  floatDescription: "Float Description",
+  floatBreakdown: "Float Breakdown",
+  adjustFloat: "Adjust Float",
+  updateFloat: "Update Float",
+  setupDenominations: "Setup Denominations",
+  setupFloatDenominations: "Setup Float Denominations",
+  setupFloatInstructions: "Enter the denominations that make up your float:",
+  totalFloat: "Total Float",
+
+  // Daily reconciliation
+  dailyCashReconciliation: "Daily Cash Reconciliation",
+  selectDateForReconciliation: "Select Date for Reconciliation",
+  cashSales: "Cash Sales",
+  expectedInTill: "Expected in Till",
+  actualCashCount: "Actual Cash Count",
+  variance: "Variance",
+  saveReconciliation: "Save Reconciliation",
+  reconciliationHistory: "Reconciliation History",
+
+  // Payment methods
+  setPayment: "Set Payment",
+  totalAmount: "Total Amount",
+  cashAmounts: "Cash Amounts",
+  selectAmount: "Select Amount",
+  secondCard: "Second Card",
+  paidTogether: "Paid Together",
+  whoDoesThisBelong: "Who does this belong to?",
+
+  // General actions
+  save: "Save",
+
+  // Help/Tutorial - Scan section
+  scanHelpTitle: "How to Use the Barcode Scanner",
+  scanStep1Title: "Step 1: Select a Name",
+  step1: "Step 1",
+  scanStep1_1: "Tap on the name dropdown",
+  step2: "Step 2",
+  scanStep1_2: "Select a customer name from the list",
+  step3: "Step 3",
+  scanStep1_3: "The scanner will automatically focus on the product code field",
+  step4: "Step 4",
+  scanStep1_4: "Hold your phone camera near the barcode",
+  step5: "Step 5",
+  scanStep1_5: "The barcode will scan automatically and the product will be added",
+  scanNote: "Note: Make sure the barcode is clearly visible and well-lit.",
+  scanStep2Title: "Step 2: Entering Quantity",
+  scanStep2_1: "After scanning, you can adjust the quantity",
+  scanStep2_2: "Tap the quantity field to change it",
+  scanStep2_3: "Enter the desired quantity and confirm",
+  scanStep2_4: "The product will be added to your transaction",
+  gotIt: "Got it!",
+
+  // Search and filter
+  searchProducts: "Search Products",
+  typeCategories: "Type Categories",
+  selectCategory: "Select Category",
+  startingStock: "Starting Stock" 
+ 
+});
+
+Object.assign(translations.af, {
+  // General UI and prompts
+  selectDateDropdown: "-- Kies 'n Datum --",
+  selectNameFirst: "Kies asseblief eers 'n naam hierbo om produkte te sien.",
+  noProducts: "Geen produkte nog nie",
+  addProductsImport: "Voeg produkte by in die Produkte-oortjie of voer 'n rugsteun in.",
+  tryDifferentSearch: "Probeer 'n ander soektog of maak filters skoon.",
+  firstFindProduct: "Soek asseblief eers 'n produk",
+  productBelongsTo: "Hierdie produk behoort aan ",
+  changeNameOrProduct: ". Verander die geselekteerde naam of kies 'n ander produk.",
+  productNotFound: "Produk nie gevind nie: ",
+  notFound: "",
+  remove: "Verwyder",
+  noProductsFound: "Geen produkte gevind nie",
+
+  // Products table / actions
+  edit: "Wysig",
+
+  // Backups / imports / errors
+  errorReadingBackup: "Fout met lees van rugsteun: ",
+  invalidBackup: "Ongeldige rugsteunlêer",
+  currentDataReplaced: "Huidige data sal vervang word. Gaan voort?",
+  backupRestored: "Rugsteun herstel",
+  productsUploaded: "Produkte opgelaai",
+  invalidProductFile: "Ongeldige produklêer",
+  currentProductsReplaced: "Huidige produkte sal vervang word. Gaan voort?",
+  invalidReportFile: "Ongeldige verkooplêer",
+  currentSalesReplaced: "Huidige verkope sal vervang word. Gaan voort?",
+  salesUploaded: "Verkope opgelaai",
+
+  // New day flow
+  newDayDetected: "Nuwe dag bespeur. Genereer verslag vir",
+
+  // Edit transaction modal labels
+  editTransactionTitle: "Wysig Transaksie",
+  warningReverseCash: "As jy die prys of betaalmetode van 'n kontantverkoping verander, sal ons die vorige kassadenominasies omkeer en nuwe invoer vra.",
+  itemsLabel: "Items",
+  totalLabel: "Totaal",
+  saveChanges: "Stoor Veranderinge",
+
+  // Report/PDF table headings (complementing your pdfTranslations usage)
+  person: "Persoon",
+  item: "Item",
+  toBank: "Na Bank",
+
+  // Misc used in UI blocks (denomination sections)
+  notes: "Note",
+  coins: "Muntstukke",
+
+  // Placeholders that appear in UI but missed in af
+  amount: "Bedrag",
+
+  // Small consistency keys to match English usage (if needed)
+  code: "Kode",
+ 
+  // Pagination and navigation
+  previous: "Vorige",
+  next: "Volgende",
+
+  // Products management
+  noItemAvailable: "Geen items beskikbaar",
+  noItemAvailableEnd: " in hierdie kategorie.",
+  addCategory: "Voeg Kategorie By",
+  newProduct: "Nuwe Produk",
+  selectOwner: "Kies Eienaar",
+  saveProduct: "Stoor Produk",
+  cancel: "Kanselleer",
+  allCategories: "Alle Kategorieë",
+  allOwners: "Alle Eienaars",
+  stock: "Voorraad",
+  actions: "Aksies",
+
+  // Import/Export
+  downloadProductsOnly: "Laai Net Produkte Af",
+  importProductsOnly: "Voer Net Produkte In",
+  downloadSalesOnly: "Laai Net Verkope Af",
+  importSalesOnly: "Voer Net Verkope In",
+
+  // Report tab
+  selectSavedDate: "Kies 'n Gestoorde Datum",
+  viewingReportFor: "Verslag word besigtig vir",
+  cashReconciliation: "Kontantversoeking",
+  totalCashSales: "Totale Kontantverkope",
+  startingFloat: "Aanvangsfloat",
+  totalInTill: "Totaal in Kas",
+  floatToKeep: "Float om Te Hou",
+  cashToBank: "Kontant na Bank",
+  countDenominations: "Tel Denominasies",
+  calculateCashToBank: "Bereken Kontant na Bank",
+
+  // Float management
+  floatManagement: "Floatubestuur",
+  currentFloat: "Huidige Float",
+  floatAmount: "Floatbedrag",
+  floatDescription: "Floatbeskrywing",
+  floatBreakdown: "Floatonderbreking",
+  adjustFloat: "Pas Float Aan",
+  updateFloat: "Werk Float By",
+  setupDenominations: "Stel Denominasies In",
+  setupFloatDenominations: "Stel Floatdenominasies In",
+  setupFloatInstructions: "Voer die denominasies in wat jou float uitmaak:",
+  totalFloat: "Totale Float",
+
+  // Daily reconciliation
+  dailyCashReconciliation: "Daaglikse Kontantversoeking",
+  selectDateForReconciliation: "Kies Datum vir Versoeking",
+  cashSales: "Kontantverkope",
+  expectedInTill: "Verwag in Kas",
+  actualCashCount: "Werklike Kontanttelling",
+  variance: "Afwyking",
+  saveReconciliation: "Stoor Versoeking",
+  reconciliationHistory: "Versoekingsgeskiedenis",
+
+  // Payment methods
+  setPayment: "Stel Betaling In",
+  totalAmount: "Totale Bedrag",
+  cashAmounts: "Kontantbedrae",
+  selectAmount: "Kies Bedrag",
+  secondCard: "Tweede Kaart",
+  paidTogether: "Saam Betaal",
+  whoDoesThisBelong: "Aan wie behoort dit?",
+
+  // General actions
+  save: "Stoor",
+
+  // Help/Tutorial - Scan section
+  scanHelpTitle: "Hoe om die Streepkodelesing Te Gebruik",
+  scanStep1Title: "Stap 1: Kies 'n Naam",
+  step1: "Stap 1",
+  scanStep1_1: "Tik op die naamlassakening",
+  step2: "Stap 2",
+  scanStep1_2: "Kies 'n kliëntnaam uit die lys",
+  step3: "Stap 3",
+  scanStep1_3: "Die lesing sal outomaties op die produktkodeveld fokus",
+  step4: "Stap 4",
+  scanStep1_4: "Hou jou telefoonkamera naby die streepkode",
+  step5: "Stap 5",
+  scanStep1_5: "Die streepkode sal outomaties geles word en die produk sal bygevoegd word",
+  scanNote: "Opmerking: Maak seker dat die streepkode duidelik sigbaar en goed verlig is.",
+  scanStep2Title: "Stap 2: Hoeveelheid Invoer",
+  scanStep2_1: "Na die lesing kan jy die hoeveelheid aanpas",
+  scanStep2_2: "Tik op die hoeveelheidsveld om dit te verander",
+  scanStep2_3: "Voer die gewenste hoeveelheid in en bevestig",
+  scanStep2_4: "Die produk sal by jou transaksie bygevoegd word",
+  gotIt: "Verstaan!",
+
+  // Search and filter
+  searchProducts: "Soek Produkte",
+  typeCategories: "Tik Kategorieë",
+  selectCategory: "Kies Kategorie",
+  startingStock: "Aanvangsvoorraad" 
+  
+});
+
+
+
+
+
+
+
 var currentLanguage = 'en';
  
-
-var cashReceivedDenominations = {
-    'R200': { count: 0, value: 200 },
-    'R100': { count: 0, value: 100 },
-    'R50': { count: 0, value: 50 },
-    'R20': { count: 0, value: 20 },
-    'R10': { count: 0, value: 10 },
-    'R5': { count: 0, value: 5 },
-    'R2': { count: 0, value: 2 },
-    'R1': { count: 0, value: 1 },
-    '50c': { count: 0, value: 0.5 },
-    '20c': { count: 0, value: 0.2 },
-    '10c': { count: 0, value: 0.1 }
+const DenominationManager = {
+    denominations: {
+        'R200': 200, 'R100': 100, 'R50': 50, 'R20': 20, 'R10': 10,
+        'R5': 5, 'R2': 2, 'R1': 1, '50c': 0.5, '20c': 0.2, '10c': 0.1
+    },
+    
+    createEmpty() {
+        return Object.fromEntries(
+            Object.keys(this.denominations).map(k => [k, { count: 0, value: this.denominations[k] }])
+        );
+    },
+    
+    calculateTotal(denoms) {
+        return Object.entries(denoms).reduce((sum, [key, data]) => 
+            sum + (data.count * data.value), 0
+        );
+    },
+    
+    clone(denoms) {
+        return JSON.parse(JSON.stringify(denoms));
+    }
 };
 
-var changeGivenDenominations = {
-    'R200': { count: 0, value: 200 },
-    'R100': { count: 0, value: 100 },
-    'R50': { count: 0, value: 50 },
-    'R20': { count: 0, value: 20 },
-    'R10': { count: 0, value: 10 },
-    'R5': { count: 0, value: 5 },
-    'R2': { count: 0, value: 2 },
-    'R1': { count: 0, value: 1 },
-    '50c': { count: 0, value: 0.5 },
-    '20c': { count: 0, value: 0.2 },
-    '10c': { count: 0, value: 0.1 }
-};
+// Initialize at startup:
+let tillDenominations = DenominationManager.createEmpty();
+let cashReceivedDenominations = DenominationManager.createEmpty();
+let changeGivenDenominations = DenominationManager.createEmpty();
 
 
-var tillDenominations = {
-    'R200': { count: 0, value: 200 },
-    'R100': { count: 0, value: 100 },
-    'R50': { count: 0, value: 50 },
-    'R20': { count: 0, value: 20 },
-    'R10': { count: 0, value: 10 },
-    'R5': { count: 0, value: 5 },
-    'R2': { count: 0, value: 2 },
-    'R1': { count: 0, value: 1 },
-    '50c': { count: 0, value: 0.5 },
-    '20c': { count: 0, value: 0.2 },
-    '10c': { count: 0, value: 0.1 }
-};
 
 function saveTillState() {
     localStorage.setItem('salesSystemTillState', JSON.stringify(tillDenominations));
@@ -2504,36 +2806,7 @@ function loadTillState() {
     }
 }
 
-function getTranslation(key) {
-  const lang = window.currentLanguage || 'en';
 
-  const enText = translations.en?.[key];
-  let afText = translations.af?.[key];
-
-  // Auto-insert missing Afrikaans keys
-  if (enText && afText === undefined) {
-    translations.af[key] = `${enText} (AF)`;
-    afText = translations.af[key];
-    window.missingTranslationKeys.add(key);
-  }
-
-  // Preferred language
-  if (translations[lang]?.[key]) {
-    return translations[lang][key];
-  }
-
-  // Bilingual fallback
-  if (enText && afText) {
-    return `${enText} | ${afText}`;
-  }
-
-  // Single fallback
-  if (enText) return enText;
-  if (afText) return afText;
-
-  window.missingTranslationKeys.add(key);
-  return `⟨${key}⟩`;
-}
 
 
 
@@ -2835,11 +3108,8 @@ function closeChangeDenominationModal() {
         modal.remove();
     }
 }
-
-
-
         var purchasedItems = [],
-          allTransactions = [],
+          allTransactions = [],                                           
           allProducts = [],
           currentQuantity = 1,
           currentProduct = null,
@@ -2849,9 +3119,10 @@ function closeChangeDenominationModal() {
           itemsPerPage = 10,
           filteredProducts = [];
         var allCategories = ['Balls', 'Knives', 'Puzzles', 'Games', 'Board Games', 'Polstized Sunglasses', 'Sunglasses', 'Caps', 'Bucket Hats', 'Silver Stainless Steel Bangles', 'Golden Stainless Steel Bangles', 'Other'];
-        var pendingItem = null,
+//        var pendingItem = null,
           pendingItemType = '',
-          quantityMode = 'none',
+          quantityMode = 'none',                                              
+		  
           productQuantities = {};
         var salesCurrentPage = 1,
           salesItemsPerPage = 10,
@@ -2920,10 +3191,14 @@ function closeChangeDenominationModal() {
                     document.getElementById('productCode').focus();
                 }
             }, 500);
-            
-            // NEW: Register service worker
+          
+if (window.missingTranslationKeys && window.missingTranslationKeys.size) {
+    console.log('Missing translations:', [...window.missingTranslationKeys]);
+  }
           });
-        
+
+		
+		
         // Load saved language preference
         function loadLanguage() {
             var savedLang = localStorage.getItem('salesSystemLanguage');
@@ -2997,40 +3272,57 @@ function getTranslation(key) {
   return `⟨${key}⟩`;
 }
 
-function exportAutoGeneratedAfrikaans() {
-  const generated = {};
-
-  missingTranslationKeys.forEach(key => {
-    if (translations.af[key]?.endsWith('(AF)')) {
-      generated[key] = translations.af[key];
-    }
-  });
-
-  console.log(
-    'Auto-generated Afrikaans translations:',
-    JSON.stringify(generated, null, 2)
-  );
-
-  return generated;
-}
-
-
  function loadData() {
+    // First, validate localStorage isn't corrupted
+    try {
+        const testKey = 'salesSystemIntegrityCheck';
+        localStorage.setItem(testKey, 'test');
+        localStorage.removeItem(testKey);
+    } catch (e) {
+        if (confirm('Storage corrupted. Clear and restart?')) {
+            localStorage.clear();
+            location.reload();
+        }
+        return;
+    }
+    
+    // Now load all data with validation
     try {
         var saved = localStorage.getItem('salesSystemData');
-        if (saved) allTransactions = JSON.parse(saved);
+        if (saved) {
+            allTransactions = JSON.parse(saved);
+            // Validate structure
+            if (!Array.isArray(allTransactions)) {
+                throw new Error('Invalid transaction data');
+            }
+        }
         
         var savedProducts = localStorage.getItem('salesSystemProducts');
-        if (savedProducts) allProducts = JSON.parse(savedProducts);
+        if (savedProducts) {
+            allProducts = JSON.parse(savedProducts);
+            if (!Array.isArray(allProducts)) {
+                throw new Error('Invalid products data');
+            }
+        }
         
         var savedCategories = localStorage.getItem('salesSystemCategories');
-        if (savedCategories) allCategories = JSON.parse(savedCategories);
+        if (savedCategories) {
+            allCategories = JSON.parse(savedCategories);
+            if (!Array.isArray(allCategories)) {
+                throw new Error('Invalid categories data');
+            }
+        }
         
         var savedNumber = localStorage.getItem('salesSystemTransactionNumber');
         if (savedNumber) currentTransactionNumber = parseInt(savedNumber);
         
         var savedQuantities = localStorage.getItem('salesSystemQuantities');
-        if (savedQuantities) productQuantities = JSON.parse(savedQuantities);
+        if (savedQuantities) {
+            productQuantities = JSON.parse(savedQuantities);
+            if (typeof productQuantities !== 'object') {
+                throw new Error('Invalid quantities data');
+            }
+        }
         
         loadFloatData();
         
@@ -3038,19 +3330,149 @@ function exportAutoGeneratedAfrikaans() {
         loadTillState();
         
         var savedReconciliations = localStorage.getItem('salesSystemReconciliations');
-        if (savedReconciliations) dailyReconciliations = JSON.parse(savedReconciliations);
+        if (savedReconciliations) {
+            dailyReconciliations = JSON.parse(savedReconciliations);
+            if (!Array.isArray(dailyReconciliations)) {
+                throw new Error('Invalid reconciliations data');
+            }
+        }
         
         // NEW: Check for new day and prompt to clear if needed
         checkForNewDay();
+        
     } catch (error) {
         console.error('Error loading data:', error);
-        alert('Error loading data. Starting fresh.');
+        if (confirm('Data corrupted. Restore from backup or start fresh?')) {
+            attemptBackupRestore();
+        } else {
+            // Start fresh but keep the error logged
+            alert('Starting with fresh data. Previous data may be corrupted.');
+        }
     }
     
     updateTransactionNumberDisplay();
     updateStats();
     renderReconciliationHistory();
 }
+
+function attemptBackupRestore() {
+    try {
+        const compressed = localStorage.getItem('salesSystemCompressedBackup');
+        if (compressed && typeof LZString !== 'undefined') {
+            const data = JSON.parse(LZString.decompressFromUTF16(compressed));
+            if (data.transactions) {
+                allTransactions = data.transactions || [];
+                allProducts = data.products || [];
+                allCategories = data.categories || [];
+                productQuantities = data.quantities || {};
+                currentTransactionNumber = data.transactionNumber || 1;
+                floatAmount = data.floatAmount || 700.00;
+                floatDenominations = data.floatDenominations || floatDenominations;
+                dailyReconciliations = data.reconciliations || [];
+                
+                // Save all restored data
+                queueSave('transactions');
+                queueSave('products');
+                saveCategories();
+                saveQuantityData();
+                saveFloatData();
+                saveReconciliations();
+                saveTransactionNumber();
+                
+                alert('Successfully restored from backup!');
+                location.reload();
+                return true;
+            }
+        }
+    } catch (e) {
+        console.error('Backup restore failed:', e);
+    }
+    
+    // Last resort
+    if (confirm('Cannot restore backup. Clear all data and start fresh?')) {
+        localStorage.clear();
+        location.reload();
+    }
+    return false;
+}
+
+
+
+
+function validateTransaction(transaction) {
+    const required = ['date', 'time', 'name', 'items', 'totalAmount'];
+    const missing = required.filter(field => !transaction[field]);
+    
+    if (missing.length > 0) {
+        throw new Error(`Missing fields: ${missing.join(', ')}`);
+    }
+    
+    if (transaction.items.length === 0) {
+        throw new Error('Transaction has no items');
+    }
+    
+    const calculatedTotal = transaction.items.reduce((sum, item) => 
+        sum + (item.total || 0), 0
+    );
+    
+    if (Math.abs(calculatedTotal - transaction.totalAmount) > 0.01) {
+        throw new Error(`Total mismatch: ${calculatedTotal} vs ${transaction.totalAmount}`);
+    }
+    
+    return true;
+}
+
+// USE IT in completeTransaction():
+let transactionValid = true;
+
+try {
+    validateTransaction(transaction);
+    allTransactions.push(transaction);
+    queueSave('transactions');
+} catch (error) {
+    alert('Transaction error: ' + error.message);
+    transactionValid = false;
+}
+
+if (!transactionValid) {
+    // stop further processing
+}
+
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
+
+const filterSalesProducts = debounce(function() {
+    salesSearchTerm = document.getElementById('salesSearch').value.toLowerCase();
+    salesCurrentPage = 1;
+    updateProductList();
+}, 300);
+
+const filterProducts = debounce(function() {
+    var term = document.getElementById('searchProducts').value.toLowerCase();
+    var cat = document.getElementById('filterCategory').value;
+    var own = document.getElementById('filterOwner').value;
+    
+    filteredProducts = allProducts.filter(p => {
+        var m1 = term === '' || p.name.toLowerCase().includes(term) || 
+                 (p.code && p.code.toLowerCase().includes(term));
+        var m2 = cat === '' || p.category === cat;
+        var m3 = own === '' || p.owner === own;
+        return m1 && m2 && m3;
+    });
+    
+    currentPage = 1;
+    renderProductsTable();
+}, 300);
+
+
+
+
+
 
 function getCurrentTillTotal() {
     var total = 0;
@@ -3333,7 +3755,7 @@ function saveQuickInfo() {
 
   // Add to products
   allProducts.push(newProduct);
-  saveProducts();
+  queueSave('products');
 
   // If starting stock provided (> 0), store it into productQuantities
   if (startQty && startQty > 0) {
@@ -3631,6 +4053,48 @@ function calculateReportCashToBank() {
           localStorage.setItem('salesSystemTransactionNumber', currentTransactionNumber.toString());
         }
 
+
+function sanitizeInput(str) {
+    if (typeof str !== 'string') return str;
+    return str
+        .replace(/[<>]/g, '') // Remove potential XSS
+        .trim()
+        .slice(0, 500); // Limit length
+}
+
+function showLoading(message = 'Loading...') {
+    const loader = document.createElement('div');
+    loader.id = 'loadingOverlay';
+    loader.style.cssText = `
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.7); display: flex;
+        align-items: center; justify-content: center; z-index: 9999;
+    `;
+    loader.innerHTML = `
+        <div style="background: white; padding: 30px; border-radius: 12px; text-align: center;">
+            <div style="font-size: 18px; font-weight: bold; margin-bottom: 15px;">${message}</div>
+            <div style="width: 40px; height: 40px; border: 4px solid #3b82f6;
+                        border-top-color: transparent; border-radius: 50%;
+                        animation: spin 1s linear infinite; margin: 0 auto;"></div>
+        </div>
+    `;
+    document.body.appendChild(loader);
+}
+
+function hideLoading() {
+    const loader = document.getElementById('loadingOverlay');
+    if (loader) loader.remove();
+}
+
+
+
+
+
+
+
+
+
+
 function updateTransactionNumberDisplay() {
   var el = document.getElementById('currentTransactionNumber');
   if (el) {
@@ -3645,6 +4109,9 @@ function updateTransactionNumberDisplay() {
         }
 
         function saveProducts() {
+    var name = sanitizeInput(document.getElementById('newProductName').value);
+    var code = sanitizeInput(document.getElementById('newProductCode').value.trim());
+    var category = sanitizeInput(document.getElementById('newProductCategory').value);		
           localStorage.setItem('salesSystemProducts', JSON.stringify(allProducts));
         }
 
@@ -4061,7 +4528,7 @@ function saveSimpleEdit(transactionIndex, newItems, original) {
     allTransactions[transactionIndex].time = document.getElementById('editTime').value;
     allTransactions[transactionIndex].name = document.getElementById('editName').value;
     
-    saveData();
+    queueSave('transactions');
     closeEditTransactionModal();
     updateReport();
     updateStats();
@@ -4121,7 +4588,7 @@ function saveCardOnlyEdit(transactionIndex, newItems, newTotal, original) {
         changeGivenDenominations: null
     };
     
-    saveData();
+    queueSave('transactions');
     closeEditTransactionModal();
     updateReport();
     updateStats();
@@ -4341,6 +4808,56 @@ function autoFillEditChange(amount) {
 }
 
 
+let saveQueue = new Set();
+let saveTimer = null;
+
+function queueSave(type) {
+    saveQueue.add(type);
+    
+    if (saveTimer) clearTimeout(saveTimer);
+    
+    saveTimer = setTimeout(() => {
+        saveQueue.forEach(type => {
+            switch(type) {
+                case 'transactions': queueSave('transactions'); break;
+                case 'products': queueSave('products'); break;
+                case 'categories': saveCategories(); break;
+                case 'quantities': saveQuantityData(); break;
+                case 'float': saveFloatData(); break;
+                case 'reconciliations': saveReconciliations(); break;
+                case 'transactionNumber': saveTransactionNumber(); break;
+            }
+        });
+        saveQueue.clear();
+    }, 1000); // Batch saves every 1 second
+}
+
+function startAutoSave() {
+    // Periodic compressed backup every 30 seconds
+    setInterval(() => {
+        if (typeof LZString !== 'undefined') {
+            try {
+                const consolidatedData = {
+                    exportType: 'complete_backup',
+                    timestamp: new Date().toISOString(),
+                    products: allProducts,
+                    categories: allCategories,
+                    transactions: allTransactions,
+                    quantities: productQuantities,
+                    transactionNumber: currentTransactionNumber,
+                    floatAmount: floatAmount,
+                    floatDenominations: floatDenominations,
+                    reconciliations: dailyReconciliations
+                };
+                const compressedData = LZString.compressToUTF16(JSON.stringify(consolidatedData));
+                localStorage.setItem('salesSystemCompressedBackup', compressedData);
+            } catch (e) {
+                console.error('Auto-backup failed:', e);
+            }
+        }
+    }, 30000);
+}
+
 function saveEditWithDenominations() {
     const data = window.editDenominationData;
     if (!data || !data.original) {
@@ -4402,7 +4919,7 @@ function saveEditWithDenominations() {
         changeGivenDenominations: change
     };
 
-    saveData();
+    queueSave('transactions');
     closeEditDenominationModal();
     updateReport();
     updateStats();
@@ -4516,8 +5033,10 @@ function closeEditTransactionModal() {
     if (modal) {
         modal.remove();
     }
+    // Clear global state
+    delete window.editingTransactionIndex;
+    delete window.editDenominationData;
 }
-
 
 
 
@@ -4601,7 +5120,7 @@ function checkForNewDay() {
                     if (confirm("Report generated!\n\nDo you want to clear transactions from " + lastActiveDate + "?\n\n(Float and till will reset to starting float amount)")) {
                         // Keep only current day's transactions (if any)
                         allTransactions = allTransactions.filter(t => t.date === today);
-                        saveData();
+                        queueSave('transactions');
                         
                         // Reset till to float amount
                         initializeTillFromFloat();
@@ -4995,10 +5514,6 @@ function saveReconciliation() {
 function updateReport() {
   // small helpers (self-contained so you can paste the function anywhere)
   
-  function safeSetText(id, text) {
-    var el = document.getElementById(id);
-    if (el) el.textContent = text;
-  }
   
   function safeSetHTML(id, html) {
     var el = document.getElementById(id);
@@ -5672,7 +6187,7 @@ function completeTransaction() {
     };
     
     allTransactions.push(transaction);
-    saveData();
+    queueSave('transactions');
     
     // Close modal first
     document.getElementById('paymentModal').classList.remove('active');
@@ -6009,7 +6524,7 @@ document.addEventListener('click', function (e) {
             }
             cancelEdit();
           }
-          saveProducts();
+          queueSave('products');
           filterProducts();
           renderProductsTable();
           document.getElementById('newProductCode').value = '';
@@ -6060,27 +6575,11 @@ document.addEventListener('click', function (e) {
               saveQuantityData();
             }
             allProducts.splice(idx, 1);
-            saveProducts();
+            queueSave('products');
             filterProducts();
             renderProductsTable();
           }
         }
-
-function filterProducts() {
-    var term = document.getElementById('searchProducts').value.toLowerCase();
-    var cat = document.getElementById('filterCategory').value;
-    var own = document.getElementById('filterOwner').value;
-    
-    filteredProducts = allProducts.filter(p => {
-        var m1 = term === '' || p.name.toLowerCase().includes(term) || (p.code && p.code.toLowerCase().includes(term));
-        var m2 = cat === '' || p.category === cat;
-        var m3 = own === '' || p.owner === own;
-        return m1 && m2 && m3;
-    });
-    
-    currentPage = 1;
-    renderProductsTable();
-}
 
         function renderProductsTable() {
           var tbody = document.getElementById('productsTableBody');
@@ -6106,12 +6605,6 @@ function filterProducts() {
         function changePage(dir) {
           currentPage += dir;
           renderProductsTable();
-        }
-
-        function filterSalesProducts() {
-          salesSearchTerm = document.getElementById('salesSearch').value.toLowerCase();
-          salesCurrentPage = 1;
-          updateProductList();
         }
 
         function changeSalesPage(dir) {
@@ -6272,8 +6765,8 @@ async function handleBackupFile(file) {
         dailyReconciliations = data.reconciliations || [];
         
         // Save to localStorage
-        saveData();
-        saveProducts();
+        queueSave('transactions');
+        queueSave('products');
         saveCategories();
         saveQuantityData();
         saveFloatData();
@@ -6297,7 +6790,7 @@ async function handleBackupFile(file) {
         floatAmount = data.floatAmount || 700.00;
         floatDenominations = data.floatDenominations || floatDenominations;
         
-        saveProducts();
+        queueSave('products');
         saveCategories();
         saveQuantityData();
         saveFloatData();
@@ -6314,7 +6807,7 @@ async function handleBackupFile(file) {
         currentTransactionNumber = data.transactionNumber || 1;
         dailyReconciliations = data.reconciliations || [];
         
-        saveData();
+        queueSave('transactions');
         saveReconciliations();
         saveTransactionNumber();
         
@@ -6338,36 +6831,7 @@ function closeScannerHelp() {
 }
 
 // Auto-save function
-function startAutoSave() {
-    // Auto-save every 30 seconds
-    setInterval(() => {
-        saveData();
-        saveProducts();
-        saveCategories();
-        saveQuantityData();
-        saveFloatData();
-        saveReconciliations();
-        saveTransactionNumber();
-        
-        // Create compressed backup
-        if (typeof LZString !== 'undefined') {
-            const consolidatedData = {
-                exportType: 'complete_backup',
-                timestamp: new Date().toISOString(),
-                products: allProducts,
-                categories: allCategories,
-                transactions: allTransactions,
-                quantities: productQuantities,
-                transactionNumber: currentTransactionNumber,
-                floatAmount: floatAmount,
-                floatDenominations: floatDenominations,
-                reconciliations: dailyReconciliations
-            };
-            const compressedData = LZString.compressToUTF16(JSON.stringify(consolidatedData));
-            localStorage.setItem('salesSystemCompressedBackup', compressedData);
-        }
-    }, 30000);
-}
+
 
 // IndexedDB fallback (placeholder)
 async function loadFromIndexedDB() {
@@ -6407,12 +6871,11 @@ async function loadFromIndexedDB() {
 }
 
 // PDF generation function
+// PDF generation function
 function generatePDF(specificDate = null) {
   try {
     if (typeof window.jspdf === 'undefined') return alert(translations[currentLanguage]['pdfLibraryError']);
-    const {
-      jsPDF
-    } = window.jspdf;
+    const { jsPDF } = window.jspdf;
     
     // Allow passing a date, or default to input
     var day = specificDate || document.getElementById('daySelect').value;
@@ -6485,32 +6948,29 @@ function generatePDF(specificDate = null) {
     
     doc.setFontSize(20);
     doc.setTextColor(40, 40, 40);
-    doc.text(t.dailyReport, 105, 20, {
-      align: 'center'
-    });
+    doc.text(t.dailyReport, 105, 20, { align: 'center' });
     doc.setFontSize(12);
     doc.setTextColor(100, 100, 100);
-    doc.text(t.date + ': ' + day, 105, 30, {
-      align: 'center'
-    });
+    doc.text(t.date + ': ' + day, 105, 30, { align: 'center' });
 
     let yPosition = 50;
     doc.setFontSize(16);
     doc.setTextColor(59, 130, 246);
-    doc.text(t.detailedTransactions, 105, yPosition, {
-      align: 'center'
-    });
+    doc.text(t.detailedTransactions, 105, yPosition, { align: 'center' });
     yPosition += 10;
 
-    const tableData = [
-      [t.transactionNumber, t.person, t.item, t.quantity, t.price, t.total, t.payment]
-    ];
+    const tableData = [[t.transactionNumber, t.person, t.item, t.quantity, t.price, t.total, t.payment]];
+    
     dayTransactions.forEach(tran => {
       var trNumber = tran.transactionNumber.toString().slice(-3);
       var paymentMethod = '';
-      if (tran.cashAmount > 0 && (tran.cardAmount > 0 || tran.cardAmount2 > 0)) paymentMethod = isAfrikaans ? 'Gemeng' : 'Mixed';
-      else if (tran.cashAmount > 0) paymentMethod = isAfrikaans ? 'KONTANT' : 'CASH';
-      else if (tran.cardAmount > 0 || tran.cardAmount2 > 0) paymentMethod = (tran.cardAmount2 > 0) ? (isAfrikaans ? '2xKD' : '2xCD') : (isAfrikaans ? 'KAART' : 'CARD');
+      if (tran.cashAmount > 0 && (tran.cardAmount > 0 || tran.cardAmount2 > 0)) {
+        paymentMethod = isAfrikaans ? 'Gemeng' : 'Mixed';
+      } else if (tran.cashAmount > 0) {
+        paymentMethod = isAfrikaans ? 'KONTANT' : 'CASH';
+      } else if (tran.cardAmount > 0 || tran.cardAmount2 > 0) {
+        paymentMethod = (tran.cardAmount2 > 0) ? (isAfrikaans ? '2xKD' : '2xCD') : (isAfrikaans ? 'KAART' : 'CARD');
+      }
 
       tran.items.forEach(item => {
         var itemOwner = item.owner || tran.name;
@@ -6518,7 +6978,7 @@ function generatePDF(specificDate = null) {
         tableData.push([
           trNumber, 
           personAbbr, 
-          item.product, // Full name
+          item.product,
           item.quantity.toString(), 
           'R' + item.price.toFixed(2), 
           'R' + item.total.toFixed(2), 
@@ -6545,51 +7005,24 @@ function generatePDF(specificDate = null) {
         cellWidth: 'wrap'
       },
       columnStyles: {
-        0: { // Tr #
-          cellWidth: 12,
-          halign: 'center',
-          fontSize: 7
-        },
-        1: { // Person
-          cellWidth: 15,
-          halign: 'center',
-          fontSize: 7
-        },
-        2: { // Item
-          cellWidth: 'auto',
-          minCellWidth: 80,
-          maxCellWidth: 95,
-          overflow: 'linebreak',
-          fontSize: 7
-        },
-        3: { // Qty
-          cellWidth: 12,
-          halign: 'center',
-          fontSize: 7
-        },
-        4: { // Price
-          cellWidth: 18,
-          halign: 'right',
-          fontSize: 7
-        },
-        5: { // Total
-          cellWidth: 18,
-          halign: 'right',
-          fontSize: 7
-        },
-        6: { // Payment
-          cellWidth: 18,
-          halign: 'center',
-          fontSize: 7
-        }
+        0: { cellWidth: 12, halign: 'center', fontSize: 7 },
+        1: { cellWidth: 15, halign: 'center', fontSize: 7 },
+        2: { cellWidth: 'auto', minCellWidth: 80, maxCellWidth: 95, overflow: 'linebreak', fontSize: 7 },
+        3: { cellWidth: 12, halign: 'center', fontSize: 7 },
+        4: { cellWidth: 18, halign: 'right', fontSize: 7 },
+        5: { cellWidth: 18, halign: 'right', fontSize: 7 },
+        6: { cellWidth: 18, halign: 'center', fontSize: 7 }
       },
       margin: { horizontal: 5 },
       tableWidth: 'wrap',
       didParseCell: function (data) {
         if (data.row.index > 0) {
           var owner = data.row.raw[1];
-          if (owner === 'KO') data.cell.styles.fillColor = [225, 245, 254];
-          else if (owner === 'FR') data.cell.styles.fillColor = [232, 245, 233];
+          if (owner === 'KO') {
+            data.cell.styles.fillColor = [225, 245, 254];
+          } else if (owner === 'FR') {
+            data.cell.styles.fillColor = [232, 245, 233];
+          }
         }
         if (data.column.index === 2 && data.cell.raw.length > 30) {
           data.cell.styles.fontSize = 6;
@@ -6610,24 +7043,16 @@ function generatePDF(specificDate = null) {
     yPosition = doc.lastAutoTable.finalY + 15;
     doc.setFontSize(14);
     doc.setTextColor(59, 130, 246);
-    doc.text(t.summary, 105, yPosition, {
-      align: 'center'
-    });
+    doc.text(t.summary, 105, yPosition, { align: 'center' });
     yPosition += 8;
 
     // Calculate Summary
-    var kc = 0,
-      kca = 0,
-      kcd = 0,
-      kt = 0;
-    var fc = 0,
-      fca = 0,
-      fcd = 0,
-      ft = 0;
+    var kc = 0, kca = 0, kcd = 0, kt = 0;
+    var fc = 0, fca = 0, fcd = 0, ft = 0;
+    
     dayTransactions.forEach(tran => {
       if (tran.name === 'Both') {
-        var ki = 0,
-          fi = 0;
+        var ki = 0, fi = 0;
         tran.items.forEach(i => {
           if (i.owner === 'Kotie') ki += i.total;
           else fi += i.total;
@@ -6667,8 +7092,7 @@ function generatePDF(specificDate = null) {
       [t.dayTotal, dayTransactions.length.toString(), 'R' + (kca + fca).toFixed(2), 'R' + (kcd + fcd).toFixed(2), 'R' + (kt + ft).toFixed(2)]
     ];
 
-    // FIXED: Create a separate table for the TOTAL row to ensure perfect alignment
-    // First, draw the main table (Kotie and Francois rows)
+    // Main table (Kotie and Francois rows)
     doc.autoTable({
       startY: yPosition,
       head: [summaryData[0]],
@@ -6689,43 +7113,27 @@ function generatePDF(specificDate = null) {
         lineWidth: 0.1
       },
       columnStyles: {
-        0: { // Name
-          cellWidth: 40,
-          fontStyle: 'bold',
-          halign: 'left'
-        },
-        1: { // Transactions
-          cellWidth: 25,
-          halign: 'center'
-        },
-        2: { // Cash
-          cellWidth: 30,
-          halign: 'right'
-        },
-        3: { // Card
-          cellWidth: 30,
-          halign: 'right'
-        },
-        4: { // Total
-          cellWidth: 30,
-          halign: 'right'
-        }
+        0: { cellWidth: 40, fontStyle: 'bold', halign: 'left' },
+        1: { cellWidth: 25, halign: 'center' },
+        2: { cellWidth: 30, halign: 'right' },
+        3: { cellWidth: 30, halign: 'right' },
+        4: { cellWidth: 30, halign: 'right' }
       },
       didParseCell: function (data) {
-        if (data.row.index === 1) { // Kotie row
-          data.cell.styles.fillColor = [225, 245, 254]; // Light blue
-        } else if (data.row.index === 2) { // Francois row
-          data.cell.styles.fillColor = [232, 245, 233]; // Light green
+        if (data.row.index === 1) {
+          data.cell.styles.fillColor = [225, 245, 254];
+        } else if (data.row.index === 2) {
+          data.cell.styles.fillColor = [232, 245, 233];
         }
       }
     });
 
     yPosition = doc.lastAutoTable.finalY;
 
-    // Now draw the TOTAL row separately with exact same column widths
+    // TOTAL row
     doc.autoTable({
       startY: yPosition,
-      head: [], // No header for this table
+      head: [],
       body: [summaryData[3]],
       theme: 'grid',
       styles: {
@@ -6736,53 +7144,34 @@ function generatePDF(specificDate = null) {
         lineWidth: 0.1
       },
       headStyles: {
-        fillColor: [30, 64, 175], // Dark blue
-        textColor: [255, 255, 255], // White text
+        fillColor: [30, 64, 175],
+        textColor: [255, 255, 255],
         fontStyle: 'bold'
       },
       bodyStyles: {
-        fillColor: [30, 64, 175], // Dark blue for total row
-        textColor: [255, 255, 255] // White text
+        fillColor: [30, 64, 175],
+        textColor: [255, 255, 255]
       },
       columnStyles: {
-        0: { // Name
-          cellWidth: 40,
-          fontStyle: 'bold',
-          halign: 'left'
-        },
-        1: { // Transactions
-          cellWidth: 25,
-          halign: 'center'
-        },
-        2: { // Cash
-          cellWidth: 30,
-          halign: 'right'
-        },
-        3: { // Card
-          cellWidth: 30,
-          halign: 'right'
-        },
-        4: { // Total
-          cellWidth: 30,
-          halign: 'right'
-        }
+        0: { cellWidth: 40, fontStyle: 'bold', halign: 'left' },
+        1: { cellWidth: 25, halign: 'center' },
+        2: { cellWidth: 30, halign: 'right' },
+        3: { cellWidth: 30, halign: 'right' },
+        4: { cellWidth: 30, halign: 'right' }
       }
     });
 
-    // Add Cash Reconciliation Section
+    // Cash Reconciliation Section
     yPosition = doc.lastAutoTable.finalY + 15;
     doc.setFontSize(14);
     doc.setTextColor(22, 163, 74);
-    doc.text(t.cashReconciliation, 105, yPosition, {
-      align: 'center'
-    });
+    doc.text(t.cashReconciliation, 105, yPosition, { align: 'center' });
     yPosition += 8;
 
     var totalCash = kca + fca;
     var totalInTill = totalCash + floatAmount;
     var cashToBank = totalCash;
 
-    // Create separate rows for better visual separation
     const cashData = [
       [t.cashSales, 'R ' + totalCash.toFixed(2)],
       [t.startingFloat, 'R ' + floatAmount.toFixed(2)],
@@ -6794,8 +7183,8 @@ function generatePDF(specificDate = null) {
     doc.autoTable({
       startY: yPosition,
       head: [[t.name, t.total]],
-      body: cashData.slice(0, 3), // First 3 rows: Cash Sales, Starting Float, Total in Till
-      theme: 'striped', // Use striped theme for better separation
+      body: cashData.slice(0, 3),
+      theme: 'striped',
       headStyles: {
         fillColor: [22, 163, 74],
         textColor: [255, 255, 255],
@@ -6807,24 +7196,17 @@ function generatePDF(specificDate = null) {
         cellPadding: 3
       },
       columnStyles: {
-        0: {
-          cellWidth: 65,
-          fontStyle: 'bold'
-        },
-        1: {
-          cellWidth: 40,
-          halign: 'right'
-        }
+        0: { cellWidth: 65, fontStyle: 'bold' },
+        1: { cellWidth: 40, halign: 'right' }
       },
       didParseCell: function (data) {
-        // Regular rows - white background
         if (data.row.index >= 0 && data.row.index <= 2) {
           data.cell.styles.fillColor = [255, 255, 255];
         }
       }
     });
 
-    // First special row: Float to Keep (light yellow background)
+    // Float to Keep row
     yPosition = doc.lastAutoTable.finalY;
     doc.autoTable({
       startY: yPosition,
@@ -6835,56 +7217,42 @@ function generatePDF(specificDate = null) {
         cellPadding: 3
       },
       columnStyles: {
-        0: {
-          cellWidth: 65,
-          fontStyle: 'bold'
-        },
-        1: {
-          cellWidth: 40,
-          halign: 'right'
-        }
+        0: { cellWidth: 65, fontStyle: 'bold' },
+        1: { cellWidth: 40, halign: 'right' }
       },
       didParseCell: function (data) {
-        // Float to Keep row - light yellow background
-        data.cell.styles.fillColor = [254, 243, 199]; // Light yellow
-        data.cell.styles.textColor = [180, 93, 4]; // Dark orange text
+        data.cell.styles.fillColor = [254, 243, 199];
+        data.cell.styles.textColor = [180, 93, 4];
         data.cell.styles.fontStyle = 'bold';
       }
     });
 
-    // Second special row: CASH TO BANK (light green background)
+    // CASH TO BANK row
     yPosition = doc.lastAutoTable.finalY;
     doc.autoTable({
       startY: yPosition,
       body: [[cashData[4][0], cashData[4][1]]],
       theme: 'plain',
       styles: {
-        fontSize: 9, // Slightly larger for emphasis
+        fontSize: 9,
         cellPadding: 4,
         fontStyle: 'bold'
       },
       columnStyles: {
-        0: {
-          cellWidth: 65,
-          fontStyle: 'bold'
-        },
-        1: {
-          cellWidth: 40,
-          halign: 'right'
-        }
+        0: { cellWidth: 65, fontStyle: 'bold' },
+        1: { cellWidth: 40, halign: 'right' }
       },
       didParseCell: function (data) {
-        // CASH TO BANK row - light green background
-        data.cell.styles.fillColor = [220, 252, 231]; // Light green
-        data.cell.styles.textColor = [22, 163, 74]; // Green text
+        data.cell.styles.fillColor = [220, 252, 231];
+        data.cell.styles.textColor = [22, 163, 74];
         data.cell.styles.fontStyle = 'bold';
         if (data.column.index === 1) {
-          data.cell.styles.fontSize = 10; // Larger font for amount
+          data.cell.styles.fontSize = 10;
         }
       }
     });
 
-    // Add page number if needed
+    // Add page numbers
     const pageCount = doc.internal.getNumberOfPages();
     if (pageCount > 1) {
       for (let i = 1; i <= pageCount; i++) {
@@ -6895,11 +7263,11 @@ function generatePDF(specificDate = null) {
       }
     }
 
-    // Use language-specific filename
     const filename = isAfrikaans ? 'verslag_' + day + '.pdf' : 'report_' + day + '.pdf';
     doc.save(filename);
     
-    if(!specificDate) alert(translations[currentLanguage]['pdfGenerated']);
+    if (!specificDate) alert(translations[currentLanguage]['pdfGenerated']);
+    
   } catch (error) {
     console.error('PDF generation error:', error);
     alert(translations[currentLanguage]['pdfError'] + error.message);
@@ -6920,7 +7288,7 @@ function clearData() {
     initializeTillFromFloat();
 
     // Persist everything
-    saveData();
+    queueSave('transactions');
     saveTransactionNumber();
     saveReconciliations();
     saveTillState();
@@ -6980,7 +7348,7 @@ async function handleProductsOnlyUpload(e) {
         floatAmount = data.floatAmount || 700.00;
         floatDenominations = data.floatDenominations || floatDenominations;
         
-        saveProducts();
+        queueSave('products');
         saveCategories();
         saveQuantityData();
         saveFloatData();
@@ -7018,7 +7386,7 @@ async function handleSalesOnlyUpload(e) {
         currentTransactionNumber = data.transactionNumber || 1;
         dailyReconciliations = data.reconciliations || [];
         
-        saveData();
+        queueSave('transactions');
         saveTransactionNumber();
         saveReconciliations();
         
@@ -7080,7 +7448,5 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 })();
 </script>
-
-
 </body>
 </html>
