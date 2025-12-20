@@ -2340,7 +2340,6 @@ const translations = {
     over: "Over",
     short: "Short",
     correct: "Correct",
-
     installApp: "Install App"
   },
 
@@ -2509,8 +2508,8 @@ Object.assign(translations.en, {
   selectOwner: "Select Owner",
   saveProduct: "Save Product",
   cancel: "Cancel",
-  allCategories: "All Categories",
-  allOwners: "All Owners",
+  allCategories: "Categories",
+  allOwners: "Owners",
   stock: "Stock",
   actions: "Actions",
 
@@ -2566,6 +2565,10 @@ Object.assign(translations.en, {
 
   // General actions
   save: "Save",
+ currentTillTotal: 'Current Till Total',
+    floatToKeep: 'Float Amount (to keep)',
+    amountToBank: 'Amount to Bank',
+
 
   // Help/Tutorial - Scan section
   scanHelpTitle: "How to Use the Barcode Scanner",
@@ -2663,8 +2666,8 @@ Object.assign(translations.af, {
   selectOwner: "Kies Eienaar",
   saveProduct: "Stoor Produk",
   cancel: "Kanselleer",
-  allCategories: "Alle Kategorieë",
-  allOwners: "Alle Eienaars",
+  allCategories: "Kategorieë",
+  allOwners: "Eienaars",
   stock: "Voorraad",
   actions: "Aksies",
 
@@ -2689,10 +2692,10 @@ Object.assign(translations.af, {
   // Float management
   floatManagement: "Floatubestuur",
   currentFloat: "Huidige Float",
-  floatAmount: "Floatbedrag",
+  floatAmount: "Kas Bedrag",
   floatDescription: "Floatbeskrywing",
-  floatBreakdown: "Floatonderbreking",
-  adjustFloat: "Pas Float Aan",
+  floatBreakdown: "Kas Onderbreking",
+  adjustFloat: "Pas Kas Aan",
   updateFloat: "Werk Float By",
   setupDenominations: "Stel Denominasies In",
   setupFloatDenominations: "Stel Floatdenominasies In",
@@ -2720,6 +2723,10 @@ Object.assign(translations.af, {
 
   // General actions
   save: "Stoor",
+currentTillTotal: 'Huidige Kas Totaal',
+    floatToKeep: 'Float Bedrag (om te hou)',
+    amountToBank: 'Bedrag na Bank',
+
 
   // Help/Tutorial - Scan section
   scanHelpTitle: "Hoe om die Streepkodelesing Te Gebruik",
@@ -2869,7 +2876,7 @@ function renderCashDenominationInputs() {
     var html = '';
     
     // Notes Section
-    html += '<div style="margin-bottom: 10px; font-weight: bold; color: #374151;">Notes</div>';
+    html += '<div style="margin-bottom: 10px; font-weight: bold; color: #374151;" data-translate="notes">Notes</div>';
     var notes = ['R200', 'R100', 'R50', 'R20', 'R10'];
     notes.forEach(denom => {
         html += `
@@ -2882,7 +2889,7 @@ function renderCashDenominationInputs() {
     });
     
     // Coins Section
-    html += '<div style="margin-top: 15px; margin-bottom: 10px; font-weight: bold; color: #374151;">Coins</div>';
+    html += '<div style="margin-top: 15px; margin-bottom: 10px; font-weight: bold; color: #374151;" data-translate="coins">Coins</div>';
     var coins = ['R5', 'R2', 'R1', '50c', '20c', '10c'];
     coins.forEach(denom => {
         html += `
@@ -4154,7 +4161,7 @@ function renderFloatBreakdown() {
     var totalCalculated = getCurrentTillTotal();
     
     // Notes Section
-    breakdownHtml += '<div style="grid-column: 1 / -1; font-weight: bold; color: #374151; margin-bottom: 5px;">Notes</div>';
+    breakdownHtml += '<div style="grid-column: 1 / -1; font-weight: bold; color: #374151; margin-bottom: 5px;" data-translate="notes">Notes</div>';
     var notes = ['R200', 'R100', 'R50', 'R20', 'R10'];
     notes.forEach(denom => {
         var denomData = tillDenominations[denom];
@@ -4169,7 +4176,7 @@ function renderFloatBreakdown() {
     });
     
     // Coins Section
-    breakdownHtml += '<div style="grid-column: 1 / -1; font-weight: bold; color: #374151; margin-top: 10px; margin-bottom: 5px;">Coins</div>';
+    breakdownHtml += '<div style="grid-column: 1 / -1; font-weight: bold; color: #374151; margin-top: 10px; margin-bottom: 5px;" data-translate="coins">Coins</div>';
     var coins = ['R5', 'R2', 'R1', '50c', '20c', '10c'];
     coins.forEach(denom => {
         var denomData = tillDenominations[denom];
@@ -4191,15 +4198,15 @@ function renderFloatBreakdown() {
     // Update the float summary section with all three amounts
     document.getElementById('floatTotalAmount').innerHTML = 
         '<div style="margin-bottom: 10px;">' +
-        '<div style="font-size: 12px; color: #6b7280;">Current Till Total</div>' +
+        '<div style="font-size: 12px; color: #6b7280;" data-translate="currentTillTotal">Current Till Total</div>' +	
         '<div style="font-size: 24px; font-weight: bold; color: #ea580c;">R ' + totalCalculated.toFixed(2) + '</div>' +
         '</div>' +
         '<div style="margin-bottom: 10px; padding-top: 10px; border-top: 1px solid #e5e7eb;">' +
-        '<div style="font-size: 12px; color: #6b7280;">Float Amount (to keep)</div>' +
+        '<div style="font-size: 12px; color: #6b7280;" data-translate="floatToKeep">Float Amount (to keep)</div>' +
         '<div style="font-size: 20px; font-weight: bold; color: #f59e0b;">R ' + floatAmount.toFixed(2) + '</div>' +
         '</div>' +
         '<div style="padding-top: 10px; border-top: 2px solid #22c55e;">' +
-        '<div style="font-size: 12px; color: #6b7280;">Amount to Bank</div>' +
+       '<div style="font-size: 12px; color: #6b7280;" data-translate="amountToBank">Amount to Bank</div>' +
         '<div style="font-size: 20px; font-weight: bold; color: #16a34a;">R ' + amountToBank.toFixed(2) + '</div>' +
         '</div>';
 }
@@ -7448,5 +7455,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 })();
 </script>
+
+
 </body>
 </html>
