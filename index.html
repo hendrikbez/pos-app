@@ -11,10 +11,21 @@
 <!-- iOS support -->
 <link rel="apple-touch-icon" href="sale_192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Sales POS">
  <style>
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #f1f5f9;
+  );
+  min-height: 100vh;
+  padding: 8px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app-shell {
   background: linear-gradient(
     90deg,
     rgba(42, 123, 155, 1) 0%,
@@ -22,9 +33,24 @@ body {
     rgba(237, 221, 83, 1) 100%
   );
   min-height: 100vh;
-  padding: 8px;
-  -webkit-tap-highlight-color: transparent;
+ animation: appLaunch 0.35s ease-out; 
 }
+
+@keyframes appLaunch {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+
+
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -681,8 +707,7 @@ select:focus {
   gap: 10px;
   margin: 20px 0;
 }
-
-
+ 
 .cash-amount-section {
   margin-bottom: 16px;
 }
@@ -715,8 +740,7 @@ select:focus {
   gap: 10px;
   margin-bottom: 12px;
 }
-
-
+ 
 .stock-display {
   background: #fef3c7;
   border: 2px solid #f59e0b;
@@ -1007,7 +1031,13 @@ select:focus {
   .reconciliation-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+  .header-bar {
+    display: none;
+  }
+} 
+  
 }
+
 @media (min-width: 700px) {
   .container {
     max-width: 700px;
@@ -1372,10 +1402,7 @@ select:focus {
     0 4px 12px rgba(37, 99, 235, 0.15),
     inset 0 0 0 2px rgba(37,99,235,0.25) !important;
 }
-
-
-
-
+  
 /* Pagination (Outlined) */
 .page-btn {
   color: #2563eb !important;
@@ -1493,17 +1520,8 @@ select:focus {
   z-index: 2;
   color: inherit;
 }
-
-
-
-
-
-
-
-
-
-
-/* Fix for all input fields */
+ 
+  /* Fix for all input fields */
 input[type="date"],
 input[type="time"],
 input[type="text"],
@@ -1650,16 +1668,7 @@ input[type="time"] {
   width: 100%;
 }
 
-
-
-
-
-
-
-
-
-
-/* Inactive language buttons */
+ /* Inactive language buttons */
 .lang-btn.inactive {
   color: #64748b !important;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
@@ -1674,12 +1683,6 @@ input[type="time"] {
     0 6px 16px rgba(100, 116, 139, 0.2),
     inset 0 0 0 2px rgba(100,116,139,0.3) !important;
 }
-
-
-
-
-
-
 
 /* Focus visible animation */
 .button:focus-visible,
@@ -1697,6 +1700,55 @@ input[type="time"] {
     inset 0 0 0 2px rgba(255,255,255,0.7);
   animation: funky-focus 450ms ease;
 }
+
+
+html, body {
+  overscroll-behavior: none;
+  touch-action: manipulation;
+}
+
+* {
+  -webkit-user-select: none;
+  user-select: none;
+}
+input, textarea {
+  user-select: text;
+}
+
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-top: 1px solid #e5e7eb;
+  z-index: 2000;
+}
+
+.nav-item {
+  background: none;
+  border: none;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.nav-item.active {
+  color: #2563eb;
+}
+
+
+
+
+
+
+
+
 
 @keyframes funky-focus {
   0% { transform: translateY(0) rotate(0); }
@@ -1757,6 +1809,7 @@ input[type="time"] {
 	 
 </head>
 <body>
+<div class="app-shell">
        <div class="container">
 		<div class="header-bar">
 			<div class="language-selector">
@@ -1767,12 +1820,7 @@ input[type="time"] {
             <button class="button btn-green" onclick="openQuickInfoModal()">➕ Quick Add</button>
 	      <button class="button btn-purple" onclick="openScannerHelp()">Scanner Info ℹ️</button>
         </div>
-        <div class="tabs">
-          <button class="tab-btn active" data-tab="sales" data-translate="sales">Sales</button>
-          <button class="tab-btn inactive" data-tab="products" data-translate="products">Products</button>
-          <button class="tab-btn inactive" data-tab="report" data-translate="report">Report</button>
-          <button class="tab-btn inactive" data-tab="float" data-translate="float">Float</button>
-        </div>
+
         <div id="sales" class="tab-content active">
           <div class="transaction-header">
             <div>
@@ -2415,6 +2463,8 @@ input[type="time"] {
     Refresh
   </button>
 </div>
+
+
  <script>
 let swRegistration = null;
 
@@ -7700,5 +7750,15 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 
+
+<nav class="bottom-nav">
+  <button onclick="switchTab('sales')" class="nav-item active">Sales</button>
+  <button onclick="switchTab('products')" class="nav-item">Products</button>
+  <button onclick="switchTab('report')" class="nav-item">Report</button>
+  <button onclick="switchTab('float')" class="nav-item">Float</button>
+</nav>
+</div>
+
 </body>
 </html>
+
