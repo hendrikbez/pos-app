@@ -19,7 +19,6 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background: #f1f5f9;
-  );
   min-height: 100vh;
   padding: 8px;
   -webkit-tap-highlight-color: transparent;
@@ -48,10 +47,6 @@ body {
     transform: scale(1);
   }
 }
-
-
-
-
 
 .container {
   max-width: 1200px;
@@ -764,13 +759,6 @@ select:focus {
   background: #f1f5f9;
 } 
  
- 
- 
- 
- 
- 
- 
- 
 .stock-display {
   background: #fef3c7;
   border: 2px solid #f59e0b;
@@ -1081,41 +1069,6 @@ select:focus {
     inset 0 0 0 2px rgba(255,255,255,0.65);
   transition: transform 0.14s ease, box-shadow 0.22s ease, filter 0.22s ease, background 0.3s ease;
 
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* Core base for all buttons */
-.button,
-.quick-btn,
-.tab-btn,
-.lang-btn,
-.page-btn,
-.action-btn,
-.owner-btn,
-.quantity-btn,
-.btn-red,
-.btn-blue,
-.btn-green,
-.btn-orange,
-.btn-purple {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.9em 1.15em;
-  border-radius: 12px;
-  border: 0;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  line-height: 1;
-  cursor: pointer;
-  user-select: none;
-  background: linear-gradient(135deg, #ffffff 0%, #f7f8ff 100%);
-  color: #0f172a;
-  box-shadow:
-    0 8px 18px rgba(15, 23, 42, 0.15),
-    inset 0 0 0 2px rgba(255,255,255,0.65);
-  transition: transform 0.14s ease, box-shadow 0.22s ease, filter 0.22s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -1614,15 +1567,7 @@ input[type="time"] {
   width: 100%;
 }
 
- /* Inactive language buttons */
-.lang-btn.inactive {
-  color: #64748b !important;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
-  box-shadow:
-    0 4px 12px rgba(100, 116, 139, 0.15),
-    inset 0 0 0 2px rgba(100,116,139,0.2) !important;
-}
-
+ 
 .lang-btn.inactive:hover {
   background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important;
   box-shadow:
@@ -1668,48 +1613,47 @@ input, textarea {
   left: 0;
   right: 0;
   height: 64px;
-  background: rgba(255,255,255,0.95);
-  backdrop-filter: blur(10px);
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  border-top: 1px solid #e5e7eb;
-  z-index: 2000;
   background: #ffffff;
+  display: flex;
+  border-top: 1px solid #e5e7eb;
+  z-index: 3000;
 }
 
 .nav-item {
   flex: 1;
-  height: 100%;
   border: none;
   background: transparent;
   font-weight: 700;
   font-size: 13px;
-  color: #64748b;
+  color: #94a3b8; /* inactive */
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+/* ACTIVE TAB */
 .nav-item.active {
   color: #2563eb;
+  background: #eff6ff;
 }
 
+/* ACTIVE INDICATOR BAR */
 .nav-item.active::before {
   content: "";
   position: absolute;
   top: 0;
-  left: 20%;
-  right: 20%;
+  left: 25%;
+  right: 25%;
   height: 4px;
   border-radius: 0 0 6px 6px;
   background: #2563eb;
 }
 
-
-
-
-
-
-
+/* OPTIONAL: press feedback */
+.nav-item:active {
+  background: #dbeafe;
+}
 
 
 @keyframes funky-focus {
@@ -1833,11 +1777,6 @@ input, textarea {
   animation: funky-focus 420ms ease;
 }
 
-@keyframes funky-focus {
-  0% { transform: translateY(0) rotate(0); }
-  40% { transform: translateY(-1px) rotate(-0.4deg); }
-  100% { transform: translateY(0) rotate(0); }
-}
 </style>
 
  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -2083,9 +2022,7 @@ input, textarea {
   <input type="file" id="salesOnlyInput" style="display: none;" accept=".json" onchange="handleSalesOnlyUpload(event)">
 </div>
 		  
-		  
-		  
-        </div>
+      </div>
         <div id="report" class="tab-content">
           <div class="section-title" data-translate="dailyReport">Daily Report</div>
           
@@ -2238,7 +2175,6 @@ input, textarea {
         <input type="number" id="newFloatAmount" value="700.00" step="0.01" min="0" style="padding-left: 30px;">
     </div>
 </div>
-                
                 <button class="button btn-orange full-width" onclick="updateFloatAmount()" style="margin-bottom: 15px;" data-translate="updateFloat">Update Float Amount</button>
                 <button class="button btn-blue full-width" onclick="setupFloatDenominations()" data-translate="setupDenominations">Setup Float Denominations</button>
             </div>
@@ -2522,6 +2458,46 @@ function refreshApp() {
   });
 }
 </script>
+
+<script>
+function switchTab(tabId) {
+  // 1. Hide all tab contents
+  document.querySelectorAll('.tab-content').forEach(tab => {
+    tab.classList.remove('active');
+  });
+
+  // 2. Show selected tab
+  const activeTab = document.getElementById(tabId);
+  if (!activeTab) {
+    console.warn('Tab not found:', tabId);
+    return;
+  }
+  activeTab.classList.add('active');
+
+  // 3. Update bottom navigation ONLY
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.classList.remove('active');
+  });
+
+  const navBtn = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
+  if (navBtn) {
+    navBtn.classList.add('active');
+  }
+}
+
+// Attach bottom-nav clicks
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      switchTab(btn.dataset.tab);
+    });
+  });
+
+  // Force initial state
+  switchTab('sales');
+});
+</script>
+
 
     <script>
 const { jsPDF } = window.jspdf;
@@ -3087,12 +3063,6 @@ currentTillTotal: 'Huidige Kas Totaal',
   
 });
 
-
-
-
-
-
-
 var currentLanguage = 'en';
  
 const DenominationManager = {
@@ -3123,8 +3093,6 @@ let tillDenominations = DenominationManager.createEmpty();
 let cashReceivedDenominations = DenominationManager.createEmpty();
 let changeGivenDenominations = DenominationManager.createEmpty();
 
-
-
 function saveTillState() {
     localStorage.setItem('salesSystemTillState', JSON.stringify(tillDenominations));
 }
@@ -3142,19 +3110,6 @@ function loadTillState() {
         initializeTillFromFloat();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // Function to open cash denomination modal for payment
 function openCashDenominationModal() {
@@ -3533,8 +3488,6 @@ if (window.missingTranslationKeys && window.missingTranslationKeys.size) {
     console.log('Missing translations:', [...window.missingTranslationKeys]);
   }
           });
-
-		
 		
         // Load saved language preference
         function loadLanguage() {
@@ -3557,7 +3510,6 @@ function applyTranslations() {
 
   logMissingTranslations();
 }
-
 
 function logMissingTranslations() {
   if (!window.missingTranslationKeys.size) return;
@@ -3733,9 +3685,6 @@ function attemptBackupRestore() {
     return false;
 }
 
-
-
-
 function validateTransaction(transaction) {
     const required = ['date', 'time', 'name', 'items', 'totalAmount'];
     const missing = required.filter(field => !transaction[field]);
@@ -3806,11 +3755,6 @@ const filterProducts = debounce(function() {
     renderProductsTable();
 }, 300);
 
-
-
-
-
-
 function getCurrentTillTotal() {
     var total = 0;
     var allDenoms = ['R200', 'R100', 'R50', 'R20', 'R10', 'R5', 'R2', 'R1', '50c', '20c', '10c'];
@@ -3821,7 +3765,6 @@ function getCurrentTillTotal() {
     
     return total;
 }
-
 
  function setLanguage(lang) {
   currentLanguage = lang;
@@ -4033,8 +3976,6 @@ function showProductCategoryDropdown() {
     });
 }
 
-
-
 function showQuickCategoryDropdown() {
     var val = document.getElementById("quickItemCategory").value.toUpperCase();
     var list = document.getElementById("quickCategoryAutocompleteList");
@@ -4056,7 +3997,6 @@ function showQuickCategoryDropdown() {
         }
     });
 }
-
 
 function saveQuickInfo() {
   var name = (document.getElementById('quickItemName').value || '').trim();
@@ -4120,7 +4060,6 @@ function saveQuickInfo() {
   filteredProducts = [...allProducts];
   renderProductsTable();
 }
-
 
 function closeQuickInfoModal() {
     var modal = document.getElementById('quickInfoModal');
@@ -4283,10 +4222,6 @@ function renderReportDenominationInputs(date, existingRecon = null) {
     calculateReportCashToBank();
 }
 
-
-
-
-
 function autoFillCashFromTransactions() {
     var date = document.getElementById('daySelect').value;
     if (!date) return;
@@ -4375,7 +4310,6 @@ function calculateReportCashToBank() {
     }
 }
 
- 
         function loadReportFromHistory() {
             const selectedDate = document.getElementById('reportHistoryDropdown').value;
             if(selectedDate) {
@@ -4423,15 +4357,6 @@ function hideLoading() {
     if (loader) loader.remove();
 }
 
-
-
-
-
-
-
-
-
-
 function updateTransactionNumberDisplay() {
   var el = document.getElementById('currentTransactionNumber');
   if (el) {
@@ -4452,38 +4377,71 @@ function updateTransactionNumberDisplay() {
           localStorage.setItem('salesSystemProducts', JSON.stringify(allProducts));
         }
 
-        function switchTab(tab) {
-          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-          document.querySelectorAll('.tab-btn').forEach(b => {
-            b.classList.remove('active');
-            b.classList.add('inactive');
-          });
-          document.getElementById(tab).classList.add('active');
-          document.querySelector(`.tab-btn[data-tab="${tab}"]`).classList.add('active');
-          document.querySelector(`.tab-btn[data-tab="${tab}"]`).classList.remove('inactive');
-          if (tab === 'report') {
-              updateReport();
-              // Re-apply language to dropdown
-              const dropdown = document.getElementById('reportHistoryDropdown');
-              if (dropdown && dropdown.options.length > 0) {
-                  dropdown.options[0].text = translations[currentLanguage]['selectDateDropdown'];
-              }
-          }
-          if (tab === 'products') {
-            filteredProducts = [...allProducts];
-            renderProductsTable();
-            updateCategorySelects();
-          }
-          if (tab === 'sales') {
-            // Auto focus for scanner
-            setTimeout(() => document.getElementById('productCode').focus(), 300);
-          }
-          if (tab === 'float') {
-              renderFloatBreakdown();
-              renderReconciliationHistory();
-          }
-        }
+function switchTab(tab) {
+  // Hide all tab contents
+  document.querySelectorAll('.tab-content').forEach(c => {
+    c.classList.remove('active');
+  });
 
+  // Show selected tab
+  const activeTab = document.getElementById(tab);
+  if (!activeTab) {
+    console.warn('Tab not found:', tab);
+    return;
+  }
+  activeTab.classList.add('active');
+
+  // Update BOTTOM navigation (NOT tab-btn)
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.classList.remove('active');
+  });
+
+  const navBtn = document.querySelector(`.nav-item[data-tab="${tab}"]`);
+  if (navBtn) {
+    navBtn.classList.add('active');
+  }
+
+  /* ===== EXISTING LOGIC (PRESERVED) ===== */
+
+  if (tab === 'report') {
+    updateReport();
+
+    const dropdown = document.getElementById('reportHistoryDropdown');
+    if (dropdown && dropdown.options.length > 0) {
+      dropdown.options[0].text =
+        translations[currentLanguage]['selectDateDropdown'];
+    }
+  }
+
+  if (tab === 'products') {
+    filteredProducts = [...allProducts];
+    renderProductsTable();
+    updateCategorySelects();
+  }
+
+  if (tab === 'sales') {
+    setTimeout(() => {
+      const codeInput = document.getElementById('productCode');
+      if (codeInput) codeInput.focus();
+    }, 300);
+  }
+
+  if (tab === 'float') {
+    renderFloatBreakdown();
+    renderReconciliationHistory();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      switchTab(btn.dataset.tab);
+    });
+  });
+
+  // Force initial correct state
+  switchTab('sales');
+});
         // ========== FLOAT MANAGEMENT FUNCTIONS ==========
         
 function renderFloatBreakdown() {
@@ -4541,9 +4499,6 @@ function renderFloatBreakdown() {
         '</div>';
 }
 
-
-
-
 function initializeTillFromFloat() {
     var allDenoms = ['R200', 'R100', 'R50', 'R20', 'R10', 'R5', 'R2', 'R1', '50c', '20c', '10c'];
     
@@ -4553,9 +4508,6 @@ function initializeTillFromFloat() {
     
     saveTillState();
 }    
-
-
-
 
 function openEditTransactionModal(transaction, transactionIndex) {
     // First close any existing modal
@@ -4657,7 +4609,6 @@ function openEditTransactionModal(transaction, transactionIndex) {
   </div>
 </div>`;
 
-
     // Add modal to body
     document.body.insertAdjacentHTML('beforeend', modalHTML);
 
@@ -4667,7 +4618,6 @@ function openEditTransactionModal(transaction, transactionIndex) {
     // Show appropriate payment fields
     updateEditPaymentFields();
 }
-
 
 function renderEditItemsList(items, transactionIndex) {
     var container = document.getElementById('editItemsList');
@@ -4711,7 +4661,6 @@ function renderEditItemsList(items, transactionIndex) {
     container.innerHTML = html;
 }
 
-
 function updateEditItemTotal(itemIndex) {
     var qty = parseFloat(document.getElementById('editItemQty_' + itemIndex).value) || 0;
     var price = parseFloat(document.getElementById('editItemPrice_' + itemIndex).value) || 0;
@@ -4735,7 +4684,6 @@ function updateEditOverallTotal() {
     
     document.getElementById('editTotalDisplay').textContent = total.toFixed(2);
 }
-
 
 // Show/hide payment fields based on selection
 function updateEditItemTotal(itemIndex) {
@@ -4904,7 +4852,6 @@ function handleComplexEdit(transactionIndex, newItems, newTotal, newPaymentMetho
     );
 }
 
-
 function saveCardOnlyEdit(transactionIndex, newItems, newTotal, original) {
     var cardAmount = parseFloat(document.getElementById('editCardAmount').value) || newTotal;
     var cardAmount2 = parseFloat(document.getElementById('editCardAmount2').value) || 0;
@@ -5004,8 +4951,6 @@ function openEditDenominationModal(transactionIndex, newItems, newTotal, payment
     document.body.insertAdjacentHTML('beforeend', modalHTML);
     renderEditDenominationInputs();
 }
-
-
 
 function renderEditDenominationInputs() {
     var allDenoms = ['R200', 'R100', 'R50', 'R20', 'R10', 'R5', 'R2', 'R1', '50c', '20c', '10c'];
@@ -5144,7 +5089,6 @@ function autoFillEditChange(amount) {
     calculateEditChangeGiven();
 }
 
-
 let saveQueue = new Set();
 let saveTimer = null;
 
@@ -5282,9 +5226,6 @@ function validateTillAvailability(changeDenoms) {
     return true;
 }
 
-
-    
-
 function cancelEditDenominations(transactionIndex) {
     var original = window.editingOriginalTransaction;
     
@@ -5304,21 +5245,6 @@ function closeEditDenominationModal() {
     if (modal) modal.remove();
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Save edited transaction
 function saveEditedTransaction(transactionIndex) {
     // Route ALL edit saves through the main edit decision logic.
@@ -5335,7 +5261,6 @@ function saveEditedTransaction(transactionIndex) {
     // - Opens denomination modal when required
     processEditTransaction();
 }
-
 
 // Reverse a cash transaction (undo the till changes)
 function reverseCashTransaction(cashReceivedDenoms, changeGivenDenoms) {
@@ -5374,9 +5299,6 @@ function closeEditTransactionModal() {
     delete window.editingTransactionIndex;
     delete window.editDenominationData;
 }
-
-
-
 
 // Add edit button to transaction list in Report tab
 // This modifies the existing updateReport function to add edit buttons
@@ -5417,7 +5339,6 @@ function addEditButtonsToTransactions() {
         list.innerHTML = html;
     }
 }
-
 
 function checkForNewDay() {
     var today = new Date().toISOString().split('T')[0];
@@ -5477,12 +5398,6 @@ function checkForNewDay() {
         localStorage.setItem('salesSystemLastActiveDate', today);
     }
 }
-
-
-
-
-
-
 
 function updateFloatAmount() {
     var newAmount = parseFloat(document.getElementById('newFloatAmount').value);
@@ -5600,7 +5515,6 @@ function saveFloatDenominations() {
     alert("Float denominations saved! Till updated to match.");
 }
 
-
 function processCashTransaction(cashReceivedDenoms, changeGivenDenoms) {
     var allDenoms = ['R200', 'R100', 'R50', 'R20', 'R10', 'R5', 'R2', 'R1', '50c', '20c', '10c'];
     
@@ -5629,8 +5543,6 @@ function processCashTransaction(cashReceivedDenoms, changeGivenDenoms) {
     
     saveTillState();
 }
-
-
 
 function closeFloatDenominationModal() {
     document.getElementById('floatDenominationModal').classList.remove('active');
@@ -5850,8 +5762,7 @@ function saveReconciliation() {
 
 function updateReport() {
   // small helpers (self-contained so you can paste the function anywhere)
-  
-  
+ 
   function safeSetHTML(id, html) {
     var el = document.getElementById(id);
     if (el) el.innerHTML = html;
@@ -6050,8 +5961,6 @@ function updateReport() {
     }
   }
 }
-
-
 
         // ========== REST OF YOUR EXISTING FUNCTIONS ==========
         
@@ -6579,8 +6488,6 @@ function completeTransaction() {
     }, 100);
 }
 
-
-
 // Helper function to calculate net cash added to till
 function calculateNetCashToTill(cashReceivedDenoms, changeGivenDenoms) {
     var netCash = {};
@@ -6651,20 +6558,6 @@ function showCategorySuggestions() {
         list.appendChild(div);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // ========== CORE ENHANCED FUNCTIONS ==========
 
@@ -7156,8 +7049,6 @@ async function handleBackupFile(file) {
     }
 }
 
-
-
 // Scanner Help Modal Functions
 function openScannerHelp() {
     document.getElementById('scannerHelpModal').classList.add('active');
@@ -7166,9 +7057,6 @@ function openScannerHelp() {
 function closeScannerHelp() {
     document.getElementById('scannerHelpModal').classList.remove('active');
 }
-
-// Auto-save function
-
 
 // IndexedDB fallback (placeholder)
 async function loadFromIndexedDB() {
@@ -7786,16 +7674,13 @@ document.addEventListener('DOMContentLoaded', function() {
 })();
 </script>
 
-
-
 <nav class="bottom-nav">
-  <button onclick="switchTab('sales')" class="nav-item active">Sales</button>
-  <button onclick="switchTab('products')" class="nav-item">Products</button>
-  <button onclick="switchTab('report')" class="nav-item">Report</button>
-  <button onclick="switchTab('float')" class="nav-item">Float</button>
+  <button class="nav-item active" data-tab="sales">Sales</button>
+  <button class="nav-item" data-tab="products">Products</button>
+  <button class="nav-item" data-tab="report">Report</button>
+  <button class="nav-item" data-tab="float">Float</button>
 </nav>
 </div>
 
 </body>
 </html>
-
