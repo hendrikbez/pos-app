@@ -33,6 +33,8 @@ body {
     rgba(237, 221, 83, 1) 100%
   );
   min-height: 100vh;
+   width: 100vw;
+  overflow-x: hidden;
  animation: appLaunch 0.35s ease-out; 
 }
 
@@ -740,6 +742,34 @@ select:focus {
   gap: 10px;
   margin-bottom: 12px;
 }
+ 
+.toggle-btn {
+  flex: 1;
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: 700;
+  border: 2px solid #e5e7eb;
+  background: #f8fafc;
+  color: #475569;
+}
+
+.toggle-btn.active {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 8px 20px rgba(37,99,235,0.35);
+}
+
+.toggle-btn.inactive {
+  background: #f1f5f9;
+} 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  
 .stock-display {
   background: #fef3c7;
@@ -1647,6 +1677,19 @@ input[type="time"] {
   .categories-grid {
     grid-template-columns: 1fr;
   }
+  
+@media (max-width: 768px) {
+  body {
+    padding: 0;
+  }
+
+  .container {
+    max-width: 100%;
+    margin: 0;
+    padding: 12px 12px 90px; /* bottom space for nav */
+  }
+}
+  
 }
 
 /* Ensure proper box-sizing everywhere */
@@ -1729,17 +1772,33 @@ input, textarea {
   align-items: center;
   border-top: 1px solid #e5e7eb;
   z-index: 2000;
+  background: #ffffff;
 }
 
 .nav-item {
-  background: none;
+  flex: 1;
+  height: 100%;
   border: none;
+  background: transparent;
   font-weight: 700;
+  font-size: 13px;
   color: #64748b;
+  position: relative;
 }
 
 .nav-item.active {
   color: #2563eb;
+}
+
+.nav-item.active::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 4px;
+  border-radius: 0 0 6px 6px;
+  background: #2563eb;
 }
 
 
@@ -7749,8 +7808,6 @@ document.addEventListener('DOMContentLoaded', function() {
 })();
 </script>
 
-
-
 <nav class="bottom-nav">
   <button onclick="switchTab('sales')" class="nav-item active">Sales</button>
   <button onclick="switchTab('products')" class="nav-item">Products</button>
@@ -7758,7 +7815,6 @@ document.addEventListener('DOMContentLoaded', function() {
   <button onclick="switchTab('float')" class="nav-item">Float</button>
 </nav>
 </div>
-
 </body>
 </html>
 
