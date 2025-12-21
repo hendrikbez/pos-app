@@ -1162,7 +1162,7 @@ select:focus {
   opacity: 1;
 }
 
-//* Sparkle shimmer */
+/* Sparkle shimmer */
 .button::before,
 .quick-btn::before,
 .tab-btn::before,
@@ -1632,10 +1632,13 @@ input, textarea {
   justify-content: center;
 }
 
-/* ACTIVE TAB */
 .nav-item.active {
-  color: #2563eb;
-  background: #eff6ff;
+  color: #6d28d9;               /* readable purple text */
+  background: #ede9fe;          /* light but visible purple */
+}
+
+.nav-item.active::before {
+  background: #7c3aed;          /* slightly stronger purple */
 }
 
 /* ACTIVE INDICATOR BAR */
@@ -1737,6 +1740,12 @@ input, textarea {
     max-width: none;
   }
 
+.utility-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 14px; 
+}
+
   .import-export-buttons,
   .share-buttons,
   .categories-grid,
@@ -1758,7 +1767,14 @@ input, textarea {
     display: none;
   }
 }
+/* Hide product code input until needed */
+.code-input-section {
+  display: none;
+}
 
+.sales-feature-disabled {
+  display: none !important;
+}
 
 /* Focus-visible fun */
 .button:focus-visible,
@@ -1787,15 +1803,6 @@ input, textarea {
 <body>
 <div class="app-shell">
        <div class="container">
-		<div class="header-bar">
-			<div class="language-selector">
-				<button class="lang-btn active" onclick="setLanguage('en')">English</button>
-				<button class="lang-btn inactive" onclick="setLanguage('af')">Afrikaans</button>
-			</div>
-		  
-            <button class="button btn-green" onclick="openQuickInfoModal()">➕ Quick Add</button>
-	      <button class="button btn-purple" onclick="openScannerHelp()">Scanner Info ℹ️</button>
-        </div>
 
         <div id="sales" class="tab-content active">
           <div class="transaction-header">
@@ -1829,7 +1836,7 @@ input, textarea {
             <button class="quick-btn" onclick="setToday()" data-translate="today">Today</button>
             <button class="quick-btn" onclick="setNow()" data-translate="now">Now</button>
           </div>
-          <div class="quantity-toggle-section">
+         <div class="quantity-toggle-section sales-feature-disabled">
             <div class="section-title" style="font-size: 16px; color: #3B82F6;" data-translate="quantityManagement">Quantity Management</div>
             <div class="toggle-switch">
               <button class="toggle-btn active" id="toggleNoQuantity" onclick="toggleQuantityMode('none')" data-translate="noQuantity">No Quantity</button>
@@ -1859,10 +1866,10 @@ input, textarea {
               <span data-translate="noItemAvailableEnd">" Available</span>
             </div>
           </div>
-          <div class="code-input-section">
+          <div class="code-input-section sales-feature-disabled">
             <div class="section-title" style="font-size: 16px; color: #B45D04;" data-translate="productCode">Product Code</div>
             <div class="code-input-row">
-              <input type="text" id="productCode" placeholder="Enter product code" class="code-input" onkeypress="handleCodeEnter(event)" data-translate-placeholder="enterProductCode">
+           <input type="text" id="productCode" class="code-input" onfocus="this.placeholder=this.dataset.hint" onblur="if(!this.value)this.placeholder=''" data-hint="Enter product code" onkeypress="handleCodeEnter(event)">
               <button class="button btn-orange small-btn" onclick="lookupProduct()" data-translate="findProduct">Find Product</button>
             </div>
             <div id="productInfo" class="product-info-display">
@@ -2498,7 +2505,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-
     <script>
 const { jsPDF } = window.jspdf;
 
@@ -2508,6 +2514,7 @@ const translations = {
     products: "Products",
     report: "Report",
     float: "Float",
+    more: "More",
 
     transaction: "Transaction",
     newTransaction: "New Transaction",
@@ -2646,6 +2653,7 @@ const translations = {
     over: "Over",
     short: "Short",
     correct: "Correct",
+	
     installApp: "Install App"
   },
 
@@ -2654,6 +2662,7 @@ const translations = {
     products: "Produkte",
     report: "Verslag",
     float: "Kas",
+   more: "Meer",	
 
     transaction: "Transaksie",
     newTransaction: "Nuwe Transaksie",
@@ -2902,7 +2911,7 @@ Object.assign(translations.en, {
   typeCategories: "Type Categories",
   selectCategory: "Select Category",
   startingStock: "Starting Stock" 
- 
+
 });
 
 Object.assign(translations.af, {
@@ -3059,7 +3068,8 @@ currentTillTotal: 'Huidige Kas Totaal',
   searchProducts: "Soek Produkte",
   typeCategories: "Tik Kategorieë",
   selectCategory: "Kies Kategorie",
-  startingStock: "Aanvangsvoorraad" 
+  startingStock: "Aanvangsvoorraad"
+
   
 });
 
@@ -3189,6 +3199,21 @@ function renderCashDenominationInputs() {
     container.innerHTML = html;
     calculateCashReceivedTotal();
 }
+
+function showProductCodeInput() {
+  const section = document.querySelector('.code-input-section');
+  if (!section) return;
+
+  section.style.display = 'block';
+
+  // Focus input after it becomes visible
+  setTimeout(() => {
+    const input = document.getElementById('productCode');
+    if (input) input.focus();
+  }, 150);
+}
+
+
 
 // Function to calculate total cash received from denominations
 function calculateCashReceivedTotal() {
@@ -3766,20 +3791,33 @@ function getCurrentTillTotal() {
     return total;
 }
 
- function setLanguage(lang) {
+function saveLanguagePreference() {
+  try {
+    localStorage.setItem('language', currentLanguage);
+  } catch (e) {
+    console.warn('Could not save language preference:', e);
+  }
+}
+
+function setLanguage(lang) {
   currentLanguage = lang;
 
+  // Update language button state
   document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.classList.remove('active');
     btn.classList.add('inactive');
   });
 
-  document
-    .querySelector(`.lang-btn[onclick="setLanguage('${lang}')"]`)
-    ?.classList.add('active');
+  const activeBtn = document.querySelector(`.lang-btn[onclick*="'${lang}'"]`);
+  if (activeBtn) {
+    activeBtn.classList.add('active');
+    activeBtn.classList.remove('inactive');
+  }
 
   applyTranslations();
+  saveLanguagePreference();
 }
+
 
 function loadCompressionLibrary() {
     if (typeof LZString === 'undefined') {
@@ -4378,20 +4416,28 @@ function updateTransactionNumberDisplay() {
         }
 
 function switchTab(tab) {
+  // Guard: invalid or missing tab
+  if (!tab || typeof tab !== 'string') {
+    console.warn('switchTab called without a valid tab:', tab);
+    return;
+  }
+
+  // Find target tab
+  const activeTab = document.getElementById(tab);
+  if (!activeTab) {
+    console.warn('Tab element not found:', tab);
+    return;
+  }
+
   // Hide all tab contents
   document.querySelectorAll('.tab-content').forEach(c => {
     c.classList.remove('active');
   });
 
   // Show selected tab
-  const activeTab = document.getElementById(tab);
-  if (!activeTab) {
-    console.warn('Tab not found:', tab);
-    return;
-  }
   activeTab.classList.add('active');
 
-  // Update BOTTOM navigation (NOT tab-btn)
+  // Update BOTTOM navigation
   document.querySelectorAll('.nav-item').forEach(btn => {
     btn.classList.remove('active');
   });
@@ -4400,8 +4446,6 @@ function switchTab(tab) {
   if (navBtn) {
     navBtn.classList.add('active');
   }
-
-  /* ===== EXISTING LOGIC (PRESERVED) ===== */
 
   if (tab === 'report') {
     updateReport();
@@ -4432,18 +4476,6 @@ function switchTab(tab) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.nav-item').forEach(btn => {
-    btn.addEventListener('click', () => {
-      switchTab(btn.dataset.tab);
-    });
-  });
-
-  // Force initial correct state
-  switchTab('sales');
-});
-        // ========== FLOAT MANAGEMENT FUNCTIONS ==========
-        
 function renderFloatBreakdown() {
     var breakdownHtml = '';
     var totalCalculated = getCurrentTillTotal();
@@ -6210,6 +6242,12 @@ function startNewTransaction() {
           pendingItem = null;
         }
 
+function closeAllModals() {
+  document.querySelectorAll('.modal.active').forEach(m => {
+    m.classList.remove('active');
+  });
+}
+
         function updateItemsList() {
           var container = document.getElementById('itemsContainer');
           var list = document.getElementById('itemsList');
@@ -7049,13 +7087,25 @@ async function handleBackupFile(file) {
     }
 }
 
-// Scanner Help Modal Functions
-function openScannerHelp() {
-    document.getElementById('scannerHelpModal').classList.add('active');
+function switchModal(targetId) {
+  // Close everything
+  document.querySelectorAll('.modal.active').forEach(m => {
+    m.classList.remove('active');
+  });
+
+  // Open requested modal
+  const target = document.getElementById(targetId);
+  if (target) {
+    target.classList.add('active');
+  }
 }
 
 function closeScannerHelp() {
     document.getElementById('scannerHelpModal').classList.remove('active');
+}
+function openScannerHelp() {
+  closeAllModals();
+  document.getElementById('scannerHelpModal')?.classList.add('active');
 }
 
 // IndexedDB fallback (placeholder)
@@ -7550,6 +7600,41 @@ function importSalesOnly() {
     importData('sales');
 }
 
+function openUtilityDrawer() {
+  closeAllModals();
+  document.getElementById('utilityDrawer')?.classList.add('active');
+}
+
+function openProductCodeInfo() {
+  closeAllModals();
+  document.getElementById('productCodeInfoModal')?.classList.add('active');
+}
+
+function closeProductCodeInfo() {
+  document.getElementById('productCodeInfoModal').classList.remove('active');
+}
+
+function openQuantityInfo() {
+  closeAllModals();
+  document.getElementById('quantityInfoModal')?.classList.add('active');
+}
+
+function closeQuantityInfo() {
+  document.getElementById('quantityInfoModal').classList.remove('active');
+}
+   
+function closeUtilityDrawer() {
+  const drawer = document.getElementById('utilityDrawer');
+  if (drawer) drawer.classList.remove('active');
+}
+  
+function openModalAfterDrawer(modalId) {
+  closeUtilityDrawer();
+  setTimeout(() => {
+    document.getElementById(modalId)?.classList.add('active');
+  }, 150);
+}
+
 // File upload handlers
 async function handleProductsOnlyUpload(e) {
     const file = e.target.files[0];
@@ -7675,11 +7760,122 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <nav class="bottom-nav">
-  <button class="nav-item active" data-tab="sales">Sales</button>
-  <button class="nav-item" data-tab="products">Products</button>
-  <button class="nav-item" data-tab="report">Report</button>
-  <button class="nav-item" data-tab="float">Float</button>
+  <button class="nav-item" data-tab="sales" data-translate="sales">Sales</button>
+  <button class="nav-item" data-tab="products" data-translate="products">Products</button>
+  <button class="nav-item" data-tab="report" data-translate="dailyReport">Report</button>
+  <button class="nav-item" data-tab="float" data-translate="float">Float</button>
+  <button class="nav-item" onclick="openUtilityDrawer()" data-translate="more">More</button>
 </nav>
+
+</div>
+</div>
+
+<!-- Utility Drawer Modal -->
+<div class="modal" id="utilityDrawer">
+  <div class="modal-content">
+    <div class="modal-title">Tools & Settings</div>
+
+    <!-- Language selection -->
+    <div style="display:flex; gap:10px; margin-bottom:18px;">
+      <button class="lang-btn active" onclick="setLanguage('en')">English</button>
+      <button class="lang-btn inactive" onclick="setLanguage('af')">Afrikaans</button>
+    </div>
+
+    <!-- Utility actions -->
+    <div class="utility-buttons">
+      <button class="button btn-green full-width" onclick="openQuickInfoModal()">➕ Quick Add</button>
+      <button class="button btn-purple full-width" onclick="closeUtilityDrawer(); openScannerHelp();">Scanner Info</button>
+      <button class="button btn-orange full-width" onclick="openModalAfterDrawer('productCodeInfoModal')">Product Code Input</button>	
+      <button class="button btn-blue full-width" onclick="openModalAfterDrawer('quantityInfoModal')">Quantity Management</button>
+    </div>
+
+    <!-- Close -->
+    <div class="modal-buttons">
+      <button class="button btn-blue" onclick="closeUtilityDrawer()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Product Code Info Modal (OUTSIDE drawer) -->
+<div class="modal" id="productCodeInfoModal">
+  <div class="modal-content">
+    <div class="modal-title">Product Code Input (Info)</div>
+
+    <p>
+      This feature allows products to be added by scanning or manually entering
+      a product code.
+    </p>
+
+    <p><strong>Current status:</strong> Disabled</p>
+
+    <p><strong>Why it is hidden:</strong><br>
+      The sales flow is currently manual. This input is intentionally hidden
+      to keep the Sales screen clean.
+    </p>
+
+    <p><strong>To enable this feature later:</strong></p>
+
+    <ol>
+      <li>
+        Remove the class
+        <code>sales-feature-disabled</code>
+        from:
+        <br>
+        <code>&lt;div class="code-input-section"&gt;</code>
+      </li>
+      <li>
+        (Optional) Call:
+        <br>
+        <code>showProductCodeInput();</code>
+        when the Sales tab opens.
+      </li>
+    </ol>
+
+    <div class="modal-buttons">
+      <button class="button btn-blue" onclick="closeProductCodeInfo()">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Quantity Info Modal (OUTSIDE drawer) -->
+<div class="modal" id="quantityInfoModal">
+  <div class="modal-content">
+    <div class="modal-title">Quantity Management (Info)</div>
+
+    <p>
+      This feature allows quantities to be controlled per product
+      (for example: multiple units of the same item).
+    </p>
+
+    <p><strong>Current status:</strong> Disabled</p>
+
+    <p><strong>Why it is hidden:</strong><br>
+      Quantity handling is not yet part of the active sales workflow.
+    </p>
+
+    <p><strong>To enable this feature later:</strong></p>
+
+    <ol>
+      <li>
+        Remove the class
+        <code>sales-feature-disabled</code>
+        from:
+        <br>
+        <code>&lt;div class="quantity-toggle-section"&gt;</code>
+      </li>
+      <li>
+        Ensure quantity logic is enabled in the Sales flow.
+      </li>
+    </ol>
+
+    <div class="modal-buttons">
+      <button class="button btn-blue" onclick="closeQuantityInfo()">
+        Close
+      </button>
+    </div>
+  </div>
 </div>
 
 </body>
