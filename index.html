@@ -3495,7 +3495,7 @@ function closeChangeDenominationModal() {
           renderFloatBreakdown();
           startAutoSave();
           // NEW: Auto Save/Prompt Check
-          checkForPreviousDay();
+        //  checkForPreviousDay();
           updateReportHistoryDropdown();
           
           // Initialize report with today's data
@@ -3586,82 +3586,51 @@ function getTranslation(key) {
   return `⟨${key}⟩`;
 }
 
- function loadData() {
-    // First, validate localStorage isn't corrupted
+function loadData() {
     try {
-        const testKey = 'salesSystemIntegrityCheck';
-        localStorage.setItem(testKey, 'test');
-        localStorage.removeItem(testKey);
-    } catch (e) {
-        if (confirm('Storage corrupted. Clear and restart?')) {
-            localStorage.clear();
-            location.reload();
-        }
-        return;
-    }
-    
-    // Now load all data with validation
-    try {
+        // Load Transactions
         var saved = localStorage.getItem('salesSystemData');
         if (saved) {
             allTransactions = JSON.parse(saved);
-            // Validate structure
-            if (!Array.isArray(allTransactions)) {
-                throw new Error('Invalid transaction data');
-            }
         }
         
+        // Load Products
         var savedProducts = localStorage.getItem('salesSystemProducts');
         if (savedProducts) {
             allProducts = JSON.parse(savedProducts);
-            if (!Array.isArray(allProducts)) {
-                throw new Error('Invalid products data');
-            }
         }
         
+        // Load Categories
         var savedCategories = localStorage.getItem('salesSystemCategories');
         if (savedCategories) {
             allCategories = JSON.parse(savedCategories);
-            if (!Array.isArray(allCategories)) {
-                throw new Error('Invalid categories data');
-            }
         }
         
+        // Load Transaction Number
         var savedNumber = localStorage.getItem('salesSystemTransactionNumber');
         if (savedNumber) currentTransactionNumber = parseInt(savedNumber);
         
+        // Load Stock/Quantities
         var savedQuantities = localStorage.getItem('salesSystemQuantities');
         if (savedQuantities) {
             productQuantities = JSON.parse(savedQuantities);
-            if (typeof productQuantities !== 'object') {
-                throw new Error('Invalid quantities data');
-            }
         }
         
-        loadFloatData();
-        
-        // CRITICAL: Load till state
-        loadTillState();
-        
+        // Load Reconciliations
         var savedReconciliations = localStorage.getItem('salesSystemReconciliations');
         if (savedReconciliations) {
             dailyReconciliations = JSON.parse(savedReconciliations);
-            if (!Array.isArray(dailyReconciliations)) {
-                throw new Error('Invalid reconciliations data');
-            }
         }
         
-        // NEW: Check for new day and prompt to clear if needed
-        checkForNewDay();
+        loadFloatData();
+        loadTillState();
         
+        // Only check for new day AFTER all data is loaded
+        setTimeout(checkForNewDay, 1000);
+
     } catch (error) {
         console.error('Error loading data:', error);
-        if (confirm('Data corrupted. Restore from backup or start fresh?')) {
-            attemptBackupRestore();
-        } else {
-            // Start fresh but keep the error logged
-            alert('Starting with fresh data. Previous data may be corrupted.');
-        }
+        alert('Data loading error. Please check your storage.');
     }
     
     updateTransactionNumberDisplay();
@@ -3731,22 +3700,6 @@ function validateTransaction(transaction) {
     }
     
     return true;
-}
-
-// USE IT in completeTransaction():
-let transactionValid = true;
-
-try {
-    validateTransaction(transaction);
-    allTransactions.push(transaction);
-    queueSave('transactions');
-} catch (error) {
-    alert('Transaction error: ' + error.message);
-    transactionValid = false;
-}
-
-if (!transactionValid) {
-    // stop further processing
 }
 
 function debounce(func, wait) {
@@ -3886,35 +3839,7 @@ function loadFloatData() {
         
         // --- NEW AUTO SAVE / NEW DAY LOGIC ---
         
-        function checkForPreviousDay() {
-            if(allTransactions.length === 0) return;
-            
-            // Get unique dates in DB
-            const dates = [...new Set(allTransactions.map(t => t.date))].sort();
-            if(dates.length === 0) return;
-            
-            const lastDate = dates[dates.length - 1];
-            const today = new Date().toISOString().split('T')[0];
-            
-            // If the last date in the DB is NOT today, it means we have opened the app on a new day.
-            // Check if we have already "viewed" or "downloaded" it? 
-            // Simplified: Just prompt if it's not today.
-            
-            if (lastDate !== today) {
-                // Ensure the interface starts clean for Today
-                setToday(); 
-                
-                // Prompt user
-                const confirmDownload = confirm(translations[currentLanguage]['newDayDetected'] + " (" + lastDate + ")?");
-                if(confirmDownload) {
-                    // Temporarily set daySelect to lastDate to generate PDF, then swap back
-                    document.getElementById('daySelect').value = lastDate;
-                    generatePDF(lastDate); // Generate PDF for that specific date
-                    document.getElementById('daySelect').value = today; // Reset to today
-                }
-            }
-        }
-        
+       
         function updateReportHistoryDropdown() {
             const dates = [...new Set(allTransactions.map(t => t.date))].sort().reverse();
             const dropdown = document.getElementById('reportHistoryDropdown');
@@ -5376,57 +5301,42 @@ function checkForNewDay() {
     var today = new Date().toISOString().split('T')[0];
     var lastActiveDate = localStorage.getItem('salesSystemLastActiveDate');
     
-    // If no last active date, set it to today
+    // If it's the first time ever, just save today and exit
     if (!lastActiveDate) {
         localStorage.setItem('salesSystemLastActiveDate', today);
         return;
     }
     
-    // If it's a different day
+    // If the date has changed
     if (lastActiveDate !== today) {
-        // Check if there are transactions from the previous day
         var previousDayTransactions = allTransactions.filter(t => t.date === lastActiveDate);
         
         if (previousDayTransactions.length > 0) {
-            // Calculate totals for the message
             var totalSales = previousDayTransactions.reduce((sum, t) => sum + t.totalAmount, 0);
             
-            var message = "New day detected!\n\n";
-            message += "Last active: " + lastActiveDate + "\n";
-            message += "Transactions: " + previousDayTransactions.length + "\n";
-            message += "Total sales: R" + totalSales.toFixed(2) + "\n\n";
-            message += "Do you want to:\n";
-            message += "• Generate PDF report for " + lastActiveDate + "\n";
-            message += "• Keep all data for records\n";
-            message += "• Reset till to float amount\n\n";
-            message += "Click OK to generate report and reset, or Cancel to keep working.";
+            var message = "NEW DAY DETECTED!\n\n" +
+                "Date: " + lastActiveDate + "\n" +
+                "Transactions: " + previousDayTransactions.length + "\n" +
+                "Total: R" + totalSales.toFixed(2) + "\n\n" +
+                "Would you like to generate a PDF Report for yesterday?";
             
             if (confirm(message)) {
-                // Generate PDF for previous day
                 generatePDF(lastActiveDate);
-                
-                // Ask if they want to clear old transactions
-                setTimeout(function() {
-                    if (confirm("Report generated!\n\nDo you want to clear transactions from " + lastActiveDate + "?\n\n(Float and till will reset to starting float amount)")) {
-                        // Keep only current day's transactions (if any)
-                        allTransactions = allTransactions.filter(t => t.date === today);
-                        queueSave('transactions');
-                        
-                        // Reset till to float amount
-                        initializeTillFromFloat();
-                        
-                        // Update display
-                        updateStats();
-                        updateReport();
-                        renderFloatBreakdown();
-                        
-                        alert("System reset for new day!\n\nTill reset to float amount: R" + floatAmount.toFixed(2));
-                    }
-                }, 500);
             }
+            
+            // Safety: Ask separately before clearing to prevent accidental data loss
+            setTimeout(() => {
+                if (confirm("Clear yesterday's transactions to start fresh today?")) {
+                    allTransactions = allTransactions.filter(t => t.date === today);
+                    localStorage.setItem('salesSystemData', JSON.stringify(allTransactions));
+                    initializeTillFromFloat();
+                    updateStats();
+                    updateReport();
+                    alert("System reset for " + today);
+                }
+            }, 1000);
         }
-        
-        // Update last active date to today
+        // Update the active date so this message doesn't pop up again today
         localStorage.setItem('salesSystemLastActiveDate', today);
     }
 }
@@ -6247,6 +6157,8 @@ function closeAllModals() {
     m.classList.remove('active');
   });
 }
+
+
 
         function updateItemsList() {
           var container = document.getElementById('itemsContainer');
@@ -7100,6 +7012,8 @@ function switchModal(targetId) {
   }
 }
 
+
+
 function closeScannerHelp() {
     document.getElementById('scannerHelpModal').classList.remove('active');
 }
@@ -7635,6 +7549,11 @@ function openModalAfterDrawer(modalId) {
   }, 150);
 }
 
+
+
+
+
+
 // File upload handlers
 async function handleProductsOnlyUpload(e) {
     const file = e.target.files[0];
@@ -7880,3 +7799,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </body>
 </html>
+
