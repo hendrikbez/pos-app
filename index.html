@@ -3108,18 +3108,22 @@ function saveTillState() {
 }
 
 function loadTillState() {
-    var saved = localStorage.getItem('salesSystemTillState');
+  try {
+    const saved = localStorage.getItem('salesSystemTillState');
     if (saved) {
-        try {
-            tillDenominations = JSON.parse(saved);
-        } catch (e) {
-            console.error('Error loading till state:', e);
-            initializeTillFromFloat();
-        }
-    } else {
-        initializeTillFromFloat();
+      tillDenominations = JSON.parse(saved);
+      if (!tillDenominations || typeof tillDenominations !== 'object' || !('R10' in tillDenominations)) {
+        throw new Error('Invalid till state');
+      }
+      return true;
     }
+  } catch (e) {
+    console.error('Error loading till state:', e);
+  }
+  initializeTillFromFloat();
+  return false;
 }
+
 
 // Function to open cash denomination modal for payment
 function openCashDenominationModal() {
@@ -3482,7 +3486,7 @@ function closeChangeDenominationModal() {
             });
           });
           loadData();
-          loadCategories();
+	    loadCategories();
           loadQuantityData();
           loadLanguage();
           filteredProducts = [...allProducts];
@@ -3490,12 +3494,11 @@ function closeChangeDenominationModal() {
           updateProductList();
           
           // Load Float Data
-          loadFloatData();
+        //  loadFloatData();
           loadCompressionLibrary();
           renderFloatBreakdown();
           startAutoSave();
-          // NEW: Auto Save/Prompt Check
-        //  checkForPreviousDay();
+          checkForNewDayOnce()	
           updateReportHistoryDropdown();
           
           // Initialize report with today's data
@@ -3587,56 +3590,144 @@ function getTranslation(key) {
 }
 
 function loadData() {
-    try {
-        // Load Transactions
-        var saved = localStorage.getItem('salesSystemData');
-        if (saved) {
-            allTransactions = JSON.parse(saved);
-        }
-        
-        // Load Products
-        var savedProducts = localStorage.getItem('salesSystemProducts');
-        if (savedProducts) {
-            allProducts = JSON.parse(savedProducts);
-        }
-        
-        // Load Categories
-        var savedCategories = localStorage.getItem('salesSystemCategories');
-        if (savedCategories) {
-            allCategories = JSON.parse(savedCategories);
-        }
-        
-        // Load Transaction Number
-        var savedNumber = localStorage.getItem('salesSystemTransactionNumber');
-        if (savedNumber) currentTransactionNumber = parseInt(savedNumber);
-        
-        // Load Stock/Quantities
-        var savedQuantities = localStorage.getItem('salesSystemQuantities');
-        if (savedQuantities) {
-            productQuantities = JSON.parse(savedQuantities);
-        }
-        
-        // Load Reconciliations
-        var savedReconciliations = localStorage.getItem('salesSystemReconciliations');
-        if (savedReconciliations) {
-            dailyReconciliations = JSON.parse(savedReconciliations);
-        }
-        
-        loadFloatData();
-        loadTillState();
-        
-        // Only check for new day AFTER all data is loaded
-        setTimeout(checkForNewDay, 1000);
-
-    } catch (error) {
-        console.error('Error loading data:', error);
-        alert('Data loading error. Please check your storage.');
+  // Basic storage test
+  try {
+    const testKey = 'salesSystemIntegrityCheck';
+    localStorage.setItem(testKey, 'test');
+    localStorage.removeItem(testKey);
+  } catch (e) {
+    if (confirm('Storage error detected. Clear and restart?')) {
+      localStorage.clear();
+      location.reload();
     }
-    
-    updateTransactionNumberDisplay();
-    updateStats();
-    renderReconciliationHistory();
+    return;
+  }
+
+  try {
+    // Transactions
+    const saved = localStorage.getItem('salesSystemData');
+    allTransactions = saved ? JSON.parse(saved) : [];
+    if (!Array.isArray(allTransactions)) throw new Error('Invalid transaction data');
+
+    // Products
+    const savedProducts = localStorage.getItem('salesSystemProducts');
+    allProducts = savedProducts ? JSON.parse(savedProducts) : [];
+    if (!Array.isArray(allProducts)) throw new Error('Invalid products data');
+
+    // Categories
+    const savedCategories = localStorage.getItem('salesSystemCategories');
+    allCategories = savedCategories ? JSON.parse(savedCategories) : allCategories;
+    if (!Array.isArray(allCategories)) throw new Error('Invalid categories data');
+
+    // Transaction number
+    const savedNumber = localStorage.getItem('salesSystemTransactionNumber');
+    if (savedNumber) currentTransactionNumber = parseInt(savedNumber, 10) || 1;
+
+    // Quantities
+    const savedQuantities = localStorage.getItem('salesSystemQuantities');
+    productQuantities = savedQuantities ? JSON.parse(savedQuantities) : {};
+    if (productQuantities && typeof productQuantities !== 'object') {
+      throw new Error('Invalid quantities data');
+    }
+
+    // Float data
+    loadFloatData();
+
+    // Till state (don’t override after this)
+    loadTillState();
+
+    // Reconciliations
+    const savedReconciliations = localStorage.getItem('salesSystemReconciliations');
+    dailyReconciliations = savedReconciliations ? JSON.parse(savedReconciliations) : [];
+    if (!Array.isArray(dailyReconciliations)) throw new Error('Invalid reconciliations data');
+
+  } catch (error) {
+    console.error('Error loading data:', error);
+    if (confirm('Data problem detected. Try to restore the internal backup?')) {
+      if (!attemptBackupRestore()) {
+        alert('Could not restore from backup. Starting fresh.');
+      }
+    } else {
+      alert('Starting with fresh data. Previous data may be corrupted.');
+    }
+  }
+
+  updateTransactionNumberDisplay();
+  updateStats();
+  renderReconciliationHistory();
 }
+
+
+
+
+function checkForNewDayOnce() {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+
+    let lastActiveDate = localStorage.getItem('salesSystemLastActiveDate');
+    if (!lastActiveDate) {
+      localStorage.setItem('salesSystemLastActiveDate', today);
+      return;
+    }
+
+    if (lastActiveDate === today) return;
+
+    const lastPromptedFor = localStorage.getItem('salesSystemLastPromptedDate');
+    if (lastPromptedFor === lastActiveDate) {
+      localStorage.setItem('salesSystemLastActiveDate', today);
+      return;
+    }
+
+    const prevDayTransactions = allTransactions.filter(t => t.date === lastActiveDate);
+
+    if (prevDayTransactions.length > 0) {
+      const totalSales = prevDayTransactions.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
+      const message =
+        `New day detected!\n\n` +
+        `Last active: ${lastActiveDate}\n` +
+        `Transactions: ${prevDayTransactions.length}\n` +
+        `Total sales: R${totalSales.toFixed(2)}\n\n` +
+        `Click OK to generate PDF for ${lastActiveDate}.\n` +
+        `You can decide to clear yesterday’s transactions afterwards.\n\n` +
+        `Click Cancel to skip.`;
+
+      localStorage.setItem('salesSystemLastPromptedDate', lastActiveDate);
+
+      if (confirm(message)) {
+        generatePDF(lastActiveDate);
+
+        setTimeout(() => {
+          if (confirm(
+            `Report generated!\n\nDo you want to clear transactions from ${lastActiveDate}?\n` +
+            `(Till will be reset back to starting float amount.)`
+          )) {
+            const todayStr = today;
+            allTransactions = allTransactions.filter(t => t.date === todayStr);
+            queueSave('transactions');
+
+            initializeTillFromFloat();
+
+            updateStats();
+            updateReport();
+            renderFloatBreakdown();
+
+            alert(`System reset for new day.\nTill reset to float amount: R${floatAmount.toFixed(2)}`);
+          }
+        }, 300);
+      }
+    }
+
+    localStorage.setItem('salesSystemLastActiveDate', today);
+  } catch (e) {
+    console.error('checkForNewDayOnce failed:', e);
+  }
+}
+
+
+
+
+
+
 
 function attemptBackupRestore() {
     try {
@@ -3680,27 +3771,50 @@ function attemptBackupRestore() {
 }
 
 function validateTransaction(transaction) {
-    const required = ['date', 'time', 'name', 'items', 'totalAmount'];
-    const missing = required.filter(field => !transaction[field]);
-    
-    if (missing.length > 0) {
-        throw new Error(`Missing fields: ${missing.join(', ')}`);
-    }
-    
-    if (transaction.items.length === 0) {
-        throw new Error('Transaction has no items');
-    }
-    
-    const calculatedTotal = transaction.items.reduce((sum, item) => 
-        sum + (item.total || 0), 0
-    );
-    
-    if (Math.abs(calculatedTotal - transaction.totalAmount) > 0.01) {
-        throw new Error(`Total mismatch: ${calculatedTotal} vs ${transaction.totalAmount}`);
-    }
-    
-    return true;
+  if (!transaction || typeof transaction !== 'object') {
+    throw new Error('Invalid transaction object');
+  }
+
+  const required = ['date', 'time', 'name', 'items', 'totalAmount'];
+  const missing = required.filter(field => transaction[field] === undefined || transaction[field] === null || transaction[field] === '');
+  if (missing.length > 0) {
+    throw new Error(`Missing fields: ${missing.join(', ')}`);
+  }
+
+  if (!Array.isArray(transaction.items) || transaction.items.length === 0) {
+    throw new Error('Transaction has no items');
+  }
+
+  const calculatedTotal = transaction.items.reduce((sum, item) => {
+    const qty = parseFloat(item.quantity) || 0;
+    const price = parseFloat(item.price) || 0;
+    return sum + (qty * price);
+  }, 0);
+
+  const givenTotal = parseFloat(transaction.totalAmount) || 0;
+  if (Math.abs(calculatedTotal - givenTotal) > 0.01) {
+    throw new Error(`Total mismatch: ${calculatedTotal.toFixed(2)} vs ${givenTotal.toFixed(2)}`);
+  }
+
+  return true;
 }
+
+
+function tryValidateAndStoreTransaction(tr) {
+  try {
+    validateTransaction(tr);
+    allTransactions.push(tr);
+    queueSave('transactions');
+    return true;
+  } catch (error) {
+    alert('Transaction error: ' + error.message);
+    return false;
+  }
+}
+
+
+
+
 
 function debounce(func, wait) {
     let timeout;
@@ -3839,7 +3953,35 @@ function loadFloatData() {
         
         // --- NEW AUTO SAVE / NEW DAY LOGIC ---
         
-       
+        function checkForPreviousDay() {
+            if(allTransactions.length === 0) return;
+            
+            // Get unique dates in DB
+            const dates = [...new Set(allTransactions.map(t => t.date))].sort();
+            if(dates.length === 0) return;
+            
+            const lastDate = dates[dates.length - 1];
+            const today = new Date().toISOString().split('T')[0];
+            
+            // If the last date in the DB is NOT today, it means we have opened the app on a new day.
+            // Check if we have already "viewed" or "downloaded" it? 
+            // Simplified: Just prompt if it's not today.
+            
+            if (lastDate !== today) {
+                // Ensure the interface starts clean for Today
+                setToday(); 
+                
+                // Prompt user
+                const confirmDownload = confirm(translations[currentLanguage]['newDayDetected'] + " (" + lastDate + ")?");
+                if(confirmDownload) {
+                    // Temporarily set daySelect to lastDate to generate PDF, then swap back
+                    document.getElementById('daySelect').value = lastDate;
+                    generatePDF(lastDate); // Generate PDF for that specific date
+                    document.getElementById('daySelect').value = today; // Reset to today
+                }
+            }
+        }
+        
         function updateReportHistoryDropdown() {
             const dates = [...new Set(allTransactions.map(t => t.date))].sort().reverse();
             const dropdown = document.getElementById('reportHistoryDropdown');
@@ -4327,11 +4469,10 @@ function updateTransactionNumberDisplay() {
   }
 }
 
-        function saveData() {
-          localStorage.setItem('salesSystemData', JSON.stringify(allTransactions));
-          // Update history dropdown whenever data changes
-          updateReportHistoryDropdown();
-        }
+function saveData() {
+  localStorage.setItem('salesSystemData', JSON.stringify(allTransactions));
+  updateReportHistoryDropdown();
+}
 
         function saveProducts() {
     var name = sanitizeInput(document.getElementById('newProductName').value);
@@ -5050,25 +5191,41 @@ let saveQueue = new Set();
 let saveTimer = null;
 
 function queueSave(type) {
-    saveQueue.add(type);
-    
-    if (saveTimer) clearTimeout(saveTimer);
-    
-    saveTimer = setTimeout(() => {
-        saveQueue.forEach(type => {
-            switch(type) {
-                case 'transactions': queueSave('transactions'); break;
-                case 'products': queueSave('products'); break;
-                case 'categories': saveCategories(); break;
-                case 'quantities': saveQuantityData(); break;
-                case 'float': saveFloatData(); break;
-                case 'reconciliations': saveReconciliations(); break;
-                case 'transactionNumber': saveTransactionNumber(); break;
-            }
-        });
-        saveQueue.clear();
-    }, 1000); // Batch saves every 1 second
+  saveQueue.add(type);
+  if (saveTimer) clearTimeout(saveTimer);
+
+  saveTimer = setTimeout(() => {
+    const snapshot = Array.from(saveQueue);
+    saveQueue.clear();
+
+    snapshot.forEach(t => {
+      switch (t) {
+        case 'transactions':
+          localStorage.setItem('salesSystemData', JSON.stringify(allTransactions));
+          break;
+        case 'products':
+          localStorage.setItem('salesSystemProducts', JSON.stringify(allProducts));
+          break;
+        case 'categories':
+          saveCategories();
+          break;
+        case 'quantities':
+          saveQuantityData();
+          break;
+        case 'float':
+          saveFloatData();
+          break;
+        case 'reconciliations':
+          saveReconciliations();
+          break;
+        case 'transactionNumber':
+          saveTransactionNumber();
+          break;
+      }
+    });
+  }, 500); // writes within half a second of the last queue request
 }
+
 
 function startAutoSave() {
     // Periodic compressed backup every 30 seconds
@@ -5301,42 +5458,57 @@ function checkForNewDay() {
     var today = new Date().toISOString().split('T')[0];
     var lastActiveDate = localStorage.getItem('salesSystemLastActiveDate');
     
-    // If it's the first time ever, just save today and exit
+    // If no last active date, set it to today
     if (!lastActiveDate) {
         localStorage.setItem('salesSystemLastActiveDate', today);
         return;
     }
     
-    // If the date has changed
+    // If it's a different day
     if (lastActiveDate !== today) {
+        // Check if there are transactions from the previous day
         var previousDayTransactions = allTransactions.filter(t => t.date === lastActiveDate);
         
         if (previousDayTransactions.length > 0) {
+            // Calculate totals for the message
             var totalSales = previousDayTransactions.reduce((sum, t) => sum + t.totalAmount, 0);
             
-            var message = "NEW DAY DETECTED!\n\n" +
-                "Date: " + lastActiveDate + "\n" +
-                "Transactions: " + previousDayTransactions.length + "\n" +
-                "Total: R" + totalSales.toFixed(2) + "\n\n" +
-                "Would you like to generate a PDF Report for yesterday?";
+            var message = "New day detected!\n\n";
+            message += "Last active: " + lastActiveDate + "\n";
+            message += "Transactions: " + previousDayTransactions.length + "\n";
+            message += "Total sales: R" + totalSales.toFixed(2) + "\n\n";
+            message += "Do you want to:\n";
+            message += "• Generate PDF report for " + lastActiveDate + "\n";
+            message += "• Keep all data for records\n";
+            message += "• Reset till to float amount\n\n";
+            message += "Click OK to generate report and reset, or Cancel to keep working.";
             
             if (confirm(message)) {
+                // Generate PDF for previous day
                 generatePDF(lastActiveDate);
+                
+                // Ask if they want to clear old transactions
+                setTimeout(function() {
+                    if (confirm("Report generated!\n\nDo you want to clear transactions from " + lastActiveDate + "?\n\n(Float and till will reset to starting float amount)")) {
+                        // Keep only current day's transactions (if any)
+                        allTransactions = allTransactions.filter(t => t.date === today);
+                        queueSave('transactions');
+                        
+                        // Reset till to float amount
+                        initializeTillFromFloat();
+                        
+                        // Update display
+                        updateStats();
+                        updateReport();
+                        renderFloatBreakdown();
+                        
+                        alert("System reset for new day!\n\nTill reset to float amount: R" + floatAmount.toFixed(2));
+                    }
+                }, 500);
             }
-            
-            // Safety: Ask separately before clearing to prevent accidental data loss
-            setTimeout(() => {
-                if (confirm("Clear yesterday's transactions to start fresh today?")) {
-                    allTransactions = allTransactions.filter(t => t.date === today);
-                    localStorage.setItem('salesSystemData', JSON.stringify(allTransactions));
-                    initializeTillFromFloat();
-                    updateStats();
-                    updateReport();
-                    alert("System reset for " + today);
-                }
-            }, 1000);
         }
-        // Update the active date so this message doesn't pop up again today
+        
+        // Update last active date to today
         localStorage.setItem('salesSystemLastActiveDate', today);
     }
 }
@@ -6158,8 +6330,6 @@ function closeAllModals() {
   });
 }
 
-
-
         function updateItemsList() {
           var container = document.getElementById('itemsContainer');
           var list = document.getElementById('itemsList');
@@ -6382,8 +6552,9 @@ function completeTransaction() {
         changeGivenDenominations: changeGivenDenoms
     };
     
-    allTransactions.push(transaction);
-    queueSave('transactions');
+ if (!tryValidateAndStoreTransaction(transaction)) {
+  return; // abort the rest if invalid
+}
     
     // Close modal first
     document.getElementById('paymentModal').classList.remove('active');
@@ -6436,7 +6607,20 @@ function completeTransaction() {
             document.getElementById('productCode').focus();
         }, 200);
     }, 100);
+
 }
+
+function refreshAllUIAfterDataChange() {
+  filteredProducts = [...allProducts];
+  renderProductsTable();
+  updateProductList();
+  updateStats();
+  updateReportHistoryDropdown();
+  renderReconciliationHistory();
+  renderFloatBreakdown();
+  updateReport();
+}
+
 
 // Helper function to calculate net cash added to till
 function calculateNetCashToTill(cashReceivedDenoms, changeGivenDenoms) {
@@ -6515,25 +6699,35 @@ async function exportData(type) {
   try {
     const now = new Date();
     let data, filename;
-    
+
     switch (type) {
       case 'complete':
         data = {
           exportType: 'complete_backup',
           timestamp: now.toISOString(),
+
+          // Sales and products data
           products: allProducts,
           categories: allCategories,
           transactions: allTransactions,
           quantities: productQuantities,
           transactionNumber: currentTransactionNumber,
+
+          // Float configuration
           floatAmount: floatAmount,
           floatDenominations: floatDenominations,
+
+          // LIVE till state
+          tillState: tillDenominations,
+
+          // Reconciliations
           reconciliations: dailyReconciliations,
-          version: '2.0'
+
+          version: '2.1'
         };
         filename = `sales_backup_${now.toISOString().split('T')[0]}.json`;
         break;
-        
+
       case 'products':
         data = {
           exportType: 'products',
@@ -6543,10 +6737,12 @@ async function exportData(type) {
           quantities: productQuantities,
           floatAmount: floatAmount,
           floatDenominations: floatDenominations
+          // optional: include tillState here too if you want
+          // tillState: tillDenominations
         };
         filename = `products_with_float_${now.toISOString().split('T')[0]}.json`;
         break;
-        
+
       case 'sales':
         data = {
           exportType: 'sales',
@@ -6558,8 +6754,7 @@ async function exportData(type) {
         filename = `sales_only_${now.toISOString().split('T')[0]}.json`;
         break;
     }
-    
-    // Create and download the file
+
     const jsonStr = JSON.stringify(data, null, 2);
     const blob = new Blob([jsonStr], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -6570,15 +6765,16 @@ async function exportData(type) {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    
+
     return true;
-    
+
   } catch (error) {
     console.error('Error exporting data:', error);
     alert('Error exporting data: ' + error.message);
     return false;
   }
 }
+
 
 function downloadFile(data, filename) {
   const jsonStr = JSON.stringify(data, null, 2);
@@ -6934,34 +7130,53 @@ async function handleBackupFile(file) {
     }
     
     // Validate and restore data
-    if (data.exportType === 'complete_backup') {
-        allProducts = data.products || [];
-        allCategories = data.categories || allCategories;
-        allTransactions = data.transactions || [];
-        productQuantities = data.quantities || {};
-        currentTransactionNumber = data.transactionNumber || 1;
-        floatAmount = data.floatAmount || 700.00;
-        floatDenominations = data.floatDenominations || floatDenominations;
-        dailyReconciliations = data.reconciliations || [];
-        
-        // Save to localStorage
-        queueSave('transactions');
-        queueSave('products');
-        saveCategories();
-        saveQuantityData();
-        saveFloatData();
-        saveReconciliations();
-        saveTransactionNumber();
-        
-        // Update UI
-        filteredProducts = [...allProducts];
-        renderProductsTable();
-        updateStats();
-        updateReportHistoryDropdown();
-        renderReconciliationHistory();
-        updateProductList();
-        
-        alert(translations[currentLanguage]['backupRestored']);
+if (data.exportType === 'complete_backup') {
+  allProducts = data.products || [];
+  allCategories = data.categories || allCategories;
+  allTransactions = data.transactions || [];
+  productQuantities = data.quantities || {};
+  currentTransactionNumber = data.transactionNumber || 1;
+
+  // Float config
+  floatAmount = data.floatAmount || 700.00;
+  floatDenominations = data.floatDenominations || floatDenominations;
+
+  // Restore LIVE till state if present
+  if (data.tillState && typeof data.tillState === 'object') {
+    tillDenominations = data.tillState;
+  } else {
+    // Backward compatibility with older backups
+    initializeTillFromFloat();
+  }
+
+  dailyReconciliations = data.reconciliations || [];
+
+  // Persist everything immediately
+  queueSave('transactions');
+  queueSave('products');
+  saveCategories();
+  saveQuantityData();
+  saveFloatData();
+  saveReconciliations();
+  saveTransactionNumber();
+  saveTillState(); // <-- persist restored till
+
+  // Update UI
+  filteredProducts = [...allProducts];
+  renderProductsTable();
+  updateStats();
+  updateReportHistoryDropdown();
+  renderReconciliationHistory();
+  updateProductList();
+  renderFloatBreakdown();
+
+  alert(translations[currentLanguage]['backupRestored']);
+
+  // Optional: refresh to ensure in-memory matches storage
+  setTimeout(() => window.location.reload(), 200);
+
+
+  
     } else if (data.exportType === 'products') {
         // Restore products and float only
         allProducts = data.products || [];
@@ -6996,6 +7211,11 @@ async function handleBackupFile(file) {
         renderReconciliationHistory();
         
         alert(translations[currentLanguage]['salesUploaded']);
+refreshAllUIAfterDataChange();
+setTimeout(() => window.location.reload(), 200);
+		
+		
+		
     }
 }
 
@@ -7011,8 +7231,6 @@ function switchModal(targetId) {
     target.classList.add('active');
   }
 }
-
-
 
 function closeScannerHelp() {
     document.getElementById('scannerHelpModal').classList.remove('active');
@@ -7465,37 +7683,79 @@ function generatePDF(specificDate = null) {
 
 // Clear all data function
 function clearData() {
-    if (!confirm(translations[currentLanguage]['confirmClearAll'])) return;
+  if (!confirm(translations[currentLanguage]['confirmClearAll'])) return;
 
-    // Clear sales & reports
-    allTransactions = [];
-    purchasedItems = [];
-    dailyReconciliations = [];
-    currentTransactionNumber = 1;
+  try {
+    // Remove ALL keys this app may have created
+    const keys = [
+      'salesSystemData',
+      'salesSystemProducts',
+      'salesSystemCategories',
+      'salesSystemQuantities',
+      'salesSystemTransactionNumber',
+      'salesSystemFloat',
+      'salesSystemTillState',
+      'salesSystemReconciliations',
+      'salesSystemCompressedBackup',
+      'salesSystemLastActiveDate',
+      'salesSystemLastPromptedDate',
+      'language',
+      'salesSystemLanguage'
+    ];
+    keys.forEach(k => localStorage.removeItem(k));
+  } catch (e) {
+    console.warn('LocalStorage clear failed:', e);
+  }
 
-    // IMPORTANT: Reset till back to float
-    initializeTillFromFloat();
+  // Reset runtime memory
+  allTransactions = [];
+  purchasedItems = [];
+  dailyReconciliations = [];
+  allProducts = [];
+  allCategories = ['Other'];
+  productQuantities = {};
+  currentTransactionNumber = 1;
 
-    // Persist everything
-    queueSave('transactions');
-    saveTransactionNumber();
-    saveReconciliations();
-    saveTillState();
+  // Reset till state to an empty template derived from floatDenominations
+  initializeTillFromFloat();
 
-    // Update UI
-    updateTransactionNumberDisplay();
-    updateStats();
-    updateReport();
-    renderFloatBreakdown();
-    renderReconciliationHistory();
+  // Force persistence of the clean slate
+  try {
+    localStorage.setItem('salesSystemData', JSON.stringify(allTransactions));
+    localStorage.setItem('salesSystemProducts', JSON.stringify(allProducts));
+    localStorage.setItem('salesSystemCategories', JSON.stringify(allCategories));
+    localStorage.setItem('salesSystemQuantities', JSON.stringify(productQuantities));
+    localStorage.setItem('salesSystemTransactionNumber', currentTransactionNumber.toString());
+    saveFloatData();      // writes salesSystemFloat
+    saveTillState();      // writes salesSystemTillState
+    saveReconciliations();// writes salesSystemReconciliations
+  } catch (e) {
+    console.error('Error persisting cleared state:', e);
+  }
 
-    alert(translations[currentLanguage]['dataCleared']);
+  // Update UI
+  updateTransactionNumberDisplay();
+  updateStats();
+  updateReport();
+  renderFloatBreakdown();
+  renderReconciliationHistory();
+  filteredProducts = [...allProducts];
+  renderProductsTable();
+  updateProductList();
+
+  alert(translations[currentLanguage]['dataCleared']);
+
+  // Important: hard refresh of the app shell state in memory, so nothing stale lingers
+  setTimeout(() => {
+    window.location.reload();
+  }, 250);
 }
+
 
 
 // Download functions
 function downloadCompleteBackup() {
-    exportData('complete');
+ exportData('complete');
 }
 
 function downloadProductsAsText() {
@@ -7549,11 +7809,6 @@ function openModalAfterDrawer(modalId) {
   }, 150);
 }
 
-
-
-
-
-
 // File upload handlers
 async function handleProductsOnlyUpload(e) {
     const file = e.target.files[0];
@@ -7593,6 +7848,8 @@ async function handleProductsOnlyUpload(e) {
     } finally {
         e.target.value = '';
     }
+refreshAllUIAfterDataChange();
+setTimeout(() => window.location.reload(), 200);	
 }
 
 async function handleSalesOnlyUpload(e) {
@@ -7630,6 +7887,9 @@ async function handleSalesOnlyUpload(e) {
     } finally {
         e.target.value = '';
     }
+refreshAllUIAfterDataChange();
+setTimeout(() => window.location.reload(), 200);
+	
 }
 
 // Initialize the app
