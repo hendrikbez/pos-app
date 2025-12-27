@@ -2345,6 +2345,25 @@ input, textarea {
     </div>
   </div>
 
+
+  <!-- Transaction Note Field -->
+  <div style="margin: 16px 0;">
+    <label style="display: block; font-weight: bold; margin-bottom: 6px; color: #374151;">
+      <span data-translate="transactionNote">Transaction Note (Optional)</span>
+    </label>
+    <input 
+      type="text" 
+      id="transactionNote" 
+      placeholder="Add a note for this transaction..." 
+      data-translate-placeholder="transactionNotePlaceholder"
+      style="width: 100%; padding: 10px; border: 2px solid #D1D5DB; border-radius: 8px; font-size: 14px;"
+      maxlength="200"
+    >
+    <div style="font-size: 11px; color: #6B7280; margin-top: 4px;">
+      <span data-translate="noteHint">This note will appear in the PDF report</span>
+    </div>
+  </div>
+
   <div class="modal-buttons">
     <button class="button" style="background: #6B7280; color: white;" onclick="closePaymentModal()">Cancel</button>
     <button class="button btn-green" id="completeBtn" onclick="completeTransaction()">Complete</button>
@@ -4622,6 +4641,253 @@ function updateTransactionNumberDisplay() {
   }
 }
 
+
+// ==================== INSERT TRANSACTION FEATURE ====================
+
+function openInsertTransactionModal(afterIndex) {
+  // afterIndex = -1 means insert at beginning
+  // afterIndex = 0 means insert after first transaction, etc.
+
+  const modalHTML = `
+    <div id="insertTransactionModal" class="modal active">
+      <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-title">Insert New Transaction</div>
+
+        <div style="background: #fef3c7; border: 2px solid #f59e0b; padding: 12px; border-radius: 8px; margin-bottom: 16px;">
+          <strong>Position:</strong> This will be inserted ${afterIndex === -1 ? 'at the beginning' : `after transaction #${afterIndex + 1}`}<br>
+          <strong>Note:</strong> All transactions below will be automatically renumbered
+        </div>
+
+        <div class="form-group">
+          <label>Name</label>
+          <select id="insertName">
+            <option value="">Select Name</option>
+            <option value="Kotie">Kotie</option>
+            <option value="Francois">Francois</option>
+            <option value="Both">Both</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="insertDate" value="${document.getElementById('daySelect')?.value || new Date().toISOString().split('T')[0]}">
+          </div>
+          <div class="form-group">
+            <label>Time</label>
+            <input type="time" id="insertTime" value="${new Date().toTimeString().slice(0,5)}">
+          </div>
+        </div>
+
+        <div style="background: #f3f4f6; padding: 12px; border-radius: 8px; margin: 16px 0;">
+          <div style="font-weight: bold; margin-bottom: 10px;">Items</div>
+          <div id="insertItemsList">
+            <div class="insert-item-row" data-index="0">
+              <input type="text" placeholder="Product name" class="insert-item-name" style="width: 100%; margin-bottom: 8px; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+              <div style="display: flex; gap: 8px;">
+                <select class="insert-item-owner" style="flex: 1; padding: 8px;">
+                  <option value="Kotie">Kotie</option>
+                  <option value="Francois">Francois</option>
+                  <option value="Both">Both</option>
+                </select>
+                <input type="number" placeholder="Qty" class="insert-item-qty" value="1" min="1" style="width: 60px; padding: 8px;">
+                <input type="number" placeholder="Price" class="insert-item-price" step="0.01" min="0" style="width: 80px; padding: 8px;">
+                <button onclick="removeInsertItem(0)" style="background: #ef4444; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">×</button>
+              </div>
+            </div>
+          </div>
+          <button onclick="addInsertItem()" class="button btn-blue" style="width: 100%; margin-top: 10px;">+ Add Item</button>
+        </div>
+
+        <div class="form-group">
+          <label>Payment Method</label>
+          <select id="insertPaymentMethod" onchange="updateInsertPaymentFields()">
+            <option value="Cash">Cash Only</option>
+            <option value="Card">Card Only</option>
+            <option value="Mixed">Mixed (Cash + Card)</option>
+          </select>
+        </div>
+
+        <div id="insertCashSection">
+          <div class="form-group">
+            <label>Cash Amount R</label>
+            <input type="number" id="insertCashAmount" step="0.01" min="0" value="0">
+          </div>
+        </div>
+
+        <div id="insertCardSection" style="display: none;">
+          <div class="form-group">
+            <label>Card Amount R</label>
+            <input type="number" id="insertCardAmount" step="0.01" min="0" value="0">
+          </div>
+        </div>
+
+        <div class="modal-buttons">
+          <button class="button" style="background: #6B7280; color: white;" onclick="closeInsertTransactionModal()">Cancel</button>
+          <button class="button btn-green" onclick="saveInsertedTransaction(${afterIndex})">Insert Transaction</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
+  updateInsertPaymentFields();
+}
+
+function closeInsertTransactionModal() {
+  const modal = document.getElementById('insertTransactionModal');
+  if (modal) modal.remove();
+}
+
+let insertItemCounter = 1;
+
+function addInsertItem() {
+  const container = document.getElementById('insertItemsList');
+  const newRow = document.createElement('div');
+  newRow.className = 'insert-item-row';
+  newRow.dataset.index = insertItemCounter;
+  newRow.innerHTML = `
+    <input type="text" placeholder="Product name" class="insert-item-name" style="width: 100%; margin-bottom: 8px; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+    <div style="display: flex; gap: 8px;">
+      <select class="insert-item-owner" style="flex: 1; padding: 8px;">
+        <option value="Kotie">Kotie</option>
+        <option value="Francois">Francois</option>
+        <option value="Both">Both</option>
+      </select>
+      <input type="number" placeholder="Qty" class="insert-item-qty" value="1" min="1" style="width: 60px; padding: 8px;">
+      <input type="number" placeholder="Price" class="insert-item-price" step="0.01" min="0" style="width: 80px; padding: 8px;">
+      <button onclick="removeInsertItem(${insertItemCounter})" style="background: #ef4444; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">×</button>
+    </div>
+  `;
+  container.appendChild(newRow);
+  insertItemCounter++;
+}
+
+function removeInsertItem(index) {
+  const row = document.querySelector(`.insert-item-row[data-index="${index}"]`);
+  if (row && document.querySelectorAll('.insert-item-row').length > 1) {
+    row.remove();
+  } else {
+    alert('You must have at least one item');
+  }
+}
+
+function updateInsertPaymentFields() {
+  const method = document.getElementById('insertPaymentMethod')?.value;
+  const cashSection = document.getElementById('insertCashSection');
+  const cardSection = document.getElementById('insertCardSection');
+
+  if (method === 'Cash') {
+    cashSection.style.display = 'block';
+    cardSection.style.display = 'none';
+  } else if (method === 'Card') {
+    cashSection.style.display = 'none';
+    cardSection.style.display = 'block';
+  } else {
+    cashSection.style.display = 'block';
+    cardSection.style.display = 'block';
+  }
+}
+
+function saveInsertedTransaction(afterIndex) {
+  // Gather item data
+  const itemRows = document.querySelectorAll('.insert-item-row');
+  const items = [];
+  let totalAmount = 0;
+
+  itemRows.forEach(row => {
+    const name = row.querySelector('.insert-item-name').value.trim();
+    const owner = row.querySelector('.insert-item-owner').value;
+    const qty = parseFloat(row.querySelector('.insert-item-qty').value) || 1;
+    const price = parseFloat(row.querySelector('.insert-item-price').value) || 0;
+    const total = qty * price;
+
+    if (name && price > 0) {
+      items.push({
+        product: name,
+        owner: owner,
+        quantity: qty,
+        price: price,
+        total: total
+      });
+      totalAmount += total;
+    }
+  });
+
+  if (items.length === 0) {
+    alert('Please add at least one item with a price');
+    return;
+  }
+
+  const selectedName = document.getElementById('insertName').value;
+  if (!selectedName) {
+    alert('Please select a name');
+    return;
+  }
+
+  const paymentMethod = document.getElementById('insertPaymentMethod').value;
+  const cashAmount = paymentMethod === 'Card' ? 0 : parseFloat(document.getElementById('insertCashAmount').value) || 0;
+  const cardAmount = paymentMethod === 'Cash' ? 0 : parseFloat(document.getElementById('insertCardAmount').value) || 0;
+
+  // Create the new transaction
+  const newTransaction = {
+    transactionNumber: 'TEMP', // Will be renumbered
+    name: selectedName,
+    date: document.getElementById('insertDate').value,
+    time: document.getElementById('insertTime').value,
+    items: items,
+    totalAmount: totalAmount,
+    cashAmount: cashAmount,
+    cardAmount: cardAmount,
+    cardAmount2: 0,
+    change: 0,
+    paymentMethod: paymentMethod,
+    edited: false
+  };
+
+  // Insert at the correct position
+  const insertPosition = afterIndex + 1;
+  allTransactions.splice(insertPosition, 0, newTransaction);
+
+  // Renumber ALL transactions
+  renumberAllTransactions();
+
+  // Save and update
+  queueSave('transactions');
+  closeInsertTransactionModal();
+  updateReport();
+
+  alert(`Transaction inserted successfully! All transactions have been renumbered.`);
+}
+
+function renumberAllTransactions() {
+  // Group by date first
+  const dateGroups = {};
+
+  allTransactions.forEach(t => {
+    if (!dateGroups[t.date]) {
+      dateGroups[t.date] = [];
+    }
+    dateGroups[t.date].push(t);
+  });
+
+  // Renumber within each date
+  let globalCounter = 1;
+  Object.keys(dateGroups).sort().forEach(date => {
+    dateGroups[date].forEach(transaction => {
+      transaction.transactionNumber = globalCounter.toString().padStart(6, '0');
+      globalCounter++;
+    });
+  });
+
+  // Update current transaction number for new transactions
+  currentTransactionNumber = globalCounter;
+  queueSave('transactionNumber');
+}
+
+// ==================== END INSERT TRANSACTION FEATURE ====================
+
+
 function saveData() {
   localStorage.setItem('salesSystemData', JSON.stringify(allTransactions));
   updateReportHistoryDropdown();
@@ -5596,6 +5862,7 @@ function addEditButtonsToTransactions() {
             html += '<div class="trans-item">';
             html += '<div class="trans-time" style="display: flex; justify-content: space-between; align-items: center;">';
             html += '<span>' + (t.time || '') + ' - ' + (t.name || '') + ' (#' + (t.transactionNumber || '') + ')' + editedBadge + '</span>';
+            html += '<button class="action-btn" onclick="openInsertTransactionModal(' + absoluteIndex + ' - 1)" style="background: #8b5cf6; color: white; padding: 4px 8px; font-size: 10px; margin-right: 5px; border: none; border-radius: 4px; cursor: pointer;">⬆ Insert</button>';
             html += '<button class="btn-red" onclick="openEditTransactionModal(allTransactions[' + absoluteIndex + '], ' + absoluteIndex + ')" style="padding: 4px 8px; font-size: 11px;">Edit</button>';
             html += '</div>';
             html += '<div>' + names + '</div>';
@@ -6287,7 +6554,8 @@ function updateReport() {
         html += '<div class="trans-item">';
         html += '<div class="trans-time" style="display: flex; justify-content: space-between; align-items: center;">';
         html += '<span>' + (t.time || '') + ' - ' + (t.name || '') + ' (#' + (t.transactionNumber || '') + ')' + editedBadge + '</span>';
-        html += '<button class="btn-red" onclick="openEditTransactionModal(allTransactions[' + absoluteIndex + '], ' + absoluteIndex + ')" style="padding: 4px 8px; font-size: 11px;">Edit</button>';
+        html += '<button class="action-btn" onclick="openInsertTransactionModal(' + absoluteIndex + ' - 1)" style="background: #8b5cf6; color: white; padding: 4px 8px; font-size: 10px; margin-right: 5px; border: none; border-radius: 4px; cursor: pointer;">⬆ Insert</button>';
+            html += '<button class="btn-red" onclick="openEditTransactionModal(allTransactions[' + absoluteIndex + '], ' + absoluteIndex + ')" style="padding: 4px 8px; font-size: 11px;">Edit</button>';
         html += '</div>';
         html += '<div>' + names + '</div>';
         html += '<div style="margin-top:4px;">' + pay + '</div>';
@@ -8227,8 +8495,6 @@ async function loadFromIndexedDB() {
     });
 }
 
-// PDF generation function
-// PDF generation function
 function generatePDF(specificDate = null) {
   try {
     if (typeof window.jspdf === 'undefined') return alert(translations[currentLanguage]['pdfLibraryError']);
@@ -8355,29 +8621,7 @@ function generatePDF(specificDate = null) {
         transactionTotal += (item.total || 0);
       });
 
-      // Settlement note line
-      if (tran.settlementToOtherOwner > 0 && tran.settlementRecipient) {
-        // Compute recipient item list for note
-        var recipientItems = [];
-        (tran.items || []).forEach(itm => {
-          if (itm.owner === tran.settlementRecipient) {
-            recipientItems.push(itm.product);
-          }
-        });
-        if (recipientItems.length === 0) {
-          (tran.items || []).forEach(itm => recipientItems.push(itm.product));
-        }
-        var itemStr = recipientItems.join(', ');
-        tableData.push([
-          trNumber,
-          '',
-          `Settlement: -R${tran.settlementToOtherOwner.toFixed(2)} ${itemStr} to ${tran.settlementRecipient}`,
-          '',
-          '',
-          '',
-          ''
-        ]);
-      }
+      // Settlement note line REMOVED - use note field instead
     });
 
     doc.autoTable({
@@ -8387,7 +8631,7 @@ function generatePDF(specificDate = null) {
       theme: 'grid',
       headStyles: {
         fillColor: [59, 130, 246],
-        textColor: [255, 255, 255],
+        textColor: [20, 20, 20],
         fontStyle: 'bold'
       },
       styles: {
@@ -8460,7 +8704,7 @@ function generatePDF(specificDate = null) {
         var hasSettlement = (tr.settlementToOtherOwner && tr.settlementToOtherOwner > 0 && tr.settlementRecipient);
         if (hasSettlement) {
           // Full totals go to the card owner; recipient gets nothing
-          const cardOwner = decideCardOwnerForBoth(tr.name, tr.cardAmount, tr.cardAmount2);
+          const cardOwner = decideCardOwnerForBoth(tr);
           const fullCash = netCash;
           const fullCard = cd;
           const fullTotal = tTotal;
@@ -8528,7 +8772,7 @@ function generatePDF(specificDate = null) {
       theme: 'grid',
       headStyles: {
         fillColor: [59, 130, 246],
-        textColor: [255, 255, 255],
+        textColor: [20, 20, 20],
         fontStyle: 'bold',
         fontSize: 8,
         halign: 'center'
@@ -8571,12 +8815,12 @@ function generatePDF(specificDate = null) {
       },
       headStyles: {
         fillColor: [30, 64, 175],
-        textColor: [255, 255, 255],
+        textColor: [20, 20, 20],
         fontStyle: 'bold'
       },
       bodyStyles: {
         fillColor: [30, 64, 175],
-        textColor: [255, 255, 255]
+        textColor: [20, 20, 20]
       },
       columnStyles: {
         0: { cellWidth: 40, fontStyle: 'bold', halign: 'left' },
@@ -8597,27 +8841,11 @@ function generatePDF(specificDate = null) {
     // NET cash (cash - change)
     let pdfNetCash = 0;
     let pdfSettlementWithdrawals = 0;
-    let pdfSettlementDetails = [];
     dayTransactions.forEach(tt => {
       const ca = tt.cashAmount || 0;
       const ch = tt.change || 0;
       pdfNetCash += (ca - ch);
       if (tt.settlementToOtherOwner && tt.settlementToOtherOwner > 0) {
-        // Collect settlement details
-        var recipItems = [];
-        (tt.items || []).forEach(itm => {
-          if (itm.owner === tt.settlementRecipient) {
-            recipItems.push(itm.product);
-          }
-        });
-        if (recipItems.length === 0) {
-          (tt.items || []).forEach(itm => recipItems.push(itm.product));
-        }
-        pdfSettlementDetails.push({
-          items: recipItems.join(", "),
-          recipient: tt.settlementRecipient,
-          amount: tt.settlementToOtherOwner
-        });
         pdfSettlementWithdrawals += tt.settlementToOtherOwner;
       }
     });
@@ -8626,33 +8854,45 @@ function generatePDF(specificDate = null) {
     var expectedInTill = floatAmount + totalCashSummary - pdfSettlementWithdrawals; // subtract settlement withdrawals
     var cashToBank = expectedInTill - floatAmount; // amount above float
 
-
-    // Build settlement withdrawal line with details
-    var settlementLine = "";
-    if (pdfSettlementDetails.length > 0) {
-      var settlementTexts = pdfSettlementDetails.map(s => 
-        `${s.items} for ${s.recipient} (-R${s.amount.toFixed(2)})`
-      );
-      settlementLine = settlementTexts.join("; ");
-    }
-
+    // Build cashData with settlement lines inserted
     const cashData = [
       [t.cashSales, 'R ' + totalCashSummary.toFixed(2)],
-      [t.startingFloat, 'R ' + floatAmount.toFixed(2)],
-      ...(settlementLine ? [["Settlement Withdrawals", settlementLine]] : []),
-      [t.totalInTill, 'R ' + expectedInTill.toFixed(2)],
-      [t.floatToKeep, 'R ' + floatAmount.toFixed(2)],
-      [t.cashToBank, 'R ' + cashToBank.toFixed(2)]
+      [t.startingFloat, 'R ' + floatAmount.toFixed(2)]
     ];
+
+    // Add settlement withdrawal lines between Starting Float and Total in Till
+    dayTransactions.forEach(tt => {
+      if (tt.settlementToOtherOwner && tt.settlementToOtherOwner > 0 && tt.settlementRecipient) {
+        var itemNames = [];
+        (tt.items || []).forEach(itm => {
+          if (itm.owner === tt.settlementRecipient) {
+            itemNames.push(itm.product);
+          }
+        });
+        if (itemNames.length === 0) {
+          (tt.items || []).forEach(itm => itemNames.push(itm.product));
+        }
+        var itemStr = itemNames.join(', ').substring(0, 40); // Limit length for PDF
+        cashData.push([
+          itemStr + ' for ' + tt.settlementRecipient,
+          '-R ' + tt.settlementToOtherOwner.toFixed(2)
+        ]);
+      }
+    });
+
+    // Add remaining rows
+    cashData.push([t.totalInTill, 'R ' + expectedInTill.toFixed(2)]);
+    cashData.push([t.floatToKeep, 'R ' + floatAmount.toFixed(2)]);
+    cashData.push([t.cashToBank, 'R ' + cashToBank.toFixed(2)]);
 
     doc.autoTable({
       startY: yPosition,
       head: [[t.name, t.total]],
-      body: cashData.slice(0, 3),
+      body: cashData.slice(0, cashData.length - 2),
       theme: 'striped',
       headStyles: {
         fillColor: [22, 163, 74],
-        textColor: [255, 255, 255],
+        textColor: [20, 20, 20],
         fontStyle: 'bold',
         fontSize: 8
       },
@@ -8736,7 +8976,6 @@ function generatePDF(specificDate = null) {
     alert(translations[currentLanguage]['pdfError'] + error.message);
   }
 }
-
 
 // Clear all data function
 function clearData() {
