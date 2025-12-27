@@ -8460,7 +8460,7 @@ function generatePDF(specificDate = null) {
         var hasSettlement = (tr.settlementToOtherOwner && tr.settlementToOtherOwner > 0 && tr.settlementRecipient);
         if (hasSettlement) {
           // Full totals go to the card owner; recipient gets nothing
-          const cardOwner = decideCardOwnerForBoth(tr);
+          const cardOwner = decideCardOwnerForBoth(tr.name, tr.cardAmount, tr.cardAmount2);
           const fullCash = netCash;
           const fullCard = cd;
           const fullTotal = tTotal;
@@ -8597,11 +8597,27 @@ function generatePDF(specificDate = null) {
     // NET cash (cash - change)
     let pdfNetCash = 0;
     let pdfSettlementWithdrawals = 0;
+    let pdfSettlementDetails = [];
     dayTransactions.forEach(tt => {
       const ca = tt.cashAmount || 0;
       const ch = tt.change || 0;
       pdfNetCash += (ca - ch);
       if (tt.settlementToOtherOwner && tt.settlementToOtherOwner > 0) {
+        // Collect settlement details
+        var recipItems = [];
+        (tt.items || []).forEach(itm => {
+          if (itm.owner === tt.settlementRecipient) {
+            recipItems.push(itm.product);
+          }
+        });
+        if (recipItems.length === 0) {
+          (tt.items || []).forEach(itm => recipItems.push(itm.product));
+        }
+        pdfSettlementDetails.push({
+          items: recipItems.join(", "),
+          recipient: tt.settlementRecipient,
+          amount: tt.settlementToOtherOwner
+        });
         pdfSettlementWithdrawals += tt.settlementToOtherOwner;
       }
     });
@@ -8610,9 +8626,20 @@ function generatePDF(specificDate = null) {
     var expectedInTill = floatAmount + totalCashSummary - pdfSettlementWithdrawals; // subtract settlement withdrawals
     var cashToBank = expectedInTill - floatAmount; // amount above float
 
+
+    // Build settlement withdrawal line with details
+    var settlementLine = "";
+    if (pdfSettlementDetails.length > 0) {
+      var settlementTexts = pdfSettlementDetails.map(s => 
+        `${s.items} for ${s.recipient} (-R${s.amount.toFixed(2)})`
+      );
+      settlementLine = settlementTexts.join("; ");
+    }
+
     const cashData = [
       [t.cashSales, 'R ' + totalCashSummary.toFixed(2)],
       [t.startingFloat, 'R ' + floatAmount.toFixed(2)],
+      ...(settlementLine ? [["Settlement Withdrawals", settlementLine]] : []),
       [t.totalInTill, 'R ' + expectedInTill.toFixed(2)],
       [t.floatToKeep, 'R ' + floatAmount.toFixed(2)],
       [t.cashToBank, 'R ' + cashToBank.toFixed(2)]
