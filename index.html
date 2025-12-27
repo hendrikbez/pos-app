@@ -1932,6 +1932,10 @@ input, textarea {
             <button class="button btn-green full-width" onclick="openPaymentModal()" data-translate="choosePaymentMethod">Choose Payment Method</button>
           </div>
         </div>
+		
+		
+	
+	
         <div id="products" class="tab-content">
           <div class="section-title" data-translate="productManagement">Product Management</div>
           <div class="categories-section">
@@ -2252,15 +2256,29 @@ input, textarea {
         </div>
       </div>
       <div id="paymentModal" class="modal">
-        <div class="modal-content">
-          <div class="modal-title" data-translate="setPayment">Set Payment</div>
-          <div class="card green" style="margin-bottom: 20px;">
-            <div style="font-size: 14px; color: #6B7280;" data-translate="totalAmount">Total Amount:</div>
-            <div style="font-size: 28px; font-weight: bold; color: #16A34A;">R <span id="modalTotal">0.00</span>
-            </div>
-          </div>
+<!-- UPDATED PAYMENT MODAL CONTENT -->
+<div class="modal-content">
+  <div class="modal-title" data-translate="setPayment">Set Payment</div>
+  
+  <div class="card green" style="margin-bottom: 20px;">
+    <div style="font-size: 14px; color: #6B7280;" data-translate="totalAmount">Total Amount:</div>
+    <div style="font-size: 28px; font-weight: bold; color: #16A34A;">R <span id="modalTotal">0.00</span></div>
+  </div>
 
- <div class="cash-amount-section">
+  <!-- NEW: Machine Owner Selection for "Both" Transactions -->
+  <div id="machineOwnerSection" style="display:none; background: #f3f4f6; padding: 12px; border-radius: 10px; margin-bottom: 16px; border: 1px solid #d1d5db;">
+    <label style="font-weight: bold; color: #374151; margin-bottom: 8px; display: block;">Whose Card Machine is used?</label>
+    <select id="machineOwner" onchange="updatePaymentModal()" style="background: white;">
+      <option value="">Select Machine Owner</option>
+      <option value="Kotie">Kotie</option>
+      <option value="Francois">Francois</option>
+    </select>
+    <div id="payoutWarning" style="margin-top: 10px; font-size: 13px; color: #b45d04; font-weight: bold; display: none;">
+      ⚠️ You will need to take R<span id="payoutAmount">0.00</span> from the till to give to <span id="payoutRecipient">partner</span>.
+    </div>
+  </div>
+
+  <div class="cash-amount-section">
     <div class="cash-amount-label" data-translate="cashAmounts">Cash Amounts (Select or type):</div>
     <div class="cash-amount-row">
         <select class="cash-amount-select" id="cashAmountDropdown" onchange="selectCashAmount()">
@@ -2271,45 +2289,67 @@ input, textarea {
             <option value="100">R100.00</option>
             <option value="200">R200.00</option>
         </select>
-        <input type="number" id="cashAmount" placeholder="0.00" class="cash-amount-input" oninput="updatePaymentModal()" data-translate-placeholder="amount">
+        <input type="number" id="cashAmount" placeholder="0.00" class="cash-amount-input" oninput="updatePaymentModal()">
     </div>
-    <button class="button btn-blue" onclick="openCashDenominationModal()" style="margin-top: 10px; width: 100%;">Enter Cash Denomination Details</button>
-</div>
+	<button class="button btn-blue" onclick="openCashDenominationModal()" style="margin-top: 10px; width: 100%;">Enter Cash Denomination Details</button>
+  </div>
 	  
-          <div class="form-group">
-            <label data-translate="card">Card (R):</label>
-            <input type="number" id="cardAmount" placeholder="0.00" oninput="updatePaymentModal()" data-translate-placeholder="amount">
-          </div>
-          <div class="form-group">
-            <label data-translate="secondCard">Second Card (R) - Optional:</label>
-            <input type="number" id="cardAmount2" placeholder="0.00" oninput="updatePaymentModal()" data-translate-placeholder="amount">
-          </div>
-          <div class="form-group">
-            <div class="card" style="margin: 0; padding: 14px;">
-              <div style="font-size: 14px; color: #6B7280;" data-translate="paidTogether">Paid Together:</div>
-              <div style="font-weight: bold; font-size: 18px;">R <span id="paidTogether">0.00</span>
-              </div>
-            </div>
-          </div>
-          <div id="changeDisplay" style="display:none;">
-            <div class="card yellow" style="margin: 0; padding: 14px;">
-              <div style="font-size: 14px; color: #6B7280;" data-translate="change">Change:</div>
-              <div style="font-weight: bold; font-size: 18px; color: #B45D04;">R <span id="change">0.00</span>
-              </div>
-            </div>
-          </div>
-          <div id="insufficientDisplay" style="display:none;">
-            <div style="background: #FEE2E2; border: 2px solid #EF4444; border-radius: 8px; padding: 14px; margin: 16px 0;">
-              <div style="color: #7F1D1D; font-weight: bold;" data-translate="insufficient">INSUFFICIENT!</div>
-              <div style="color: #DC2626; font-size: 14px;" data-translate="stillNeeded">Still needed: R <span id="stillNeeded">0.00</span>
-              </div>
-            </div>
-          </div>
-          <div class="modal-buttons">
-            <button class="button" style="background: #6B7280; color: white;" onclick="closePaymentModal()" data-translate="cancel">Cancel</button>
-            <button class="button btn-green" id="completeBtn" onclick="completeTransaction()" data-translate="complete">Complete</button>
-          </div>
-        </div>
+  <div class="form-group">
+    <label data-translate="card">Card (R):</label>
+    <input type="number" id="cardAmount" placeholder="0.00" oninput="updatePaymentModal()">
+  </div>
+  
+  <div class="form-group">
+    <label data-translate="secondCard">Second Card (R):</label>
+    <input type="number" id="cardAmount2" placeholder="0.00" oninput="updatePaymentModal()">
+  </div>
+
+<div class="form-group">
+  <label data-translate="secondCard">Second Card (R) - Optional:</label>
+  <input type="number" id="cardAmount2" placeholder="0.00" oninput="updatePaymentModal()" data-translate-placeholder="amount">
+</div>
+
+<div class="form-group" id="settlementBlock" style="display:none;">
+  <label>Pay cash back to:</label>
+
+  <div style="display:flex; gap:10px; margin-bottom:10px;">
+    <label style="flex:1;">
+      <input type="radio" name="settlementRecipient" value="Francois" onchange="updateSettlementRecipient()" />
+      Francois
+    </label>
+    <label style="flex:1;">
+      <input type="radio" name="settlementRecipient" value="Kotie" onchange="updateSettlementRecipient()" />
+      Kotie
+    </label>
+  </div>
+
+  <label>Settlement Amount (auto):</label>
+  <input type="number" id="settlementAmount" step="0.01" min="0" readonly style="background:#f3f4f6;">
+  <div id="settlementHelp" style="font-size:12px;color:#6b7280;margin-top:6px;">
+    This pays the selected owner their full item amount in cash. The card payer gives this cash to the selected owner.
+  </div>
+</div>
+
+
+  <div class="form-group">
+    <div class="card" style="margin: 0; padding: 14px;">
+      <div style="font-size: 14px; color: #6B7280;" data-translate="paidTogether">Paid Together:</div>
+      <div style="font-weight: bold; font-size: 18px;">R <span id="paidTogether">0.00</span></div>
+    </div>
+  </div>
+
+  <div id="changeDisplay" style="display:none;">
+    <div class="card yellow" style="margin: 0; padding: 14px;">
+      <div style="font-size: 14px; color: #6B7280;" data-translate="change">Change:</div>
+      <div style="font-weight: bold; font-size: 18px; color: #B45D04;">R <span id="change">0.00</span></div>
+    </div>
+  </div>
+
+  <div class="modal-buttons">
+    <button class="button" style="background: #6B7280; color: white;" onclick="closePaymentModal()">Cancel</button>
+    <button class="button btn-green" id="completeBtn" onclick="completeTransaction()">Complete</button>
+  </div>
+</div>
       </div>
       <div id="ownerSelectionModal" class="owner-selection-modal">
         <div class="owner-selection-content">
@@ -2415,6 +2455,39 @@ input, textarea {
           </div>
         </div>
       </div>
+	  
+	  
+<!-- SETTLEMENT CASH DENOMINATION MODAL -->
+<div id="settlementDenominationModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-title">Give Cash Back - Select Denominations</div>
+    <p style="margin-bottom: 20px; color: #6b7280;">
+      You need to give <strong style="color: #ea580c; font-size: 18px;">R<span id="settlementAmountDisplay">0.00</span></strong> 
+      to <strong><span id="settlementRecipientDisplay">Partner</span></strong>.<br>
+      Select which denominations to give from the till.
+    </p>
+    
+    <div id="settlementDenominationInputs" style="max-height: 400px; overflow-y: auto; margin-bottom: 20px;">
+      <!-- Will be filled by JavaScript -->
+    </div>
+    
+    <div style="background: #fffbeb; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-weight: bold; color: #374151;">Total to Give</span>
+        <span style="font-size: 24px; font-weight: bold; color: #ea580c;" id="settlementGivenTotalModal">R0.00</span>
+      </div>
+    </div>
+    
+    <div id="settlementVarianceMessage" style="text-align: center; margin-top: 10px; font-size: 14px;"></div>
+    
+    <div class="modal-buttons">
+      <button class="button" style="background: #6B7280; color: white;" onclick="closeSettlementDenominationModal()">Cancel</button>
+      <button class="button btn-green" onclick="saveSettlementDenomination()">Confirm & Complete</button>
+    </div>
+  </div>
+</div>		  
+	  
+	  
 <div id="updateBanner" style="
   position: fixed;
   bottom: 20px;
@@ -3102,6 +3175,7 @@ const DenominationManager = {
 let tillDenominations = DenominationManager.createEmpty();
 let cashReceivedDenominations = DenominationManager.createEmpty();
 let changeGivenDenominations = DenominationManager.createEmpty();
+let settlementGivenDenominations = DenominationManager.createEmpty();
 
 function saveTillState() {
     localStorage.setItem('salesSystemTillState', JSON.stringify(tillDenominations));
@@ -3489,6 +3563,7 @@ function closeChangeDenominationModal() {
 	    loadCategories();
           loadQuantityData();
           loadLanguage();
+		  loadTransactions();
           filteredProducts = [...allProducts];
           renderProductsTable();
           updateProductList();
@@ -4166,6 +4241,15 @@ function saveQuickInfo() {
   renderProductsTable();
 }
 
+
+
+
+
+
+
+
+
+
 function closeQuickInfoModal() {
     var modal = document.getElementById('quickInfoModal');
     if (modal) {
@@ -4381,47 +4465,116 @@ function resetToFloatOnly() {
 }
 
 function calculateReportCashToBank() {
-    var actualTotal = 0;
-    var allDenoms = ['R200', 'R100', 'R50', 'R20', 'R10', 'R5', 'R2', 'R1', '50c', '20c', '10c'];
-    
-    allDenoms.forEach(denom => {
-        var input = document.getElementById('report_' + denom);
-        if (input) {
-            var count = parseInt(input.value) || 0;
-            var value = tillDenominations[denom].value;
-            var subtotal = count * value;
-            actualTotal += subtotal;
-            document.getElementById('report_subtotal_' + denom).textContent = 'R' + subtotal.toFixed(2);
-        }
-    });
-    
-    // Calculate expected total (float + cash sales)
-    var cashSales = parseFloat(document.getElementById('reportCashSales').textContent.replace('R', ''));
-    var expectedInTill = floatAmount + cashSales;
-    
-    var variance = actualTotal - expectedInTill;
-    var actualCashToBank = actualTotal - floatAmount;
-    
-    // Update display
-    var cashToBankElement = document.getElementById('cashToBankAmount');
-    if (cashToBankElement) {
-        if (Math.abs(variance) > 0.01) {
-            var varianceText = variance > 0 ? 'Over' : 'Short';
-            var varianceColor = variance > 0 ? '#16a34a' : '#dc2626';
-            cashToBankElement.innerHTML = `R${actualCashToBank.toFixed(2)} <span style="font-size: 14px; color: ${varianceColor};">(${variance > 0 ? '+' : ''}R${Math.abs(variance).toFixed(2)} ${varianceText})</span>`;
-        } else {
-            cashToBankElement.textContent = 'R' + actualCashToBank.toFixed(2);
-        }
+  // 1) Count the actual cash in till from inputs
+  var actualTotal = 0;
+  var allDenoms = ['R200', 'R100', 'R50', 'R20', 'R10', 'R5', 'R2', 'R1', '50c', '20c', '10c'];
+
+  allDenoms.forEach(denom => {
+    var input = document.getElementById('report_' + denom);
+    if (input) {
+      var count = parseInt(input.value || 0);
+      var value = tillDenominations[denom].value;
+      var subtotal = count * value;
+      actualTotal += subtotal;
+
+      var subCell = document.getElementById('report_subtotal_' + denom);
+      if (subCell) {
+        subCell.textContent = 'R' + subtotal.toFixed(2);
+      }
     }
+  });
+
+  // 2) Recompute NET cash (cash - change) and settlement withdrawals for the selected day
+  var day = document.getElementById('daySelect')?.value;
+  var dayTrans = allTransactions.filter(t => t.date === day);
+
+  let netCashSalesForReport = 0;
+  let totalCashBackForReport = 0; // settlement withdrawals (deduct from till)
+
+  dayTrans.forEach(t => {
+    const ca = t.cashAmount || 0;
+    const change = t.change || 0;
+    const netCash = ca - change; // net that should remain in till
+    netCashSalesForReport += netCash;
+
+    if (t.settlementToOtherOwner && t.settlementToOtherOwner > 0) {
+      totalCashBackForReport += t.settlementToOtherOwner;
+    }
+  });
+
+  const startingFloatForReport = floatAmount;
+
+  // Expected in till = starting float + net cash sales - settlement withdrawals
+  const expectedInTillForReport = startingFloatForReport + netCashSalesForReport - totalCashBackForReport;
+
+  // Update the top labels
+  safeSetText('reportCashSales', netCashSalesForReport.toFixed(2));
+  safeSetText('reportStartingFloat', startingFloatForReport.toFixed(2));
+  safeSetText('reportTotalInTill', expectedInTillForReport.toFixed(2));
+  safeSetText('reportFloatToKeep', startingFloatForReport.toFixed(2));
+
+  // Variance (what is physically counted vs expected)
+  const variance = actualTotal - expectedInTillForReport;
+
+  // Actual cash to bank based on counted cash (above float kept)
+  const actualCashToBank = actualTotal - startingFloatForReport;
+
+  // Enhanced display with settlement information (line items)
+  var cashToBankDisplay = document.getElementById('cashToBankDisplay');
+  if (cashToBankDisplay) {
+    var varianceText = '';
+    if (Math.abs(variance) < 0.01) {
+      varianceText = `<div style="color:#16a34a;font-size:14px;margin-top:10px;">✓ ${translations[currentLanguage].correct || "Correct"}</div>`;
+    } else if (variance > 0) {
+      varianceText = `<div style="color:#ea580c;font-size:14px;margin-top:10px;">(+R${variance.toFixed(2)} ${translations[currentLanguage].over || "over"})</div>`;
+    } else {
+      varianceText = `<div style="color:#dc2626;font-size:14px;margin-top:10px;">(R${Math.abs(variance).toFixed(2)} ${translations[currentLanguage].short || "short"})</div>`;
+    }
+
+    // Build settlement info lines with item context
+    var settlementInfo = '';
+    dayTrans.forEach(t => {
+      if (t.settlementToOtherOwner > 0 && t.settlementRecipient) {
+        var itemNames = [];
+        (t.items || []).forEach(itm => {
+          if (itm.owner === t.settlementRecipient) {
+            itemNames.push(itm.product);
+          }
+        });
+        if (itemNames.length === 0) {
+          (t.items || []).forEach(itm => itemNames.push(itm.product));
+        }
+        var itemStr = itemNames.join(', ');
+        settlementInfo += `<div style="font-size:12px;color:#b45d04;margin-top:5px;">(-R${t.settlementToOtherOwner.toFixed(2)} ${itemStr} to ${t.settlementRecipient})</div>`;
+      }
+    });
+
+    cashToBankDisplay.innerHTML = `
+      <div data-translate="cashToBank">Cash to Bank:</div>
+      <div style="font-size:32px; font-weight: bold;" id="cashToBankAmount">R${actualCashToBank.toFixed(2)}</div>
+      ${varianceText}
+      ${settlementInfo}
+    `;
+  }
+
+  // Optional detail alert (kept, but adjusted numbers)
+  var alertMessage = `${translations[currentLanguage].cashReconciliation || "Cash Reconciliation"}\n\n`;
+  alertMessage += `${translations[currentLanguage].cashSales || "Cash Sales"} (NET): R${netCashSalesForReport.toFixed(2)}\n`;
+  alertMessage += `${translations[currentLanguage].startingFloat || "Starting Float"}: R${startingFloatForReport.toFixed(2)}\n`;
+
+  if (totalCashBackForReport > 0) {
+    alertMessage += `Settlement Cash Withdrawals: R${totalCashBackForReport.toFixed(2)}\n`;
+  }
+
+  alertMessage += `${translations[currentLanguage].expectedInTill || "Expected in Till"}: R${expectedInTillForReport.toFixed(2)}\n`;
+  alertMessage += `${translations[currentLanguage].actualCashCount || "Actual in Till"}: R${actualTotal.toFixed(2)}\n`;
+  alertMessage += `${translations[currentLanguage].variance || "Variance"}: R${variance.toFixed(2)}\n\n`;
+  alertMessage += `${translations[currentLanguage].cashToBank || "Cash to Bank"}: R${actualCashToBank.toFixed(2)}`;
+
+  alert(alertMessage);
 }
 
-        function loadReportFromHistory() {
-            const selectedDate = document.getElementById('reportHistoryDropdown').value;
-            if(selectedDate) {
-                document.getElementById('daySelect').value = selectedDate;
-                updateReport();
-            }
-        }
+
         
         // --- END NEW LOGIC ---
 
@@ -5629,34 +5782,46 @@ function saveFloatDenominations() {
     alert("Float denominations saved! Till updated to match.");
 }
 
-function processCashTransaction(cashReceivedDenoms, changeGivenDenoms) {
-    var allDenoms = ['R200', 'R100', 'R50', 'R20', 'R10', 'R5', 'R2', 'R1', '50c', '20c', '10c'];
+function processCashTransaction(cashReceivedDenoms, changeGivenDenoms, settlementDenoms) {
+  var allDenoms = ['R200', 'R100', 'R50', 'R20', 'R10', 'R5', 'R2', 'R1', '50c', '20c', '10c'];
+  
+  console.log('Processing cash transaction...');
+  console.log('Cash received:', cashReceivedDenoms);
+  console.log('Change given:', changeGivenDenoms);
+  console.log('Settlement denoms:', settlementDenoms);
+  console.log('Before till:', JSON.parse(JSON.stringify(tillDenominations)));
+  
+  // Add cash received and subtract change given
+  allDenoms.forEach(denom => {
+    var received = (cashReceivedDenoms[denom] && cashReceivedDenoms[denom].count) || 0;
+    var given = (changeGivenDenoms[denom] && changeGivenDenoms[denom].count) || 0;
+    var net = received - given;
+    tillDenominations[denom].count += net;
+  });
+  
+  // *** NEW: Handle settlement cash withdrawal (cash given back to partner) ***
+  // When we give cash back to someone (settlement), we need to remove those denominations from the till
+  if (settlementDenoms) {
+    console.log('Subtracting settlement cash from till...');
     
-    console.log('Processing cash transaction...');
-    console.log('Before:', JSON.parse(JSON.stringify(tillDenominations)));
-    
-    // Add cash received
+    // Subtract the specific denominations that were given as settlement
     allDenoms.forEach(denom => {
-        var received = cashReceivedDenoms[denom].count || 0;
-        tillDenominations[denom].count += received;
+      var givenCount = (settlementDenoms[denom] && settlementDenoms[denom].count) || 0;
+      tillDenominations[denom].count -= givenCount;
+      
+      // Safety check - prevent negative counts
+      if (tillDenominations[denom].count < 0) {
+        console.warn('Warning: Negative count for ' + denom + ' after settlement withdrawal. Setting to 0.');
+        tillDenominations[denom].count = 0;
+      }
     });
-    
-    // Subtract change given
-    allDenoms.forEach(denom => {
-        var given = changeGivenDenoms[denom].count || 0;
-        tillDenominations[denom].count -= given;
-        
-        // Safety check
-        if (tillDenominations[denom].count < 0) {
-            console.warn('Warning: Negative count for ' + denom);
-            tillDenominations[denom].count = 0;
-        }
-    });
-    
-    console.log('After:', JSON.parse(JSON.stringify(tillDenominations)));
-    
-    saveTillState();
+  }
+  
+  console.log('After till:', JSON.parse(JSON.stringify(tillDenominations)));
+  saveTillState();
 }
+
+
 
 function closeFloatDenominationModal() {
     document.getElementById('floatDenominationModal').classList.remove('active');
@@ -5668,11 +5833,13 @@ function loadDailyCashReconciliation() {
     var date = document.getElementById('reconciliationDate').value;
     if (!date) return;
     
-    // Calculate cash sales for the day
+    // Calculate NET cash sales for the day (cash received - change given)
     var dayTransactions = allTransactions.filter(t => t.date === date);
     var cashSales = 0;
     dayTransactions.forEach(t => {
-        cashSales += t.cashAmount;
+        const ca = t.cashAmount || 0;
+        const change = t.change || 0;
+        cashSales += (ca - change);  // NET cash that stays in till
     });
     
     // Check if reconciliation already exists
@@ -5769,7 +5936,17 @@ function calculateReconciliationVariance() {
         }
     });
     
-    var expectedInTill = parseFloat(document.getElementById('reconExpectedInTill').textContent.replace('R', ''));
+    // Calculate NET cash from transactions for this date
+    var date = document.getElementById('reconciliationDate').value;
+    var dayTransactions = allTransactions.filter(t => t.date === date);
+    var netCash = 0;
+    dayTransactions.forEach(t => {
+        const ca = t.cashAmount || 0;
+        const change = t.change || 0;
+        netCash += (ca - change);  // NET cash that stays in till
+    });
+    var expectedInTill = floatAmount + netCash;
+    
     var variance = actualTotal - expectedInTill;
     
     var varianceDisplay = document.getElementById('varianceDisplay');
@@ -5874,9 +6051,26 @@ function saveReconciliation() {
         
         // ========== REPORT TAB CASH RECONCILIATION ==========
 
+// Helper: compute owner item totals for a transaction
+function ownerItemTotals(tr) {
+  var totals = { Kotie: 0, Francois: 0 };
+  (tr.items || []).forEach(i => {
+    if (i.owner === 'Kotie') totals.Kotie += (i.total || 0);
+    else if (i.owner === 'Francois') totals.Francois += (i.total || 0);
+  });
+  return totals;
+}
+
+function decideCardOwnerForBoth(transactionName, cardAmount, cardAmount2) {
+  const totalCard = (parseFloat(cardAmount) || 0) + (parseFloat(cardAmount2) || 0);
+  if (totalCard <= 0) return null;
+  if (transactionName === 'Kotie') return 'Kotie';
+  if (transactionName === 'Francois') return 'Francois';
+  if (transactionName === 'Both') return 'Francois';
+  return null;
+}
+
 function updateReport() {
-  // small helpers (self-contained so you can paste the function anywhere)
- 
   function safeSetHTML(id, html) {
     var el = document.getElementById(id);
     if (el) el.innerHTML = html;
@@ -5890,116 +6084,184 @@ function updateReport() {
   var day = dayEl ? dayEl.value : '';
   var dayTrans = allTransactions.filter(t => t.date === day);
 
-  // Reset all counters
-  var kTransactions = 0;
-  var kCash = 0;
-  var kCard = 0;
-  var kTotal = 0;
+  // No transactions: reset UI to zeros and hide reconciliation
+  if (dayTrans.length === 0) {
+    safeSetText('KotieCount', '0');
+    safeSetText('KotieCash', '0.00');
+    safeSetText('KotieCard', '0.00');
+    safeSetText('KotieTotal', '0.00');
 
-  var fTransactions = 0;
-  var fCash = 0;
-  var fCard = 0;
-  var fTotal = 0;
+    safeSetText('francoisCount', '0');
+    safeSetText('francoisCash', '0.00');
+    safeSetText('francoisCard', '0.00');
+    safeSetText('francoisTotal', '0.00');
+
+    safeSetText('totalCash', '0.00');
+    safeSetText('totalCard', '0.00');
+    safeSetText('grandTotal', '0.00');
+    safeSetText('totalTransactionsCount', '0');
+
+    safeSetText('totalSales', 'R0.00');
+    safeSetText('totalTransactions', '0');
+
+    safeSetText('reportCashSales', '0.00');
+    safeSetText('reportStartingFloat', floatAmount.toFixed(2));
+    safeSetText('reportTotalInTill', floatAmount.toFixed(2));
+    safeSetText('reportFloatToKeep', floatAmount.toFixed(2));
+    safeSetText('cashToBankAmount', '0.00');
+
+    var cashReconEl0 = document.getElementById('cashReconciliationSection');
+    if (cashReconEl0) cashReconEl0.style.display = 'none';
+
+    var list0 = document.getElementById('transList');
+    var transListContainer0 = document.getElementById('transListContainer');
+    if (transListContainer0) transListContainer0.style.display = 'none';
+    if (list0) list0.innerHTML = '';
+
+    return;
+  }
+
+  // Accumulators per owner
+  var kTransactions = 0, kCash = 0, kCard = 0, kTotal = 0;
+  var fTransactions = 0, fCash = 0, fCard = 0, fTotal = 0;
 
   var totalTransactionsCount = dayTrans.length;
-  var totalCash = 0;
-  var totalCard = 0;
-  var grandTotal = 0;
 
-  // Process each transaction
+  // For reconciliation logic
+  let netCashSalesForReport = 0;     // net cash (cash - change)
+  let totalCashBackForReport = 0;    // settlement withdrawals (to remove from till)
+
+  // Helper: compute owner item totals for a transaction
+
+  // Determine who gets the full stats when settlement happens on a "Both" sale
+
   dayTrans.forEach(t => {
-    var transactionName = t.name;
-
-    if (transactionName === 'Kotie') {
-      kTransactions++;
-      kCash += (t.cashAmount || 0);
-      kCard += ((t.cardAmount || 0) + (t.cardAmount2 || 0));
-      kTotal += (t.totalAmount || 0);
-    } else if (transactionName === 'Francois') {
-      fTransactions++;
-      fCash += (t.cashAmount || 0);
-      fCard += ((t.cardAmount || 0) + (t.cardAmount2 || 0));
-      fTotal += (t.totalAmount || 0);
-    } else if (transactionName === 'Both') {
-      // For "Both" transactions, split based on item ownership
-      var kotieItemsTotal = 0;
-      var francoisItemsTotal = 0;
-
-      (t.items || []).forEach(item => {
-        if (item.owner === 'Kotie') kotieItemsTotal += (item.total || 0);
-        else if (item.owner === 'Francois') francoisItemsTotal += (item.total || 0);
-      });
-
-      var totalTransactionValue = t.totalAmount || 0;
-      var kotiePercentage = totalTransactionValue > 0 ? kotieItemsTotal / totalTransactionValue : 0;
-      var francoisPercentage = totalTransactionValue > 0 ? francoisItemsTotal / totalTransactionValue : 0;
-
-      // Split cash and card based on percentage
-      if (kotieItemsTotal > 0) {
+    const cashReceived = (t.cashAmount || 0);
+    const changeGiven = (t.change || 0);
+    const netCash = cashReceived - changeGiven;
+    netCashSalesForReport += netCash;
+    if (t.settlementToOtherOwner && t.settlementToOtherOwner > 0) {
+      totalCashBackForReport += t.settlementToOtherOwner;
+    }
+    var totalAmount = t.totalAmount || 0;
+    var cardAll = (t.cardAmount || 0) + (t.cardAmount2 || 0);
+    var hasSettlement = (t.settlementToOtherOwner && t.settlementToOtherOwner > 0 && t.settlementRecipient);
+    if (hasSettlement) {
+      const recipient = t.settlementRecipient;
+      const cardPayer = (recipient === 'Kotie') ? 'Francois' : 'Kotie';
+      if (cardPayer === 'Kotie') {
         kTransactions++;
-        kCash += (t.cashAmount || 0) * kotiePercentage;
-        kCard += ((t.cardAmount || 0) + (t.cardAmount2 || 0)) * kotiePercentage;
-        kTotal += kotieItemsTotal;
-      }
-
-      if (francoisItemsTotal > 0) {
+        kCash += 0;
+        kCard += cardAll;
+        kTotal += totalAmount;
+      } else if (cardPayer === 'Francois') {
         fTransactions++;
-        fCash += (t.cashAmount || 0) * francoisPercentage;
-        fCard += ((t.cardAmount || 0) + (t.cardAmount2 || 0)) * francoisPercentage;
-        fTotal += francoisItemsTotal;
+        fCash += 0;
+        fCard += cardAll;
+        fTotal += totalAmount;
+      }
+    } else {
+      var owned = ownerItemTotals(t);
+      var kp = totalAmount > 0 ? (owned.Kotie / totalAmount) : 0;
+      var fp = totalAmount > 0 ? (owned.Francois / totalAmount) : 0;
+      if (owned.Kotie > 0) {
+        kTransactions++;
+        kCash += netCash * kp;
+        kCard += cardAll * kp;
+        kTotal += owned.Kotie;
+      }
+      if (owned.Francois > 0) {
+        fTransactions++;
+        fCash += netCash * fp;
+        fCard += cardAll * fp;
+        fTotal += owned.Francois;
       }
     }
   });
 
-  // Calculate totals
-  totalCash = kCash + fCash;
-  totalCard = kCard + fCard;
-  grandTotal = kTotal + fTotal;
+  var totalCash = kCash + fCash;
+  var totalCard = kCard + fCard;
+  var grandTotal = kTotal + fTotal;
 
-  // Update Kotie display
+  // Update owner blocks
   safeSetText('KotieCount', kTransactions);
   safeSetText('KotieCash', kCash.toFixed(2));
   safeSetText('KotieCard', kCard.toFixed(2));
   safeSetText('KotieTotal', kTotal.toFixed(2));
 
-  // Update Francois display
   safeSetText('francoisCount', fTransactions);
   safeSetText('francoisCash', fCash.toFixed(2));
   safeSetText('francoisCard', fCard.toFixed(2));
   safeSetText('francoisTotal', fTotal.toFixed(2));
 
-  // Update Day Total display
+  // Day totals
   safeSetText('totalCash', totalCash.toFixed(2));
   safeSetText('totalCard', totalCard.toFixed(2));
   safeSetText('grandTotal', grandTotal.toFixed(2));
   safeSetText('totalTransactionsCount', totalTransactionsCount);
 
-  // Update stats at the top
   safeSetText('totalSales', 'R' + grandTotal.toFixed(2));
   safeSetText('totalTransactions', totalTransactionsCount);
 
-  // Update cash reconciliation section
-  safeSetText('reportCashSales', totalCash.toFixed(2));
-  safeSetText('reportStartingFloat', floatAmount.toFixed(2));
+  // Cash Reconciliation section: use NET cash and subtract settlement cash-outs
+  const startingFloatForReport = floatAmount;
+  const expectedInTill = startingFloatForReport + netCashSalesForReport - totalCashBackForReport;
 
-  var totalInTill = totalCash + floatAmount;
-  safeSetText('reportTotalInTill', totalInTill.toFixed(2));
-  safeSetText('reportFloatToKeep', floatAmount.toFixed(2));
+  safeSetText('reportCashSales', netCashSalesForReport.toFixed(2));
+  safeSetText('reportStartingFloat', startingFloatForReport.toFixed(2));
+  safeSetText('reportTotalInTill', expectedInTill.toFixed(2));
+  safeSetText('reportFloatToKeep', startingFloatForReport.toFixed(2));
 
-  var cashToBank = totalCash;
-  safeSetText('cashToBankAmount', cashToBank.toFixed(2));
+  const cashToBankForReport = expectedInTill - startingFloatForReport;
 
-  // Show/hide cash reconciliation section
+  // Settlement lines to display under Cash To Bank block
+  var cashToBankDisplay = document.getElementById('cashToBankDisplay');
+  if (cashToBankDisplay) {
+    var settlementInfo = '';
+    // Build human-readable settlement deduction lines with item context
+    dayTrans.forEach(t => {
+      if (t.settlementToOtherOwner > 0 && t.settlementRecipient) {
+        // Try to pick the "recipient's item names" for clarity. If mixed, list combined.
+        var itemNames = [];
+        (t.items || []).forEach(itm => {
+          // show all items that belonged to the recipient, else show all
+          if (itm.owner === t.settlementRecipient) {
+            itemNames.push(itm.product);
+          }
+        });
+        if (itemNames.length === 0) {
+          // fallback to all items
+          (t.items || []).forEach(itm => itemNames.push(itm.product));
+        }
+        var itemStr = itemNames.join(', ');
+        settlementInfo += `<div style="font-size:12px;color:#b45d04;margin-top:5px;">(-R${(t.settlementToOtherOwner).toFixed(2)} ${itemStr} to ${t.settlementRecipient})</div>`;
+      }
+    });
+
+    // Render the cash to bank display
+    if (settlementInfo) {
+      cashToBankDisplay.innerHTML = `
+        <div data-translate="cashToBank">Cash to Bank</div>
+        <div style="font-size:32px;font-weight:bold;" id="cashToBankAmount">R${cashToBankForReport.toFixed(2)}</div>
+        ${settlementInfo}
+      `;
+    } else {
+      safeSetText('cashToBankAmount', cashToBankForReport.toFixed(2));
+    }
+  } else {
+    safeSetText('cashToBankAmount', cashToBankForReport.toFixed(2));
+  }
+
   var cashReconEl = document.getElementById('cashReconciliationSection');
   if (cashReconEl) cashReconEl.style.display = dayTrans.length > 0 ? 'block' : 'none';
 
-  // Render denomination inputs for this day
+  // Denomination inputs in report
   if (typeof renderReportDenominationInputs === 'function') {
     var existingRecon = dailyReconciliations.find(r => r.date === day);
     renderReportDenominationInputs(day, existingRecon);
   }
 
-  // Update transaction list
+  // Transaction list
   var list = document.getElementById('transList');
   var transListContainer = document.getElementById('transListContainer');
   if (transListContainer) transListContainer.style.display = dayTrans.length ? 'block' : 'none';
@@ -6009,11 +6271,12 @@ function updateReport() {
       var html = '';
       dayTrans.forEach(t => {
         var names = (t.items || []).map(i => i.product).join(', ');
-        var pay = 'Cash: R' + (t.cashAmount || 0).toFixed(2);
+        // Show NET cash in transaction list
+        var netCashForDisplay = (t.cashAmount || 0) - (t.change || 0);
+        var pay = 'Cash: R' + netCashForDisplay.toFixed(2);
         if ((t.cardAmount || 0) > 0) pay += ' | Card1: R' + (t.cardAmount || 0).toFixed(2);
         if ((t.cardAmount2 || 0) > 0) pay += ' | Card2: R' + (t.cardAmount2 || 0).toFixed(2);
 
-        // Add Edit button inline (so you can edit directly from the list)
         var absoluteIndex = allTransactions.findIndex(trans =>
           trans.transactionNumber === t.transactionNumber &&
           trans.date === t.date &&
@@ -6028,6 +6291,22 @@ function updateReport() {
         html += '</div>';
         html += '<div>' + names + '</div>';
         html += '<div style="margin-top:4px;">' + pay + '</div>';
+
+        if (t.settlementToOtherOwner > 0 && t.settlementRecipient) {
+          // include a line about settlement
+          var itemNames = [];
+          (t.items || []).forEach(itm => {
+            if (itm.owner === t.settlementRecipient) {
+              itemNames.push(itm.product);
+            }
+          });
+          if (itemNames.length === 0) {
+            (t.items || []).forEach(itm => itemNames.push(itm.product));
+          }
+          var itemStr = itemNames.join(', ');
+          html += '<div style="margin-top:4px;color:#b45d04;"><em>Settlement: -R' + t.settlementToOtherOwner.toFixed(2) + ' ' + itemStr + ' to ' + t.settlementRecipient + '</em></div>';
+        }
+
         html += '<div style="color:#16A34A;font-weight:bold;">Total: R' + (t.totalAmount || 0).toFixed(2) + '</div>';
         html += '</div>';
       });
@@ -6036,16 +6315,15 @@ function updateReport() {
       list.innerHTML = '';
     }
   }
-  
-  // TIP block: explain cash tracking. FIXED: use dayTrans, not dayTransactions
-  if (totalCash > 0) {
+
+  // Add the tip block about net cash tracking (kept from your logic)
+  if (netCashSalesForReport > 0) {
     var cashReconEl2 = document.getElementById('cashReconciliationSection');
     if (cashReconEl2 && cashReconEl2.style.display !== 'none') {
       var existingTip = document.querySelector('.cash-auto-fill-info');
       if (existingTip) {
         existingTip.remove();
       }
-      
       var infoDiv = document.createElement('div');
       infoDiv.className = 'cash-auto-fill-info';
       infoDiv.style.background = '#f0f9ff';
@@ -6055,11 +6333,11 @@ function updateReport() {
       infoDiv.style.margin = '10px 0';
       infoDiv.style.fontSize = '14px';
       infoDiv.style.color = '#374151';
-      
+
       var cashTransactions = dayTrans.filter(t => t.cashAmount > 0).length;
-      
+
       infoDiv.innerHTML = `<strong>💡 Cash Tracking Active:</strong><br>
-            You have ${cashTransactions} cash transaction(s) totaling R${totalCash.toFixed(2)}.<br>
+            You have ${cashTransactions} cash transaction(s) totaling R${netCashSalesForReport.toFixed(2)} (NET cash after change).<br>
             The denomination counts below include:
             <ul style="margin: 5px 0; padding-left: 20px;">
                 <li>Starting float from Float tab</li>
@@ -6067,7 +6345,7 @@ function updateReport() {
                 <li>Minus exact change given to customers</li>
             </ul>
             You can adjust the counts if needed.`;
-      
+
       var denomContainer = document.getElementById('denominationInputsContainer');
       if (denomContainer) {
         denomContainer.insertBefore(infoDiv, denomContainer.firstChild);
@@ -6075,7 +6353,6 @@ function updateReport() {
     }
   }
 }
-
         // ========== REST OF YOUR EXISTING FUNCTIONS ==========
         
 function startNewTransaction() {
@@ -6087,16 +6364,36 @@ function startNewTransaction() {
   saveTransactionNumber();
   updateTransactionNumberDisplay();
   
-  // Reset all fields
+  // **COMPLETE RESET - START**
+  
+  // Reset purchased items array
   purchasedItems = [];
   
+  // Reset all form fields
   document.getElementById('name').value = '';
-  document.getElementById('date').value = today;
+  document.getElementById('date').value = new Date().toISOString().split('T')[0];
   document.getElementById('time').value = new Date().toTimeString().slice(0, 5);
   document.getElementById('productCode').value = '';
-  document.getElementById('productInfo').style.display = 'none';
   document.getElementById('salesSearch').value = '';
   document.getElementById('sellQuantity').value = '1';
+  
+  // Hide product info display
+  var productInfoEl = document.getElementById('productInfo');
+  if (productInfoEl) productInfoEl.style.display = 'none';
+  
+  // Clear items list display
+  var itemsListEl = document.getElementById('itemsList');
+  if (itemsListEl) itemsListEl.innerHTML = '';
+  
+  // Hide containers
+  var itemsContainerEl = document.getElementById('itemsContainer');
+  var paymentSectionEl = document.getElementById('paymentSection');
+  if (itemsContainerEl) itemsContainerEl.style.display = 'none';
+  if (paymentSectionEl) paymentSectionEl.style.display = 'none';
+  
+  // Reset total display
+  var totalDisplayEl = document.getElementById('totalDisplay');
+  if (totalDisplayEl) totalDisplayEl.textContent = '0.00';
   
   // Reset variables
   currentProduct = null;
@@ -6109,14 +6406,14 @@ function startNewTransaction() {
     toggleQuantityMode('none');
   }
   
+  // **COMPLETE RESET - END**
+  
   // Update UI
   updateItemsList();
   updateProductList();
   updateSalesPagination(0);
-  
-  // Hide containers
-  document.getElementById('itemsContainer').style.display = 'none';
-  document.getElementById('paymentSection').style.display = 'none';
+  updateReport();
+  updateStats();
   
   window.scrollTo({
     top: 0,
@@ -6430,185 +6727,790 @@ function closeAllModals() {
           }
         }
 
+
+// NEW: Decide which owner collected the card for this sale
+function inferCardCollectorOwner(transactionName, cardAmount, cardAmount2) {
+  const totalCard = (parseFloat(cardAmount) || 0) + (parseFloat(cardAmount2) || 0);
+  if (totalCard <= 0) return null;
+
+  // For a "Both" sale, we infer the card collector is the selected name if it is Kotie/Francois.
+  // If "Both" is selected, default to 'Francois' (you can change this assumption).
+  if (transactionName === 'Kotie') return 'Kotie';
+  if (transactionName === 'Francois') return 'Francois';
+  if (transactionName === 'Both') {
+    // Default inference if user left "Both" selected during payment.
+    // Adjust to your preference or add a small selector next to card fields if needed.
+    return 'Francois';
+  }
+  return null;
+}
+
+
 function updatePaymentModal() {
   var totalEl = document.getElementById('modalTotal');
-  if (!totalEl) return; // Exit if modal is not open
-  
+  if (!totalEl) return;
+
   var total = parseFloat(totalEl.textContent);
   var cash = parseFloat(document.getElementById('cashAmount').value) || 0;
   var card = parseFloat(document.getElementById('cardAmount').value) || 0;
   var card2 = parseFloat(document.getElementById('cardAmount2').value) || 0;
   var paid = cash + card + card2;
 
+  // Display paid-together
   var paidTogetherEl = document.getElementById('paidTogether');
-  if (paidTogetherEl) {
-    paidTogetherEl.textContent = paid.toFixed(2);
+  if (paidTogetherEl) paidTogetherEl.textContent = paid.toFixed(2);
+
+  // Settlement visibility logic
+  var saleName = (document.getElementById('name').value || '').trim();
+  var settlementBlock = document.getElementById('settlementBlock');
+  var showSettlement = (saleName === 'Both') && ((card + card2) > 0); // show when card used in Both
+  if (settlementBlock) settlementBlock.style.display = showSettlement ? 'block' : 'none';
+
+  // Compute owner totals for this transaction
+  var owned = { Kotie: 0, Francois: 0 };
+  (purchasedItems || []).forEach(i => {
+    if (i.owner === 'Kotie') owned.Kotie += (i.total || 0);
+    else if (i.owner === 'Francois') owned.Francois += (i.total || 0);
+  });
+
+  // Auto-select a recipient if none chosen yet (default to owner with smaller total)
+  if (showSettlement) {
+    var recipientInput = document.querySelector('input[name="settlementRecipient"]:checked');
+    if (!recipientInput) {
+      var prefer = (owned.Kotie <= owned.Francois) ? 'Kotie' : 'Francois';
+      var radio = document.querySelector('input[name="settlementRecipient"][value="' + prefer + '"]');
+      if (radio) {
+        radio.checked = true;
+      }
+    }
+    // Update the amount field based on selected recipient (WITHOUT calling updateSettlementRecipient to avoid loop)
+    updateSettlementAmountDisplay();
   }
+
+  // Decide which total to use for change/insufficient calculation
+  var actualTotal = 0;
+  (purchasedItems || []).forEach(item => { actualTotal += (item.total || 0); });
 
   var changeDisplayEl = document.getElementById('changeDisplay');
   var insufficientDisplayEl = document.getElementById('insufficientDisplay');
   var completeBtn = document.getElementById('completeBtn');
 
-  if (paid >= total) {
+  if (paid >= actualTotal) {
     var changeEl = document.getElementById('change');
-    if (changeEl) {
-      changeEl.textContent = (paid - total).toFixed(2);
-    }
-    if (changeDisplayEl) {
-      changeDisplayEl.style.display = 'block';
-    }
-    if (insufficientDisplayEl) {
-      insufficientDisplayEl.style.display = 'none';
-    }
-    if (completeBtn) {
-      completeBtn.disabled = false;
-    }
+    if (changeEl) changeEl.textContent = (paid - actualTotal).toFixed(2);
+    if (changeDisplayEl) changeDisplayEl.style.display = 'block';
+    if (insufficientDisplayEl) insufficientDisplayEl.style.display = 'none';
+    if (completeBtn) completeBtn.disabled = false;
   } else {
     var stillNeededEl = document.getElementById('stillNeeded');
-    if (stillNeededEl) {
-      stillNeededEl.textContent = (total - paid).toFixed(2);
-    }
-    if (changeDisplayEl) {
-      changeDisplayEl.style.display = 'none';
-    }
-    if (insufficientDisplayEl) {
-      insufficientDisplayEl.style.display = 'block';
-    }
-    if (completeBtn) {
-      completeBtn.disabled = true;
-    }
+    if (stillNeededEl) stillNeededEl.textContent = (actualTotal - paid).toFixed(2);
+    if (changeDisplayEl) changeDisplayEl.style.display = 'none';
+    if (insufficientDisplayEl) insufficientDisplayEl.style.display = 'block';
+    if (completeBtn) completeBtn.disabled = true;
   }
 }
 
+function updateSettlementRecipient() {
+  // Update amount display based on selected recipient
+  updateSettlementAmountDisplay();
+}
+
+function updateSettlementAmountDisplay() {
+  var amountEl = document.getElementById('settlementAmount');
+  var picked = document.querySelector('input[name="settlementRecipient"]:checked');
+  if (!amountEl || !picked) return;
+
+  var owned = { Kotie: 0, Francois: 0 };
+  (purchasedItems || []).forEach(i => {
+    if (i.owner === 'Kotie') owned.Kotie += (i.total || 0);
+    else if (i.owner === 'Francois') owned.Francois += (i.total || 0);
+  });
+
+  // Amount = exact item total of the recipient
+  var val = (picked.value === 'Kotie') ? owned.Kotie : owned.Francois;
+  if (!isFinite(val) || val < 0) val = 0;
+
+  amountEl.value = val.toFixed(2);
+}
+
+function resetProductSelectionUI() {
+  // Clear search box
+  const search = document.getElementById('salesSearch');
+  if (search) search.value = '';
+
+  // Reset pagination
+  salesCurrentPage = 1;
+
+  // Remove selected state from product cards
+  document.querySelectorAll('#productList .product-card.selected')
+    .forEach(card => card.classList.remove('selected'));
+
+  // Re-render product list cleanly
+  updateProductList();
+
+  // Hide selected items section
+  document.getElementById('itemsContainer').style.display = 'none';
+  document.getElementById('itemsList').innerHTML = '';
+  document.getElementById('itemCount').textContent = '0';
+
+  // Hide payment section
+  document.getElementById('paymentSection').style.display = 'none';
+
+  // Reset totals display
+  document.getElementById('totalDisplay').textContent = '0.00';
+}
+
+
+
+
 function completeTransaction() {
-    var name = document.getElementById('name').value;
-    var date = document.getElementById('date').value;
-    var time = document.getElementById('time').value;
-    var cashReceived = parseFloat(document.getElementById('cashAmount').value) || 0;
-    var cardReceived = parseFloat(document.getElementById('cardAmount').value) || 0;
-    var cardReceived2 = parseFloat(document.getElementById('cardAmount2').value) || 0;
-    var total = 0;
-    
-    for (var i = 0; i < purchasedItems.length; i++) {
-        total += purchasedItems[i].total;
+  try {
+    // Get form values
+    var date = document.getElementById("date").value;
+    var name = document.getElementById("name").value.trim();
+    var cashAmount = parseFloat(document.getElementById("cashAmount").value || 0);
+    var cardAmount = parseFloat(document.getElementById("cardAmount").value || 0);
+    var cardAmount2 = parseFloat(document.getElementById("cardAmount2").value || 0);
+    // Validate
+    if (!date) {
+      alert(translations[currentLanguage].selectDate);
+      return;
+    }
+    if (!name) {
+      alert(translations[currentLanguage].selectName);
+      return;
+    }
+    if (purchasedItems.length === 0) {
+      alert(translations[currentLanguage].noItems);
+      return;
+    }
+    var total = purchasedItems.reduce((sum, item) => sum + (item.total || 0), 0);
+    var paid = cashAmount + cardAmount + cardAmount2;
+    if (paid < total) {
+      alert(translations[currentLanguage].insufficientPayment);
+      return;
+    }
+    // Determine payment method
+    var paymentMethod;
+    if (cashAmount > 0 && (cardAmount > 0 || cardAmount2 > 0)) {
+      paymentMethod = currentLanguage === "af" ? "Gemeng" : "Mixed";
+    } else if (cashAmount > 0) {
+      paymentMethod = currentLanguage === "af" ? "KONTANT" : "CASH";
+    } else if (cardAmount > 0 || cardAmount2 > 0) {
+      paymentMethod = cardAmount2 > 0 ? (currentLanguage === "af" ? "2xKD" : "2xCD") : (currentLanguage === "af" ? "KAART" : "CARD");
+    }
+    var changeAmount = paid - total;
+    var totalCardReceived = cardAmount + cardAmount2;
+
+    // NEW settlement logic
+    var settlementToOtherOwner = 0;
+    var settlementRecipient = null;
+    var settlementNote = null;
+    var settlementGivenDenominations = null;
+
+    if (name === "Both" && totalCardReceived > 0) {
+      var settlementBlock = document.getElementById("settlementBlock");
+      var recRadio = document.querySelector('input[name="settlementRecipient"]:checked');
+      var sInput = document.getElementById("settlementAmount");
+      var sVal = sInput ? parseFloat(sInput.value || 0) : 0;
+      settlementRecipient = recRadio ? recRadio.value : null;
+
+      // Validate against item totals exactly
+      var perOwner = { Kotie: 0, Francois: 0 };
+      purchasedItems.forEach(i => {
+        if (i.owner === "Kotie") perOwner.Kotie += (i.total || 0);
+        else if (i.owner === "Francois") perOwner.Francois += (i.total || 0);
+      });
+
+      if (settlementRecipient === "Kotie") {
+        sVal = Math.min(sVal, perOwner.Kotie);
+        settlementToOtherOwner = sVal;
+        settlementNote = `Gave R${sVal.toFixed(2)} cash back to Kotie (from Francois's card payment)`;
+      } else if (settlementRecipient === "Francois") {
+        sVal = Math.min(sVal, perOwner.Francois);
+        settlementToOtherOwner = sVal;
+        settlementNote = `Gave R${sVal.toFixed(2)} cash back to Francois (from Kotie's card payment)`;
+      } else {
+        settlementToOtherOwner = 0;
+        settlementNote = null;
+      }
+
+      // *** If settlement is needed, open denomination modal ***
+      if (settlementToOtherOwner > 0) {
+        // Store transaction data temporarily
+        window.pendingSettlementTransaction = {
+          date: date,
+          name: name,
+          total: total,
+          cashAmount: cashAmount,
+          cardAmount: cardAmount,
+          cardAmount2: cardAmount2,
+          changeAmount: changeAmount,
+          paymentMethod: paymentMethod,
+          settlementRecipient: settlementRecipient,
+          settlementToOtherOwner: settlementToOtherOwner,
+          settlementNote: settlementNote,
+          cashReceivedDenoms: JSON.parse(JSON.stringify(cashReceivedDenominations)),
+          changeGivenDenoms: JSON.parse(JSON.stringify(changeGivenDenominations)),
+          totalCardReceived: totalCardReceived
+        };
+
+        // Open settlement denomination modal
+        openSettlementDenominationModal(settlementToOtherOwner, settlementRecipient);
+        return; // EXIT HERE - will continue in completeTransactionFinal()
+      }
     }
 
-    // DEDUCT STOCK
-    if (quantityMode === 'with') {
-        purchasedItems.forEach(item => {
-            if (item.stockKey && productQuantities[item.stockKey] !== undefined) {
-                productQuantities[item.stockKey] -= item.quantity;
-                if (productQuantities[item.stockKey] < 0) productQuantities[item.stockKey] = 0;
-            }
-        });
-        saveQuantityData();
-    }
-
-    var totalCardReceived = cardReceived + cardReceived2;
-    var paymentMethod = (cashReceived > 0 && totalCardReceived > 0) ? 'Mixed (Cash + Card)' : 
-                        (cashReceived > 0 ? 'Cash' : (totalCardReceived > 0 ? 'Card' : 'Unknown'));
-
-    var cashAmount = 0, cardAmount = 0, cardAmount2 = 0;
-    
-    if (cashReceived > 0 && totalCardReceived > 0) {
-        var totalReceived = cashReceived + totalCardReceived;
-        cashAmount = total * (cashReceived / totalReceived);
-        cardAmount = total * (totalCardReceived / totalReceived) * (cardReceived / totalCardReceived);
-        cardAmount2 = total * (totalCardReceived / totalReceived) * (cardReceived2 / totalCardReceived);
-    } else if (cashReceived > 0) {
-        cashAmount = total;
-    } else if (totalCardReceived > 0) {
-        cardAmount = total * (cardReceived / totalCardReceived);
-        cardAmount2 = total * (cardReceived2 / totalCardReceived);
-    }
-
-    var changeAmount = (cashReceived + totalCardReceived) - total;
-    
-    // Create copies of denomination objects
+    // Copies of denomination data before we zero them out
     var cashReceivedDenoms = JSON.parse(JSON.stringify(cashReceivedDenominations));
     var changeGivenDenoms = JSON.parse(JSON.stringify(changeGivenDenominations));
 
-    // CRITICAL: Update till with this transaction
-    if (cashReceived > 0) {
-        processCashTransaction(cashReceivedDenoms, changeGivenDenoms);
+    // === CRITICAL FIX: Determine who actually collected the card payment ===
+    var whoCollectedCard = null;
+    if (name === "Both" && totalCardReceived > 0 && settlementToOtherOwner > 0 && settlementRecipient) {
+      // The person who collected the card is the OPPOSITE of who received cash back
+      whoCollectedCard = (settlementRecipient === "Kotie") ? "Francois" : "Kotie";
+    } else if (name === "Both" && totalCardReceived > 0) {
+      whoCollectedCard = settlementRecipient || "Francois"; // fallback
+    } else {
+      whoCollectedCard = name;
     }
 
+    // Create transaction object
     var transaction = {
+      date: date,
+      time: new Date().toLocaleString("en-GB", { hour: "2-digit", minute: "2-digit" }),
+      name: name,
+      items: purchasedItems.slice(),
+      totalAmount: total,
+      cashAmount: cashAmount,
+      cardAmount: cardAmount,
+      cardAmount2: cardAmount2,
+      cashReceived: cashAmount,
+      change: changeAmount,
+      transactionNumber: currentTransactionNumber.toString().padStart(6, "0"),
+      paymentMethod: paymentMethod,
+      cashReceivedDenominations: cashReceivedDenoms,
+      changeGivenDenominations: changeGivenDenoms,
+      settlementRecipient: settlementRecipient,
+      settlementToOtherOwner: settlementToOtherOwner,
+      settlementNote: settlementNote,
+      settlementGivenDenominations: settlementGivenDenominations, // will be filled in final if settlement
+      whoCollectedCard: whoCollectedCard
+    };
+
+    // Add to history
+    allTransactions.push(transaction);
+    currentTransactionNumber++;
+    saveTransactions();
+    saveTransactionNumber();
+
+    // === TILL UPDATE LOGIC (CRITICAL FIX) ===
+    // Net cash received = cash paid by customer MINUS change given MINUS settlement cash given out
+    var netCashToTill = cashAmount - changeAmount - settlementToOtherOwner;
+
+    if (netCashToTill !== 0) {
+      // We pass settlement amount separately so processCashTransaction knows what to subtract
+      processCashTransaction(cashReceivedDenoms, changeGivenDenoms, settlementToOtherOwner);
+    }
+
+    // Success message
+    alert(
+      (currentLanguage === "af" ? "Transaksie voltooi!" : "Transaction completed!") +
+      "\n" +
+      (currentLanguage === "af" ? "Transaksie #" : "Transaction #") +
+      transaction.transactionNumber +
+      "\n" +
+      (currentLanguage === "af" ? "Tyd: " : "Time: ") +
+      transaction.time +
+      "\n" +
+      (currentLanguage === "af" ? "Totaal: " : "Total: ") +
+      "R " +
+      total.toFixed(2) +
+      "\n" +
+      (currentLanguage === "af" ? "Betaling: " : "Payment: ") +
+      paymentMethod
+    );
+
+    // Clear form
+    document.getElementById("name").value = "";
+    purchasedItems = [];
+    document.getElementById("itemsList").innerHTML = "";
+    document.getElementById("cashAmount").value = "0.00";
+    document.getElementById("cardAmount").value = "0.00";
+    document.getElementById("cardAmount2").value = "0.00";
+    document.getElementById("modalTotal").textContent = "0.00";
+    document.getElementById("paidTogether").textContent = "0.00";
+
+    // Reset payment modal display elements
+    var changeDisplayEl = document.getElementById("changeDisplay");
+    var insufficientDisplayEl = document.getElementById("insufficientDisplay");
+    if (changeDisplayEl) changeDisplayEl.style.display = "none";
+    if (insufficientDisplayEl) insufficientDisplayEl.style.display = "none";
+
+    // Reset settlement block
+    var settlementBlock = document.getElementById("settlementBlock");
+    if (settlementBlock) settlementBlock.style.display = "none";
+    var settlementRadios = document.querySelectorAll('input[name="settlementRecipient"]');
+    settlementRadios.forEach(r => (r.checked = false));
+    var settlementAmount = document.getElementById("settlementAmount");
+    if (settlementAmount) settlementAmount.value = "0.00";
+
+    // Reset change display
+    var changeEl = document.getElementById("change");
+    if (changeEl) changeEl.textContent = "0.00";
+    var stillNeededEl = document.getElementById("stillNeeded");
+    if (stillNeededEl) stillNeededEl.textContent = "0.00";
+
+    // Reset denomination tracking after completion
+    Object.keys(cashReceivedDenominations).forEach(key => {
+      cashReceivedDenominations[key].count = 0;
+    });
+    Object.keys(changeGivenDenominations).forEach(key => {
+      changeGivenDenominations[key].count = 0;
+    });
+
+    // Close payment modal
+    closePaymentModal();
+
+    // Refresh displays
+    renderTransactionHistory();
+    renderFloatBreakdown();
+    updateReport();
+    resetProductSelectionUI();
+
+    setTimeout(() => {
+      startNewTransaction();
+    }, 300);
+  } catch (error) {
+    console.error("Error completing transaction:", error);
+    alert(translations[currentLanguage].error + ": " + error.message);
+  }
+}
+
+
+
+
+// Open settlement denomination modal
+function openSettlementDenominationModal(amount, recipient) {
+  // Reset settlement denominations
+  Object.keys(settlementGivenDenominations).forEach(key => {
+    settlementGivenDenominations[key].count = 0;
+  });
+
+  // Auto-fill with optimal denominations
+  var optimalDenoms = breakCashIntoDenominations(amount);
+  Object.keys(optimalDenoms).forEach(key => {
+    if (settlementGivenDenominations[key]) {
+      settlementGivenDenominations[key].count = optimalDenoms[key];
+    }
+  });
+
+  // Update display
+  document.getElementById('settlementAmountDisplay').textContent = amount.toFixed(2);
+  document.getElementById('settlementRecipientDisplay').textContent = recipient;
+
+  // Show modal
+  var modal = document.getElementById('settlementDenominationModal');
+  if (modal) {
+    modal.classList.add('active');
+    renderSettlementDenominationInputs();
+  }
+}
+
+// Render settlement denomination inputs
+function renderSettlementDenominationInputs() {
+  var container = document.getElementById('settlementDenominationInputs');
+  if (!container) return;
+
+  var html = '';
+  
+  // Notes Section
+  html += '<div style="margin-bottom: 10px; font-weight: bold; color: #374151;">Notes</div>';
+  var notes = ['R200', 'R100', 'R50', 'R20', 'R10'];
+  notes.forEach(denom => {
+    html += `<div class="denom-input-row">
+      <div class="denom-label">${denom}</div>
+      <input type="number" class="denom-input" id="settlement_${denom}" 
+             value="${settlementGivenDenominations[denom].count}" min="0" 
+             oninput="calculateSettlementGivenTotal()">
+      <div class="denom-subtotal" id="settlementsubtotal_${denom}">R0.00</div>
+    </div>`;
+  });
+
+  // Coins Section
+  html += '<div style="margin-top: 15px; margin-bottom: 10px; font-weight: bold; color: #374151;">Coins</div>';
+  var coins = ['R5', 'R2', 'R1', '50c', '20c', '10c'];
+  coins.forEach(denom => {
+    html += `<div class="denom-input-row">
+      <div class="denom-label">${denom}</div>
+      <input type="number" class="denom-input" id="settlement_${denom}" 
+             value="${settlementGivenDenominations[denom].count}" min="0" 
+             oninput="calculateSettlementGivenTotal()">
+      <div class="denom-subtotal" id="settlementsubtotal_${denom}">R0.00</div>
+    </div>`;
+  });
+
+  container.innerHTML = html;
+  calculateSettlementGivenTotal();
+}
+
+// Calculate total from settlement denominations
+function calculateSettlementGivenTotal() {
+  var total = 0;
+  var allDenoms = ['R200', 'R100', 'R50', 'R20', 'R10', 'R5', 'R2', 'R1', '50c', '20c', '10c'];
+  
+  allDenoms.forEach(denom => {
+    var input = document.getElementById('settlement_' + denom);
+    if (input) {
+      var count = parseInt(input.value || 0);
+      var value = settlementGivenDenominations[denom].value;
+      var subtotal = count * value;
+      total += subtotal;
+      
+      // Update denomination object
+      settlementGivenDenominations[denom].count = count;
+      
+      // Update subtotal display
+      var subEl = document.getElementById('settlementsubtotal_' + denom);
+      if (subEl) {
+        subEl.textContent = 'R' + subtotal.toFixed(2);
+      }
+    }
+  });
+
+  // Update total display
+  document.getElementById('settlementGivenTotalModal').textContent = 'R' + total.toFixed(2);
+
+  // Check variance
+  var expected = parseFloat(document.getElementById('settlementAmountDisplay').textContent);
+  var variance = total - expected;
+  var varMsg = document.getElementById('settlementVarianceMessage');
+  
+  if (Math.abs(variance) < 0.01) {
+    varMsg.innerHTML = '<span style="color:#16a34a;">✓ Correct amount</span>';
+  } else if (variance > 0) {
+    varMsg.innerHTML = `<span style="color:#ea580c;">Too much by R${variance.toFixed(2)}</span>`;
+  } else {
+    varMsg.innerHTML = `<span style="color:#dc2626;">Short by R${Math.abs(variance).toFixed(2)}</span>`;
+  }
+  
+  return total;
+}
+
+// Close settlement denomination modal
+function closeSettlementDenominationModal() {
+  var modal = document.getElementById('settlementDenominationModal');
+  if (modal) {
+    modal.classList.remove('active');
+  }
+  window.pendingSettlementTransaction = null;
+}
+
+// Save settlement denomination and complete transaction
+function saveSettlementDenomination() {
+  var expected = parseFloat(document.getElementById('settlementAmountDisplay').textContent);
+  var actual = calculateSettlementGivenTotal();
+  var variance = actual - expected;
+
+  // Check if amount matches
+  if (Math.abs(variance) > 0.01) {
+    if (!confirm(`Amount given (R${actual.toFixed(2)}) doesn't match expected (R${expected.toFixed(2)}). Difference: R${Math.abs(variance).toFixed(2)}. Continue anyway?`)) {
+      return;
+    }
+  }
+
+  // Close modal and complete transaction
+  closeSettlementDenominationModal();
+  
+  // Complete the transaction with settlement denominations
+  completeTransactionFinal(JSON.parse(JSON.stringify(settlementGivenDenominations)));
+}
+
+// Final completion of transaction (split from completeTransaction)
+function completeTransactionFinal(settlementDenoms) {
+  try {
+    // Get transaction data (from pending settlement or form inputs)
+    var txData;
+    if (window.pendingSettlementTransaction) {
+      txData = window.pendingSettlementTransaction;
+    } else {
+      var date = document.getElementById("date").value;
+      var name = document.getElementById("name").value.trim();
+      var cashAmount = parseFloat(document.getElementById("cashAmount").value || 0);
+      var cardAmount = parseFloat(document.getElementById("cardAmount").value || 0);
+      var cardAmount2 = parseFloat(document.getElementById("cardAmount2").value || 0);
+      var total = purchasedItems.reduce((sum, item) => sum + (item.total || 0), 0);
+      var paid = cashAmount + cardAmount + cardAmount2;
+
+      // Determine payment method
+      var paymentMethod;
+      if (cashAmount > 0 && (cardAmount > 0 || cardAmount2 > 0)) {
+        paymentMethod = currentLanguage === "af" ? "Gemeng" : "Mixed";
+      } else if (cashAmount > 0) {
+        paymentMethod = currentLanguage === "af" ? "KONTANT" : "CASH";
+      } else {
+        paymentMethod = cardAmount2 > 0 ? (currentLanguage === "af" ? "2xKD" : "2xCD") : (currentLanguage === "af" ? "KAART" : "CARD");
+      }
+
+      // Determine card owner (critical fix)
+      var cardOwner = name === "Both" && (cardAmount + cardAmount2) > 0 ? 
+        decideCardOwnerForBoth(name, cardAmount, cardAmount2) : name;
+
+
+      // Read settlement data from payment modal
+      var settlementRecipient = null;
+      var settlementToOtherOwner = 0;
+      var checkedRadio = document.querySelector('input[name="settlementRecipient"]:checked');
+      if (checkedRadio) {
+        settlementRecipient = checkedRadio.value;
+        var settlementAmountInput = document.getElementById("settlementAmount");
+        if (settlementAmountInput) {
+          settlementToOtherOwner = parseFloat(settlementAmountInput.value) || 0;
+        }
+      }
+      txData = {
         date: date,
-        time: time,
         name: name,
-        items: purchasedItems.slice(),
-        totalAmount: total,
+        total: total,
         cashAmount: cashAmount,
         cardAmount: cardAmount,
         cardAmount2: cardAmount2,
-        cashReceived: cashReceived,
-        cardReceived: cardReceived,
-        cardReceived2: cardReceived2,
-        change: changeAmount,
-        transactionNumber: currentTransactionNumber.toString().padStart(6, '0'),
+        changeAmount: paid - total,
         paymentMethod: paymentMethod,
-        cashReceivedDenominations: cashReceivedDenoms,
-        changeGivenDenominations: changeGivenDenoms
+        cardOwner: cardOwner,
+        settlementRecipient: settlementRecipient,
+        settlementToOtherOwner: settlementToOtherOwner,
+        cashReceivedDenoms: JSON.parse(JSON.stringify(cashReceivedDenominations)),
+        changeGivenDenoms: JSON.parse(JSON.stringify(changeGivenDenominations)),
+        totalCardReceived: cardAmount + cardAmount2
+      };
+    }
+
+    // Build settlement note if applicable
+    var settlementNote = null;
+    if (txData.settlementRecipient && txData.settlementToOtherOwner > 0) {
+      var payer = txData.settlementRecipient === "Kotie" ? "Francois" : "Kotie";
+      settlementNote = `Gave R${txData.settlementToOtherOwner.toFixed(2)} cash back to ${txData.settlementRecipient} (from ${payer}'s card payment)`;
+    }
+
+    // Create transaction object with all details
+    var transaction = {
+      date: txData.date,
+      time: new Date().toLocaleString("en-GB", { hour: "2-digit", minute: "2-digit" }),
+      name: txData.name,
+      items: purchasedItems.slice(),
+      totalAmount: txData.total,
+      cashAmount: txData.cashAmount,
+      cardAmount: txData.cardAmount,
+      cardAmount2: txData.cardAmount2,
+      cashReceived: txData.cashAmount,
+      change: txData.changeAmount,
+      transactionNumber: currentTransactionNumber.toString().padStart(6, "0"),
+      paymentMethod: txData.paymentMethod,
+      cashReceivedDenominations: txData.cashReceivedDenoms,
+      changeGivenDenominations: txData.changeGivenDenoms,
+      settlementRecipient: txData.settlementRecipient,
+      settlementToOtherOwner: txData.settlementToOtherOwner,
+      settlementNote: settlementNote,
+      settlementGivenDenominations: settlementDenoms,
+      whoCollectedCard: txData.cardOwner  // Fixed: uses cardOwner instead of name
     };
-    
- if (!tryValidateAndStoreTransaction(transaction)) {
-  return; // abort the rest if invalid
-}
-    
-    // Close modal first
-    document.getElementById('paymentModal').classList.remove('active');
-    
-    setTimeout(function() {
-        alert(translations[currentLanguage]['transactionComplete'] + '\n' + 
-              translations[currentLanguage]['transactionNo'] + ': ' + transaction.transactionNumber + '\n' + 
-              translations[currentLanguage]['change'] + ': R' + transaction.change.toFixed(2));
 
-        // Reset for next transaction
-        currentTransactionNumber++;
-        saveTransactionNumber();
-        updateTransactionNumberDisplay();
-        
-        purchasedItems = [];
-        
-        document.getElementById('name').value = '';
-        document.getElementById('date').value = new Date().toISOString().split('T')[0];
-        document.getElementById('time').value = new Date().toTimeString().slice(0, 5);
-        document.getElementById('cashAmount').value = '';
-        document.getElementById('cardAmount').value = '';
-        document.getElementById('cardAmount2').value = '';
-        document.getElementById('productCode').value = '';
-        document.getElementById('productInfo').style.display = 'none';
-        document.getElementById('salesSearch').value = '';
-        
-        currentProduct = null;
-        currentQuantity = 1;
-        salesSearchTerm = '';
-        salesCurrentPage = 1;
-        
-        // Reset denomination tracking
-        Object.keys(cashReceivedDenominations).forEach(key => {
-            cashReceivedDenominations[key].count = 0;
-        });
-        Object.keys(changeGivenDenominations).forEach(key => {
-            changeGivenDenominations[key].count = 0;
-        });
-        
-        updateItemsList();
-        updateStats();
-        updateProductList();
-        
-        document.getElementById('itemsContainer').style.display = 'none';
-        document.getElementById('paymentSection').style.display = 'none';
-        
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        
-        setTimeout(() => {
-            document.getElementById('productCode').focus();
-        }, 200);
-    }, 100);
+    // Add to transactions array
+    allTransactions.push(transaction);
+    currentTransactionNumber++;
+    saveTransactions();
+    saveTransactionNumber();
 
+    // Update cash till with settlement denominations
+    if (txData.cashAmount > 0) {
+      processCashTransaction(
+        txData.cashReceivedDenoms, 
+        txData.changeGivenDenoms, 
+        settlementDenoms
+      );
+    } else if (settlementDenoms) {
+      // Card-only with settlement: still need to remove cash from till
+      processCashTransaction(
+        DenominationManager.createEmpty(), 
+        DenominationManager.createEmpty(), 
+        settlementDenoms
+      );
+    }
+
+    // Success message
+    alert(
+      (currentLanguage === "af" ? "Transaksie voltooi!" : "Transaction completed!") +
+       "\n" +
+      (currentLanguage === "af" ? "Transaksie #" : "Transaction #") +
+      transaction.transactionNumber +
+       "\n" +
+      (currentLanguage === "af" ? "Tyd: " : "Time: ") +
+      transaction.time +
+       "\n" +
+      (currentLanguage === "af" ? "Totaal: " : "Total: ") +
+      "R " +
+      txData.total.toFixed(2) +
+      "\n" +
+      (currentLanguage === "af" ? "Betaling: " : "Payment: ") +
+      txData.paymentMethod
+    );
+
+    // Reset all UI elements
+   window.pendingSettlementTransaction = null;
+    document.getElementById("name").value = "";
+    purchasedItems = [];
+    document.getElementById("itemsList").innerHTML = "";
+    document.getElementById("cashAmount").value = "0.00";
+    document.getElementById("cardAmount").value = "0.00";
+    document.getElementById("cardAmount2").value = "0.00";
+    document.getElementById("modalTotal").textContent = "0.00";
+    document.getElementById("paidTogether").textContent = "0.00";
+
+    // Reset payment modal displays
+    var changeDisplayEl = document.getElementById("changeDisplay");
+    var insufficientDisplayEl = document.getElementById("insufficientDisplay");
+    if (changeDisplayEl) changeDisplayEl.style.display = "none";
+    if (insufficientDisplayEl) insufficientDisplayEl.style.display = "none";
+
+    // Reset settlement block
+    var settlementBlock = document.getElementById("settlementBlock");
+    if (settlementBlock) settlementBlock.style.display = "none";
+    var settlementRadios = document.querySelectorAll('input[name="settlementRecipient"]');
+    settlementRadios.forEach(r => (r.checked = false));
+    var settlementAmount = document.getElementById("settlementAmount");
+    if (settlementAmount) settlementAmount.value = "0.00";
+
+    // Reset change display
+    var changeEl = document.getElementById("change");
+    if (changeEl) changeEl.textContent = "0.00";
+    var stillNeededEl = document.getElementById("stillNeeded");
+    if (stillNeededEl) stillNeededEl.textContent = "0.00";
+
+    // Reset denomination tracking
+    Object.keys(cashReceivedDenominations).forEach(key => {
+      cashReceivedDenominations[key].count = 0;
+    });
+    Object.keys(changeGivenDenominations).forEach(key => {
+      changeGivenDenominations[key].count = 0;
+    });
+    Object.keys(settlementGivenDenominations).forEach(key => {
+      settlementGivenDenominations[key].count = 0;
+    });
+
+    // Close payment modal
+    closePaymentModal();
+
+    // Update displays
+    renderTransactionHistory();
+    renderFloatBreakdown();
+    updateReport();
+    resetProductSelectionUI();
+
+    // Start new transaction after a short delay
+    setTimeout(() => {
+      startNewTransaction();
+    }, 300);
+
+  } catch (error) {
+    console.error("Error in completeTransactionFinal:", error);
+    alert(translations[currentLanguage].error + ": " + error.message);
+  }
 }
+
+
+
+
+
+
+
+
+
+function renderTransactionHistory() {
+  try {
+    var container = document.getElementById('transactionHistory');
+    if (!container) return;
+
+    if (allTransactions.length === 0) {
+      container.innerHTML = '<p style="text-align:center;color:#9ca3af;padding:20px;">' + 
+        (currentLanguage === 'af' ? 'Geen transaksies nog' : 'No transactions yet') + '</p>';
+      return;
+    }
+
+    var html = '<table style="width:100%;border-collapse:collapse;">';
+    html += '<thead style="background:#3b82f6;color:white;">';
+    html += '<tr>';
+    html += '<th style="padding:10px;text-align:left;border:1px solid #ddd;">' + (currentLanguage === 'af' ? 'Datum' : 'Date') + '</th>';
+    html += '<th style="padding:10px;text-align:left;border:1px solid #ddd;">' + (currentLanguage === 'af' ? 'Tyd' : 'Time') + '</th>';
+    html += '<th style="padding:10px;text-align:left;border:1px solid #ddd;">' + (currentLanguage === 'af' ? 'Persoon' : 'Person') + '</th>';
+    html += '<th style="padding:10px;text-align:right;border:1px solid #ddd;">' + (currentLanguage === 'af' ? 'Totaal' : 'Total') + '</th>';
+    html += '<th style="padding:10px;text-align:left;border:1px solid #ddd;">' + (currentLanguage === 'af' ? 'Betaling' : 'Payment') + '</th>';
+    html += '<th style="padding:10px;text-align:center;border:1px solid #ddd;">' + (currentLanguage === 'af' ? 'Aksies' : 'Actions') + '</th>';
+    html += '</tr>';
+    html += '</thead>';
+    html += '<tbody>';
+
+    // Show transactions in reverse order (newest first)
+    for (var i = allTransactions.length - 1; i >= 0; i--) {
+      var t = allTransactions[i];
+      var rowColor = i % 2 === 0 ? '#f9fafb' : '#ffffff';
+      
+      html += '<tr style="background:' + rowColor + ';">';
+      html += '<td style="padding:10px;border:1px solid #ddd;">' + t.date + '</td>';
+      html += '<td style="padding:10px;border:1px solid #ddd;">' + (t.time || '-') + '</td>';
+      html += '<td style="padding:10px;border:1px solid #ddd;">' + t.name + '</td>';
+      html += '<td style="padding:10px;border:1px solid #ddd;text-align:right;font-weight:bold;">R' + (t.totalAmount || 0).toFixed(2) + '</td>';
+      html += '<td style="padding:10px;border:1px solid #ddd;">' + (t.paymentMethod || '-') + '</td>';
+      html += '<td style="padding:10px;border:1px solid #ddd;text-align:center;">';
+      html += '<button class="button btn-sm" style="padding:5px 10px;font-size:12px;" onclick="viewTransactionDetails(' + i + ')">' + 
+        (currentLanguage === 'af' ? 'Besonderhede' : 'Details') + '</button>';
+      html += '</td>';
+      html += '</tr>';
+    }
+
+    html += '</tbody>';
+    html += '</table>';
+
+    container.innerHTML = html;
+  } catch (error) {
+    console.error('Error rendering transaction history:', error);
+  }
+}
+
+function viewTransactionDetails(index) {
+  var t = allTransactions[index];
+  if (!t) return;
+
+  var itemsHtml = '';
+  (t.items || []).forEach(item => {
+    itemsHtml += '<li style="margin-bottom:8px;">' + 
+      (item.product || '-') + ' x' + (item.quantity || 1) + 
+      ' = R' + (item.total || 0).toFixed(2) + 
+      ' (' + (item.owner || t.name) + ')</li>';
+  });
+
+  var detailsHtml = '<div style="background:#f3f4f6;padding:20px;border-radius:8px;">';
+  detailsHtml += '<h3 style="margin-top:0;">' + (currentLanguage === 'af' ? 'Transaksie Besonderhede' : 'Transaction Details') + '</h3>';
+  detailsHtml += '<p><strong>' + (currentLanguage === 'af' ? 'Transaksie #: ' : 'Transaction #: ') + '</strong>' + t.transactionNumber + '</p>';
+  detailsHtml += '<p><strong>' + (currentLanguage === 'af' ? 'Datum: ' : 'Date: ') + '</strong>' + t.date + '</p>';
+  detailsHtml += '<p><strong>' + (currentLanguage === 'af' ? 'Tyd: ' : 'Time: ') + '</strong>' + (t.time || '-') + '</p>';
+  detailsHtml += '<p><strong>' + (currentLanguage === 'af' ? 'Persoon: ' : 'Person: ') + '</strong>' + t.name + '</p>';
+  detailsHtml += '<p><strong>' + (currentLanguage === 'af' ? 'Items: ' : 'Items: ') + '</strong><ul style="margin:5px 0;">' + itemsHtml + '</ul></p>';
+  detailsHtml += '<p><strong>' + (currentLanguage === 'af' ? 'Totaal: ' : 'Total: ') + '</strong>R' + (t.totalAmount || 0).toFixed(2) + '</p>';
+  detailsHtml += '<p><strong>' + (currentLanguage === 'af' ? 'Kontant: ' : 'Cash: ') + '</strong>R' + (t.cashAmount || 0).toFixed(2) + '</p>';
+  detailsHtml += '<p><strong>' + (currentLanguage === 'af' ? 'Kaart: ' : 'Card: ') + '</strong>R' + ((t.cardAmount || 0) + (t.cardAmount2 || 0)).toFixed(2) + '</p>';
+  detailsHtml += '<p><strong>' + (currentLanguage === 'af' ? 'Betaling: ' : 'Payment: ') + '</strong>' + (t.paymentMethod || '-') + '</p>';
+  
+  if (t.settlementNote) {
+    detailsHtml += '<p><strong style="color:#ea580c;">' + t.settlementNote + '</strong></p>';
+  }
+  
+  detailsHtml += '</div>';
+
+  alert(detailsHtml);
+}
+
 
 function refreshAllUIAfterDataChange() {
   filteredProducts = [...allProducts];
@@ -6650,6 +7552,54 @@ function calculateNetCashToTill(cashReceivedDenoms, changeGivenDenoms) {
         function saveCategories() {
           localStorage.setItem('salesSystemCategories', JSON.stringify(allCategories));
         }
+
+
+function resetSalesTab() {
+  // Complete reset of Sales tab to pristine state
+  
+  // Clear arrays
+  purchasedItems = [];
+  
+  // Reset form fields
+  document.getElementById('name').value = '';
+  document.getElementById('date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('time').value = new Date().toTimeString().slice(0, 5);
+  document.getElementById('productCode').value = '';
+  document.getElementById('salesSearch').value = '';
+  document.getElementById('sellQuantity').value = '1';
+  
+  // Hide displays
+  var productInfoEl = document.getElementById('productInfo');
+  if (productInfoEl) productInfoEl.style.display = 'none';
+  
+  var itemsContainerEl = document.getElementById('itemsContainer');
+  if (itemsContainerEl) itemsContainerEl.style.display = 'none';
+  
+  var paymentSectionEl = document.getElementById('paymentSection');
+  if (paymentSectionEl) paymentSectionEl.style.display = 'none';
+  
+  // Clear lists
+  var itemsListEl = document.getElementById('itemsList');
+  if (itemsListEl) itemsListEl.innerHTML = '';
+  
+  // Reset totals
+  var totalDisplayEl = document.getElementById('totalDisplay');
+  if (totalDisplayEl) totalDisplayEl.textContent = '0.00';
+  
+  // Reset variables
+  currentProduct = null;
+  currentQuantity = 1;
+  salesSearchTerm = '';
+  salesCurrentPage = 1;
+  
+  // Update displays
+  updateProductList();
+  updateSalesPagination(0);
+  
+  console.log('Sales tab completely reset');
+}
+
+
 
 function updateCategorySelects() {
     var sel = document.getElementById('filterCategory');
@@ -7283,19 +8233,15 @@ function generatePDF(specificDate = null) {
   try {
     if (typeof window.jspdf === 'undefined') return alert(translations[currentLanguage]['pdfLibraryError']);
     const { jsPDF } = window.jspdf;
-    
-    // Allow passing a date, or default to input
+
     var day = specificDate || document.getElementById('daySelect').value;
-    
+
     var dayTransactions = allTransactions.filter(t => t.date === day);
     if (dayTransactions.length === 0) return alert(translations[currentLanguage]['noTransactionsDay']);
 
     const doc = new jsPDF();
-    
-    // Use current language for PDF content
     const isAfrikaans = currentLanguage === 'af';
-    
-    // Translations for PDF content
+
     const pdfTranslations = {
       en: {
         dailyReport: 'DAILY REPORT',
@@ -7350,9 +8296,9 @@ function generatePDF(specificDate = null) {
         of: 'van'
       }
     };
-    
+
     const t = pdfTranslations[currentLanguage];
-    
+
     doc.setFontSize(20);
     doc.setTextColor(40, 40, 40);
     doc.text(t.dailyReport, 105, 20, { align: 'center' });
@@ -7367,34 +8313,73 @@ function generatePDF(specificDate = null) {
     yPosition += 10;
 
     const tableData = [[t.transactionNumber, t.person, t.item, t.quantity, t.price, t.total, t.payment]];
-    
+
+    // Helper to compute owner item totals
+    function ownerItemTotals(tr) {
+      var totals = { Kotie: 0, Francois: 0 };
+      (tr.items || []).forEach(i => {
+        if (i.owner === 'Kotie') totals.Kotie += (i.total || 0);
+        else if (i.owner === 'Francois') totals.Francois += (i.total || 0);
+      });
+      return totals;
+    }
+
+    // Decide PDF summary split behavior similar to updateReport
+
+
+    // Build item table
     dayTransactions.forEach(tran => {
-      var trNumber = tran.transactionNumber.toString().slice(-3);
+      var trNumber = (tran.transactionNumber || '').toString().slice(-3);
       var paymentMethod = '';
-      if (tran.cashAmount > 0 && (tran.cardAmount > 0 || tran.cardAmount2 > 0)) {
+      if (tran.cashAmount > 0 && ((tran.cardAmount || 0) > 0 || (tran.cardAmount2 || 0) > 0)) {
         paymentMethod = isAfrikaans ? 'Gemeng' : 'Mixed';
       } else if (tran.cashAmount > 0) {
         paymentMethod = isAfrikaans ? 'KONTANT' : 'CASH';
-      } else if (tran.cardAmount > 0 || tran.cardAmount2 > 0) {
+      } else if ((tran.cardAmount || 0) > 0 || (tran.cardAmount2 || 0) > 0) {
         paymentMethod = (tran.cardAmount2 > 0) ? (isAfrikaans ? '2xKD' : '2xCD') : (isAfrikaans ? 'KAART' : 'CARD');
       }
 
+      var transactionTotal = 0;
       tran.items.forEach(item => {
         var itemOwner = item.owner || tran.name;
         var personAbbr = itemOwner === 'Kotie' ? 'KO' : (itemOwner === 'Francois' ? 'FR' : 'BT');
         tableData.push([
-          trNumber, 
-          personAbbr, 
+          trNumber,
+          personAbbr,
           item.product,
-          item.quantity.toString(), 
-          'R' + item.price.toFixed(2), 
-          'R' + item.total.toFixed(2), 
+          item.quantity.toString(),
+          'R' + (item.price || 0).toFixed(2),
+          'R' + (item.total || 0).toFixed(2),
           paymentMethod
         ]);
+        transactionTotal += (item.total || 0);
       });
+
+      // Settlement note line
+      if (tran.settlementToOtherOwner > 0 && tran.settlementRecipient) {
+        // Compute recipient item list for note
+        var recipientItems = [];
+        (tran.items || []).forEach(itm => {
+          if (itm.owner === tran.settlementRecipient) {
+            recipientItems.push(itm.product);
+          }
+        });
+        if (recipientItems.length === 0) {
+          (tran.items || []).forEach(itm => recipientItems.push(itm.product));
+        }
+        var itemStr = recipientItems.join(', ');
+        tableData.push([
+          trNumber,
+          '',
+          `Settlement: -R${tran.settlementToOtherOwner.toFixed(2)} ${itemStr} to ${tran.settlementRecipient}`,
+          '',
+          '',
+          '',
+          ''
+        ]);
+      }
     });
 
-    // Optimize column widths for portrait
     doc.autoTable({
       startY: yPosition,
       head: [tableData[0]],
@@ -7431,14 +8416,14 @@ function generatePDF(specificDate = null) {
             data.cell.styles.fillColor = [232, 245, 233];
           }
         }
-        if (data.column.index === 2 && data.cell.raw.length > 30) {
+        if (data.column.index === 2 && data.cell.raw && data.cell.raw.length > 30) {
           data.cell.styles.fontSize = 6;
         }
       },
       willDrawCell: function (data) {
         if (data.column.index === 2 && data.cell.raw) {
           var text = data.cell.raw;
-          if (text.length > 40) {
+          if (typeof text === 'string' && text.length > 40) {
             var lines = doc.splitTextToSize(text, 85);
             data.cell.text = lines;
             data.row.height = 4 * lines.length;
@@ -7447,48 +8432,85 @@ function generatePDF(specificDate = null) {
       }
     });
 
+    // SUMMARY
     yPosition = doc.lastAutoTable.finalY + 15;
     doc.setFontSize(14);
     doc.setTextColor(59, 130, 246);
     doc.text(t.summary, 105, yPosition, { align: 'center' });
     yPosition += 8;
 
-    // Calculate Summary
+    // PDF summary accumulators
     var kc = 0, kca = 0, kcd = 0, kt = 0;
     var fc = 0, fca = 0, fcd = 0, ft = 0;
-    
-    dayTransactions.forEach(tran => {
-      if (tran.name === 'Both') {
-        var ki = 0, fi = 0;
-        tran.items.forEach(i => {
-          if (i.owner === 'Kotie') ki += i.total;
-          else fi += i.total;
-        });
-        var kp = tran.totalAmount > 0 ? ki / tran.totalAmount : 0;
-        var fp = tran.totalAmount > 0 ? fi / tran.totalAmount : 0;
-        kca += tran.cashAmount * kp;
-        kcd += (tran.cardAmount + (tran.cardAmount2 || 0)) * kp;
-        kt += ki;
-        fca += tran.cashAmount * fp;
-        fcd += (tran.cardAmount + (tran.cardAmount2 || 0)) * fp;
-        ft += fi;
-        if (ki > 0) kc++;
-        if (fi > 0) fc++;
-      } else {
-        var amt = tran.totalAmount;
-        var ca = tran.cashAmount;
-        var cd = tran.cardAmount + (tran.cardAmount2 || 0);
-        if (tran.name === 'Kotie') {
-          kca += ca;
-          kcd += cd;
-          kt += amt;
-          kc++;
+
+    dayTransactions.forEach(tr => {
+      var tTotal = tr.totalAmount || 0;
+      var ca = (tr.cashAmount || 0);
+      var cd = ((tr.cardAmount || 0) + (tr.cardAmount2 || 0));
+
+      // NET cash
+      var change = (tr.change || 0);
+      var netCash = ca - change;
+
+      if (tr.name === 'Both') {
+        var it = ownerItemTotals(tr);
+        var ki = it.Kotie;
+        var fi = it.Francois;
+
+        var hasSettlement = (tr.settlementToOtherOwner && tr.settlementToOtherOwner > 0 && tr.settlementRecipient);
+        if (hasSettlement) {
+          // Full totals go to the card owner; recipient gets nothing
+          const cardOwner = decideCardOwnerForBoth(tr);
+          const fullCash = netCash;
+          const fullCard = cd;
+          const fullTotal = tTotal;
+
+          if (cardOwner === 'Kotie') {
+            if (fullTotal > 0) {
+              kc++;
+              kca += fullCash;
+              kcd += fullCard;
+              kt += fullTotal;
+            }
+          } else if (cardOwner === 'Francois') {
+            if (fullTotal > 0) {
+              fc++;
+              fca += fullCash;
+              fcd += fullCard;
+              ft += fullTotal;
+            }
+          }
         } else {
-          fca += ca;
-          fcd += cd;
-          ft += amt;
-          fc++;
+          // No settlement: proportional split by items
+          var kp = tTotal > 0 ? (ki / tTotal) : 0;
+          var fp = tTotal > 0 ? (fi / tTotal) : 0;
+
+          var kCash = netCash * kp, kCard = cd * kp;
+          var fCash = netCash * fp, fCard = cd * fp;
+
+          if (ki > 0) {
+            kc++;
+            kca += kCash;
+            kcd += kCard;
+            kt += ki;
+          }
+          if (fi > 0) {
+            fc++;
+            fca += fCash;
+            fcd += fCard;
+            ft += fi;
+          }
         }
+      } else if (tr.name === 'Kotie') {
+        kc++;
+        kca += netCash;
+        kcd += cd;
+        kt += tTotal;
+      } else if (tr.name === 'Francois') {
+        fc++;
+        fca += netCash;
+        fcd += cd;
+        ft += tTotal;
       }
     });
 
@@ -7499,7 +8521,6 @@ function generatePDF(specificDate = null) {
       [t.dayTotal, dayTransactions.length.toString(), 'R' + (kca + fca).toFixed(2), 'R' + (kcd + fcd).toFixed(2), 'R' + (kt + ft).toFixed(2)]
     ];
 
-    // Main table (Kotie and Francois rows)
     doc.autoTable({
       startY: yPosition,
       head: [summaryData[0]],
@@ -7527,17 +8548,15 @@ function generatePDF(specificDate = null) {
         4: { cellWidth: 30, halign: 'right' }
       },
       didParseCell: function (data) {
-        if (data.row.index === 1) {
+        if (data.row.index === 0) {
           data.cell.styles.fillColor = [225, 245, 254];
-        } else if (data.row.index === 2) {
+        } else if (data.row.index === 1) {
           data.cell.styles.fillColor = [232, 245, 233];
         }
       }
     });
 
     yPosition = doc.lastAutoTable.finalY;
-
-    // TOTAL row
     doc.autoTable({
       startY: yPosition,
       head: [],
@@ -7568,21 +8587,33 @@ function generatePDF(specificDate = null) {
       }
     });
 
-    // Cash Reconciliation Section
+    // CASH RECONCILIATION
     yPosition = doc.lastAutoTable.finalY + 15;
     doc.setFontSize(14);
     doc.setTextColor(22, 163, 74);
     doc.text(t.cashReconciliation, 105, yPosition, { align: 'center' });
     yPosition += 8;
 
-    var totalCash = kca + fca;
-    var totalInTill = totalCash + floatAmount;
-    var cashToBank = totalCash;
+    // NET cash (cash - change)
+    let pdfNetCash = 0;
+    let pdfSettlementWithdrawals = 0;
+    dayTransactions.forEach(tt => {
+      const ca = tt.cashAmount || 0;
+      const ch = tt.change || 0;
+      pdfNetCash += (ca - ch);
+      if (tt.settlementToOtherOwner && tt.settlementToOtherOwner > 0) {
+        pdfSettlementWithdrawals += tt.settlementToOtherOwner;
+      }
+    });
+
+    var totalCashSummary = pdfNetCash; // This is net cash in the till from sales
+    var expectedInTill = floatAmount + totalCashSummary - pdfSettlementWithdrawals; // subtract settlement withdrawals
+    var cashToBank = expectedInTill - floatAmount; // amount above float
 
     const cashData = [
-      [t.cashSales, 'R ' + totalCash.toFixed(2)],
+      [t.cashSales, 'R ' + totalCashSummary.toFixed(2)],
       [t.startingFloat, 'R ' + floatAmount.toFixed(2)],
-      [t.totalInTill, 'R ' + totalInTill.toFixed(2)],
+      [t.totalInTill, 'R ' + expectedInTill.toFixed(2)],
       [t.floatToKeep, 'R ' + floatAmount.toFixed(2)],
       [t.cashToBank, 'R ' + cashToBank.toFixed(2)]
     ];
@@ -7613,7 +8644,6 @@ function generatePDF(specificDate = null) {
       }
     });
 
-    // Float to Keep row
     yPosition = doc.lastAutoTable.finalY;
     doc.autoTable({
       startY: yPosition,
@@ -7634,7 +8664,6 @@ function generatePDF(specificDate = null) {
       }
     });
 
-    // CASH TO BANK row
     yPosition = doc.lastAutoTable.finalY;
     doc.autoTable({
       startY: yPosition,
@@ -7659,7 +8688,7 @@ function generatePDF(specificDate = null) {
       }
     });
 
-    // Add page numbers
+    // Page numbers
     const pageCount = doc.internal.getNumberOfPages();
     if (pageCount > 1) {
       for (let i = 1; i <= pageCount; i++) {
@@ -7672,14 +8701,15 @@ function generatePDF(specificDate = null) {
 
     const filename = isAfrikaans ? 'verslag_' + day + '.pdf' : 'report_' + day + '.pdf';
     doc.save(filename);
-    
+
     if (!specificDate) alert(translations[currentLanguage]['pdfGenerated']);
-    
+
   } catch (error) {
     console.error('PDF generation error:', error);
     alert(translations[currentLanguage]['pdfError'] + error.message);
   }
 }
+
 
 // Clear all data function
 function clearData() {
@@ -7700,14 +8730,17 @@ function clearData() {
       'salesSystemLastActiveDate',
       'salesSystemLastPromptedDate',
       'language',
-      'salesSystemLanguage'
+      'salesSystemLanguage',
+
+      // EXTRA store introduced by quick save
+      'allTransactions'
     ];
     keys.forEach(k => localStorage.removeItem(k));
   } catch (e) {
     console.warn('LocalStorage clear failed:', e);
   }
 
-  // Reset runtime memory
+  // Reset runtime memory (in-RAM)
   allTransactions = [];
   purchasedItems = [];
   dailyReconciliations = [];
@@ -7716,10 +8749,10 @@ function clearData() {
   productQuantities = {};
   currentTransactionNumber = 1;
 
-  // Reset till state to an empty template derived from floatDenominations
+  // Reset till to float template
   initializeTillFromFloat();
 
-  // Force persistence of the clean slate
+  // Force persistence of the clean slate in primary keys (optional but consistent)
   try {
     localStorage.setItem('salesSystemData', JSON.stringify(allTransactions));
     localStorage.setItem('salesSystemProducts', JSON.stringify(allProducts));
@@ -7733,7 +8766,7 @@ function clearData() {
     console.error('Error persisting cleared state:', e);
   }
 
-  // Update UI
+  // Update UI immediately
   updateTransactionNumberDisplay();
   updateStats();
   updateReport();
@@ -7743,13 +8776,39 @@ function clearData() {
   renderProductsTable();
   updateProductList();
 
+  // Unregister service worker and delete caches to prevent stale rehydration
+  const swCleanup = (async () => {
+    try {
+      if ('serviceWorker' in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map(r => r.unregister()));
+      }
+    } catch (e) {
+      console.warn('SW unregister failed:', e);
+    }
+    try {
+      if (window.caches && caches.keys) {
+        const names = await caches.keys();
+        await Promise.all(names.map(n => caches.delete(n)));
+      }
+    } catch (e) {
+      console.warn('Cache deletion failed:', e);
+    }
+  });
+
+  // Notify user now
   alert(translations[currentLanguage]['dataCleared']);
 
-  // Important: hard refresh of the app shell state in memory, so nothing stale lingers
-  setTimeout(() => {
-    window.location.reload();
-  }, 250);
+  // After cleanup, hard reload to guarantee a fresh app shell
+  swCleanup().finally(() => {
+    setTimeout(() => {
+      // Also ensure query params don’t revive any state
+      const cleanURL = window.location.origin + window.location.pathname;
+      window.location.replace(cleanURL);
+    }, 250);
+  });
 }
+
 
 
 
@@ -7808,6 +8867,45 @@ function openModalAfterDrawer(modalId) {
     document.getElementById(modalId)?.classList.add('active');
   }, 150);
 }
+
+function saveTransactions() {
+  try {
+    localStorage.setItem('allTransactions', JSON.stringify(allTransactions));
+  } catch (error) {
+    console.error('Error saving transactions:', error);
+  }
+}
+
+function loadTransactions() {
+  try {
+    var saved = localStorage.getItem('allTransactions');
+    if (saved) {
+      allTransactions = JSON.parse(saved);
+      // Find the highest transaction number and set currentTransactionNumber
+      if (allTransactions.length > 0) {
+        var maxNum = 0;
+        allTransactions.forEach(t => {
+          var num = parseInt(t.transactionNumber) || 0;
+          if (num > maxNum) maxNum = num;
+        });
+        currentTransactionNumber = maxNum + 1;
+      }
+    }
+  } catch (error) {
+    console.error('Error loading transactions:', error);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
 
 // File upload handlers
 async function handleProductsOnlyUpload(e) {
