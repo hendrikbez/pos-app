@@ -7250,6 +7250,7 @@ function completeTransaction() {
       time: new Date().toLocaleString("en-GB", { hour: "2-digit", minute: "2-digit" }),
       name: name,
       items: purchasedItems.slice(),
+	  transactionNote: document.getElementById('transactionNote').value || '',
       totalAmount: total,
       cashAmount: cashAmount,
       cardAmount: cardAmount,
@@ -8593,7 +8594,7 @@ function generatePDF(specificDate = null) {
     // Decide PDF summary split behavior similar to updateReport
 
 
-    // Build item table
+     // Build item table
     dayTransactions.forEach(tran => {
       var trNumber = (tran.transactionNumber || '').toString().slice(-3);
       var paymentMethod = '';
@@ -8605,7 +8606,6 @@ function generatePDF(specificDate = null) {
         paymentMethod = (tran.cardAmount2 > 0) ? (isAfrikaans ? '2xKD' : '2xCD') : (isAfrikaans ? 'KAART' : 'CARD');
       }
 
-      var transactionTotal = 0;
       tran.items.forEach(item => {
         var itemOwner = item.owner || tran.name;
         var personAbbr = itemOwner === 'Kotie' ? 'KO' : (itemOwner === 'Francois' ? 'FR' : 'BT');
@@ -8618,11 +8618,22 @@ function generatePDF(specificDate = null) {
           'R' + (item.total || 0).toFixed(2),
           paymentMethod
         ]);
-        transactionTotal += (item.total || 0);
       });
 
-      // Settlement note line REMOVED - use note field instead
+      // Add transaction note if present
+      if (tran.transactionNote && tran.transactionNote.trim()) {
+        tableData.push([
+          trNumber,
+          '',
+          'Note: ' + tran.transactionNote,
+          '',
+          '',
+          '',
+          ''
+        ]);
+      }
     });
+
 
     doc.autoTable({
       startY: yPosition,
@@ -8630,7 +8641,7 @@ function generatePDF(specificDate = null) {
       body: tableData.slice(1),
       theme: 'grid',
       headStyles: {
-        fillColor: [59, 130, 246],
+        fillColor: [157, 192, 250],
         textColor: [20, 20, 20],
         fontStyle: 'bold'
       },
@@ -8771,7 +8782,7 @@ function generatePDF(specificDate = null) {
       body: summaryData.slice(1, 3),
       theme: 'grid',
       headStyles: {
-        fillColor: [59, 130, 246],
+        illColor: [157, 192, 250],
         textColor: [20, 20, 20],
         fontStyle: 'bold',
         fontSize: 8,
@@ -8814,12 +8825,12 @@ function generatePDF(specificDate = null) {
         lineWidth: 0.1
       },
       headStyles: {
-        fillColor: [30, 64, 175],
+        fillColor: [217, 211, 234],
         textColor: [20, 20, 20],
         fontStyle: 'bold'
       },
       bodyStyles: {
-        fillColor: [30, 64, 175],
+        fillColor: [217, 211, 234],
         textColor: [20, 20, 20]
       },
       columnStyles: {
