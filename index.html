@@ -1628,8 +1628,10 @@ input, textarea {
   color: #94a3b8; /* inactive */
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 8px 0;
 }
 
 .nav-item.active {
@@ -1932,10 +1934,7 @@ input, textarea {
             <button class="button btn-green full-width" onclick="openPaymentModal()" data-translate="choosePaymentMethod">Choose Payment Method</button>
           </div>
         </div>
-		
-		
-	
-	
+
         <div id="products" class="tab-content">
           <div class="section-title" data-translate="productManagement">Product Management</div>
           <div class="categories-section">
@@ -2012,27 +2011,7 @@ input, textarea {
               <button class="page-btn" onclick="changePage(1)" id="nextPageBtn" data-translate="next">Next</button>
             </div>
           </div>
-		  
-		  
-<div class="download-section">
-  <div class="section-title" style="font-size: 16px; color: #16A34A;" data-translate="dataManagement">Data Management</div>
-  <div class="download-buttons">
-    <button class="button btn-green" onclick="downloadCompleteBackup()" data-translate="downloadCompleteBackup">Download Complete Information</button>
-    <button class="button btn-green" onclick="importCompleteBackup()" data-translate="restoreCompleteBackup">Restore Complete Information</button>
-  </div>
-  <div class="download-buttons" style="margin-top: 10px;">
-    <button class="button btn-orange" onclick="downloadProductsAsText()" data-translate="downloadProductsOnly">Download Products + Float</button>
-    <button class="button btn-orange" onclick="importProductsOnly()" data-translate="importProductsOnly">Restore Products + Float</button>
-  </div>
-  <div class="download-buttons" style="margin-top: 10px;">
-    <button class="button btn-purple" onclick="downloadSalesData()" data-translate="downloadSalesOnly">Download Sales Only</button>
-    <button class="button btn-purple" onclick="importSalesOnly()" data-translate="importSalesOnly">Import Sales Only</button>
-  </div>
-  <input type="file" id="completeBackupInput" style="display: none;" accept=".json" onchange="handleCompleteBackupUpload(event)">
-  <input type="file" id="productsOnlyInput" style="display: none;" accept=".json" onchange="handleProductsOnlyUpload(event)">
-  <input type="file" id="salesOnlyInput" style="display: none;" accept=".json" onchange="handleSalesOnlyUpload(event)">
-</div>
-		  
+	  
       </div>
         <div id="report" class="tab-content">
           <div class="section-title" data-translate="dailyReport">Daily Report</div>
@@ -2158,11 +2137,7 @@ input, textarea {
           </div>
           <button class="button btn-blue full-width" onclick="generatePDF()" style="margin-top: 20px;" data-translate="generatePDFReport">Generate PDF Report</button>
           
-          <div class="danger-zone">
-              <div class="danger-title" data-translate="dangerZone">Danger Zone</div>
-              <button class="button btn-orange full-width" onclick="clearData()" style="margin-top: 12px;" data-translate="clearAllData">Clear ALL Data</button>
-          </div>
-        </div>
+                 </div>
         
         <!-- NEW FLOAT MANAGEMENT TAB -->
         <div id="float" class="tab-content">
@@ -2475,7 +2450,6 @@ input, textarea {
         </div>
       </div>
 	  
-	  
 <!-- SETTLEMENT CASH DENOMINATION MODAL -->
 <div id="settlementDenominationModal" class="modal">
   <div class="modal-content">
@@ -2505,7 +2479,6 @@ input, textarea {
     </div>
   </div>
 </div>		  
-	  
 	  
 <div id="updateBanner" style="
   position: fixed;
@@ -2602,26 +2575,30 @@ const { jsPDF } = window.jspdf;
 
 const translations = {
   en: {
+    // Navigation & Tabs
+    // Navigation / Tabs
     sales: "Sales",
     products: "Products",
     report: "Report",
     float: "Float",
     more: "More",
 
+    // Header / Transaction
     transaction: "Transaction",
-    newTransaction: "New Transaction",
     transactionNo: "Transaction Number",
-
+    newTransaction: "New Transaction",
     name: "Name",
     selectName: "Select Name",
-    both: "Both",
     customerName: "Customer Name",
+    both: "Both",
 
+    // Date / Time
     date: "Date",
     time: "Time",
     today: "Today",
     now: "Now",
 
+    // Quantity management
     quantityManagement: "Quantity Management",
     noQuantity: "No Quantity",
     withQuantity: "With Quantity",
@@ -2630,6 +2607,10 @@ const translations = {
     availableStock: "Available Stock",
     outOfStock: "Out of Stock",
 
+    // Product & scanning
+    productSelection: "Product Selection",
+    manualAddition: "Manual Addition",
+    manualInput: "Manual Input",
     product: "Product",
     productName: "Product name",
     productNameLabel: "Product Name:",
@@ -2637,139 +2618,266 @@ const translations = {
     productCodeOptional: "Product code (optional)",
     enterProductCode: "Enter product code",
     findProduct: "Find Product",
-
     price: "Price",
     priceR: "Price (R):",
     owner: "Owner",
     category: "Category",
-
     addProduct: "Add Product",
-    productSelection: "Product Selection",
-    manualAddition: "Manual Addition",
-    manualInput: "Manual Input",
-
+    items: "Selected Products",
     quantity: "Quantity",
     add: "Add",
-    items: "Selected Products",
+    remove: "Remove",
     total: "TOTAL",
+    code: "Code",
 
+    // Search & Filters
+    searchProducts: "Search Products",
+    typeCategories: "Type Categories",
+    selectCategory: "Select Category",
+    allCategories: "All Categories",
+    allOwners: "All Owners",
+    stock: "Stock",
+    actions: "Actions",
+
+    // Placeholders & prompts
+    selectNameFirst: "Please select a name above to view products.",
+    noProducts: "No products yet",
+    addProductsImport: "Add products in Products tab or import a backup.",
+    tryDifferentSearch: "Try a different search or clear filters.",
+    noProductsFound: "No products found",
+
+    // Buttons / common
+    previous: "Previous",
+    next: "Next",
+    page: "Page",
+    of: "of",
+    cancel: "Cancel",
+    edit: "Edit",
+    delete: "Delete",
+    save: "Save",
+
+    // Product management
+    productManagement: "Product Management",
+    categoryManagement: "Category Management",
+    addCategory: "Add Category",
+    newProduct: "New Product",
+    selectOwner: "Select Owner",
+    saveProduct: "Save Product",
+    updateProduct: "Update Product",
+    startingStock: "Starting Stock",
+
+    // Validations / messages
+    pleaseEnterCategory: "Please enter a category name",
+    categoryExists: "This category already exists",
+    categoryAdded: "Category added: ",
+    pleaseSelectOwner: "Please select an owner",
+    pleaseChooseCategory: "Please choose a category",
+    fillNamePrice: "Please fill in name and price",
+    fillEverything: "Please fill in all fields",
+    codeExists: "This product code already exists",
+    confirmDelete: "Are you sure you want to delete this product?",
+    pleaseSelectName: "Please select a name first",
+    pleaseEnterCode: "Please enter a product code",
+    productBelongsTo: "This product belongs to ",
+    changeNameOrProduct: ". Change the selected name or choose another product.",
+    firstFindProduct: "Please find a product first",
+    productNotFound: "Product not found: ",
+    notFound: "",
+    noItemAvailable: "No items available",
+    noItemAvailableEnd: " in this category.",
+
+    // Payment / Checkout
     choosePaymentMethod: "Choose Payment Method",
     paymentMethod: "Payment Method",
+    setPayment: "Set Payment",
+    totalAmount: "Total Amount",
     cash: "Cash",
     card: "Card",
+    secondCard: "Second Card",
+    secondCardOptional: "Second Card (Optional):",
     cashOnly: "Cash Only",
     cardOnly: "Card Only",
     mixedCashCard: "Mixed (Cash + Card)",
-
     cashAmount: "Cash Amount:",
     cardAmount: "Card Amount:",
-    secondCardOptional: "Second Card (Optional):",
-
+    cashAmounts: "Cash Amounts (Select or type):",
+    selectAmount: "Select Amount",
+    paidTogether: "Paid Together",
     change: "Change",
     insufficient: "INSUFFICIENT!",
     stillNeeded: "Still needed: R",
     complete: "Complete",
+    transactionNote: "Transaction Note (Optional)",
+    transactionNotePlaceholder: "Add a note for this transaction...",
+    noteHint: "This note will appear in the PDF report",
 
-    dataManagement: "Data Management",
-    downloadCompleteBackup: "Save Complete Information",
-    restoreCompleteBackup: "Restore Complete Information",
-    downloadProductsOnly: "Download Products + Float",
-    downloadSalesOnly: "Save Sales Information",
-    importProductsOnly: "Restore Products + Float",
-    importSalesOnly: "Restore Sales Information",
+    // Modal — cash denomination (payment)
+    enterCashReceived: "Enter Cash Received",
+    enterTheDenominationsYouReceived: "Enter the denominations you received from the customer:",
+    totalReceived: "Total Received",
+    giveChange: "Give Change",
+    changeToGive: "Change to give",
+    specifyChangeDenominations: "Specify which denominations to give as change:",
+    changeTotal: "Change Total",
+    mismatchChange: "Change total doesn't match expected change. Save anyway?",
 
+    // Settlement modal
+    giveCashBack: "Give Cash Back - Select Denominations",
+    totalToGive: "Total to Give",
+    correctAmount: "✓ Correct amount",
+    tooMuchBy: "Too much by",
+    shortBy: "Short by",
+    confirmAndComplete: "Confirm & Complete",
+
+    // PDF / Report
     dailyReport: "Daily Report",
     pastReports: "Past Reports",
-    totalSales: "Total Sales",
+    totalSalesLabel: "Total Sales",
     transactions: "Transactions",
     totalTransactions: "Total transactions",
     dayTotal: "DAY TOTAL",
-
     generatePDFReport: "Generate PDF Report",
     pdfLibraryError: "PDF library not loaded.",
     noTransactionsDay: "No transactions found for this day",
     pdfGenerated: "PDF report generated successfully!",
     pdfError: "Error generating PDF: ",
+    person: "Person",
+    item: "Item",
+    toBank: "To Bank",
 
+    // Report page headings (matching internal usage)
+    viewingReportFor: "Viewing Report For:",
+
+    // Cash Reconciliation (Report tab)
+    cashReconciliation: "Cash Reconciliation",
+    totalCashSales: "Cash Sales",
+    startingFloat: "Starting Float",
+    totalInTill: "Total in Till",
+    floatToKeep: "Float to Keep",
+    expectedInTill: "Expected in Till",
+    cashToBank: "Cash to Bank",
+    countDenominations: "Count Actual Cash in Till:",
+    calculateCashToBank: "Calculate Cash to Bank",
+    actualCashCount: "Actual in Till",
+    variance: "Variance",
+    over: "Over",
+    short: "Short",
+    correct: "Correct",
+
+    // Float Management
+    floatManagement: "Float Management",
+    currentFloat: "Current Float",
+    floatAmount: "Float Amount",
+    floatDescription: "R700.00 remains in the till for next day's change",
+    floatBreakdown: "Float Breakdown",
+    adjustFloat: "Adjust Float Amount:",
+    updateFloat: "Update Float Amount",
+    setupDenominations: "Setup Float Denominations",
+    setupFloatDenominations: "Setup Float Denominations",
+    setupFloatInstructions: "Enter how many of each denomination you want in your float:",
+    totalFloat: "Total Float",
+    currentTillTotal: "Current Till Total",
+    amountToBank: "Amount to Bank",
+    dailyCashReconciliation: "Daily Cash Reconciliation",
+    selectDateForReconciliation: "Select Date for Reconciliation",
+    cashSales: "Cash Sales",
+    actualCashCountShort: "Actual Cash Count",
+    reconciliationHistory: "Reconciliation History",
+    saveReconciliation: "Save Reconciliation",
+
+    // Data Management / Backups
+    dataManagement: "Data Management",
+    downloadCompleteBackup: "Save Complete Information",
+    restoreCompleteBackup: "Restore Complete Information",
+    downloadProductsOnly: "Download Products + Float",
+    importProductsOnly: "Restore Products + Float",
+    downloadSalesOnly: "Save Sales Information",
+    importSalesOnly: "Restore Sales Information",
+    errorReadingFile: "Error reading file: ",
+    errorReadingBackup: "Error reading backup: ",
+    invalidFileFormat: "Invalid file format",
+    invalidBackup: "Invalid backup file",
+    invalidProductFile: "Invalid products file",
+    invalidReportFile: "Invalid sales file",
+    currentDataReplaced: "Current data will be replaced. Proceed?",
+    currentProductsReplaced: "Current products will be replaced. Proceed?",
+    currentSalesReplaced: "Current sales will be replaced. Proceed?",
+    backupRestored: "Backup restored",
+    productsUploaded: "Products uploaded",
+    salesUploaded: "Sales uploaded",
+
+    // Danger Zone
     dangerZone: "Danger Zone",
     clearAllData: "Clear ALL Data",
     confirmClearAll: "Are you REALLY sure? This will delete all data.",
     dataCleared: "All data has been cleared",
 
-    productManagement: "Product Management",
-    categoryManagement: "Category Management",
-    addCategory: "Add Category",
-    newProduct: "New Product",
-    saveProduct: "Save Product",
-    editProduct: "Edit Product",
-    updateProduct: "Update Product",
-    delete: "Delete",
-    cancel: "Cancel",
+    // Help / Scanner
+    scanHelpTitle: "How to Use the Barcode Scanner",
+    scanStep1Title: "1. Setup (Linking Labels)",
+    scanStep2Title: "2. Selling (The Action)",
+    step1: "Step 1",
+    step2: "Step 2",
+    step3: "Step 3",
+    step4: "Step 4",
+    step5: "Step 5",
+    scanStep1_1: "Create a label with your label maker. Give it a code number (e.g., 1005). Print it and stick it on the item.",
+    scanStep1_2: "Go to the Products Tab in this app.",
+    scanStep1_3: "Fill in the product details (Name, Price, Owner).",
+    scanStep1_4: "Click inside the \"Product Code\" box and SCAN the sticker. The number (1005) will appear automatically.",
+    scanStep1_5: "Click Save Product.",
+    scanStep2_1: "Go to the Sales Tab.",
+    scanStep2_2: "Simply SCAN the item with your scanner.",
+    scanStep2_3: "The system will find the product (e.g., \"Silver Bangle\") and show you the price.",
+    scanStep2_4: "Click Add Product to put it in the cart.",
+    scanNote: "The Code on the Sticker MUST match the Code in the System!",
+    gotIt: "Got it!",
 
-    confirmDelete: "Are you sure you want to delete this product?",
-    pleaseSelectName: "Please select a name first",
-    pleaseEnterCode: "Please enter a product code",
-    pleaseEnterCategory: "Please enter a category name",
-    pleaseSelectOwner: "Please select an owner",
-    pleaseChooseCategory: "Please choose a category",
-    fillNamePrice: "Please fill in name and price",
+    // Install
+    installApp: "Install App",
 
-    categoryExists: "This category already exists",
-    categoryAdded: "Category added: ",
-    codeExists: "This product code already exists",
+    // New Day / System
+    newDayDetected: "New day detected. Generate report for",
+    error: "Error",
 
-    transactionComplete: "Transaction completed successfully!",
-    errorReadingFile: "Error reading file: ",
-    invalidFileFormat: "Invalid file format",
-
-    page: "Page",
-    of: "of",
-    previous: "Previous",
-    next: "Next",
-
-    floatManagement: "Float Management",
-    currentFloat: "Current Float",
-    floatAmount: "Float Amount",
-    floatBreakdown: "Float Breakdown",
-    startingFloat: "Starting Float",
-    totalInTill: "Total in Till",
-    floatToKeep: "Float to Keep",
-    cashToBank: "Cash to Bank",
-
-    setupDenominations: "Setup Float Denominations",
-    dailyCashReconciliation: "Daily Cash Reconciliation",
-    saveReconciliation: "Save Reconciliation",
-
+    // UI sections used in denomination UI
     notes: "Notes",
     coins: "Coins",
-    over: "Over",
-    short: "Short",
-    correct: "Correct",
-	
-    installApp: "Install App"
+   downloadCompleteInfo: "Download Complete Information",
+    restoreCompleteInfo: "Restore Complete Information",
+    downloadProductsFloat: "Download Products + Float",
+    restoreProductsFloat: "Restore Products + Float",
+    restoreSalesOnly: "Restore Sales Only",
+    tools: "Tools",
+    quickAdd: "Quick Add",
+    scannerInfo: "Scanner Info",
+    productCodeInput: "Product Code Input"	
   },
 
   af: {
+    // Navigation / Tabs
     sales: "Verkope",
     products: "Produkte",
     report: "Verslag",
     float: "Kas",
-   more: "Meer",	
+    more: "Meer",
 
+    // Header / Transaction
     transaction: "Transaksie",
-    newTransaction: "Nuwe Transaksie",
     transactionNo: "Transaksie Nommer",
-
+    newTransaction: "Nuwe Transaksie",
     name: "Naam",
     selectName: "Kies Naam",
-    both: "Albei",
     customerName: "Kliënt Naam",
+    both: "Albei",
 
+    // Date / Time
     date: "Datum",
     time: "Tyd",
     today: "Vandag",
     now: "Nou",
 
+    // Quantity management
     quantityManagement: "Hoeveelheid Bestuur",
     noQuantity: "Geen Hoeveelheid",
     withQuantity: "Met Hoeveelheid",
@@ -2778,6 +2886,10 @@ const translations = {
     availableStock: "Beskikbare Voorraad",
     outOfStock: "Uit Voorraad",
 
+    // Product & scanning
+    productSelection: "Produk Keuse",
+    manualAddition: "Handmatige Byvoeging",
+    manualInput: "Handmatige Invoer",
     product: "Produk",
     productName: "Produk naam",
     productNameLabel: "Produk Naam:",
@@ -2785,71 +2897,247 @@ const translations = {
     productCodeOptional: "Produk kode (opsioneel)",
     enterProductCode: "Voer produk kode in",
     findProduct: "Vind Produk",
-
     price: "Prys",
     priceR: "Prys (R):",
     owner: "Eienaar",
     category: "Kategorie",
-
     addProduct: "Voeg Produk By",
-    productSelection: "Produk Keuse",
-    manualAddition: "Handmatige Byvoeging",
-    manualInput: "Handmatige Invoer",
-
+    items: "Gekose Produkte",
     quantity: "Hoeveelheid",
     add: "Voeg By",
-    items: "Gekose Produkte",
+    remove: "Verwyder",
     total: "TOTAAL",
+    code: "Kode",
 
+    // Search & Filters
+    searchProducts: "Soek Produkte",
+    typeCategories: "Tik Kategorieë",
+    selectCategory: "Kies Kategorie",
+    allCategories: "Alle Kategorieë",
+    allOwners: "Alle Eienaars",
+    stock: "Voorraad",
+    actions: "Aksies",
+
+    // Placeholders & prompts
+    selectNameFirst: "Kies asseblief eers 'n naam hierbo om produkte te sien.",
+    noProducts: "Geen produkte nog nie",
+    addProductsImport: "Voeg produkte by in die Produkte-oortjie of voer 'n rugsteun in.",
+    tryDifferentSearch: "Probeer 'n ander soektog of maak filters skoon.",
+    noProductsFound: "Geen produkte gevind nie",
+
+    // Buttons / common
+    previous: "Vorige",
+    next: "Volgende",
+    page: "Bladsy",
+    of: "van",
+    cancel: "Kanselleer",
+    edit: "Wysig",
+    delete: "Verwyder",
+    save: "Stoor",
+
+    // Product management
+    productManagement: "Produk Bestuur",
+    categoryManagement: "Kategorie Bestuur",
+    addCategory: "Voeg Kategorie By",
+    newProduct: "Nuwe Produk",
+    selectOwner: "Kies Eienaar",
+    saveProduct: "Stoor Produk",
+    updateProduct: "Werk Produk By",
+    startingStock: "Aanvangsvoorraad",
+
+    // Validations / messages
+    pleaseEnterCategory: "Voer asseblief 'n kategorienaam in",
+    categoryExists: "Hierdie kategorie bestaan reeds",
+    categoryAdded: "Kategorie bygevoeg: ",
+    pleaseSelectOwner: "Kies asseblief 'n eienaar",
+    pleaseChooseCategory: "Kies asseblief 'n kategorie",
+    fillNamePrice: "Vul asseblief naam en prys in",
+    fillEverything: "Vul asseblief alle velde in",
+    codeExists: "Hierdie produk-kode bestaan reeds",
+    confirmDelete: "Is jy seker jy wil hierdie produk verwyder?",
+    pleaseSelectName: "Kies asseblief eers 'n naam",
+    pleaseEnterCode: "Voer asseblief 'n produk-kode in",
+    productBelongsTo: "Hierdie produk behoort aan ",
+    changeNameOrProduct: ". Verander die geselekteerde naam of kies 'n ander produk.",
+    firstFindProduct: "Soek asseblief eers 'n produk",
+    productNotFound: "Produk nie gevind nie: ",
+    notFound: "",
+    noItemAvailable: "Geen items beskikbaar",
+    noItemAvailableEnd: " in hierdie kategorie.",
+
+    // Payment / Checkout
     choosePaymentMethod: "Kies Betaal Metode",
     paymentMethod: "Betaal Metode",
+    setPayment: "Stel Betaling In",
+    totalAmount: "Totale Bedrag",
     cash: "Kontant",
     card: "Kaart",
+    secondCard: "Tweede Kaart",
+    secondCardOptional: "Tweede Kaart (Opsioneel):",
     cashOnly: "Slegs Kontant",
     cardOnly: "Slegs Kaart",
     mixedCashCard: "Gemeng (Kontant + Kaart)",
-
     cashAmount: "Kontant Bedrag:",
     cardAmount: "Kaart Bedrag:",
-    secondCardOptional: "Tweede Kaart (Opsioneel):",
-
-    change: "Kleingeld",
+    cashAmounts: "Kontantbedrae (Kies of tik):",
+    selectAmount: "Kies Bedrag",
+    paidTogether: "Saam Betaal",
+    change: "Wissel",
     insufficient: "ONVOLDOENDE!",
     stillNeeded: "Nog nodig: R",
     complete: "Voltooi",
+    transactionNote: "Transaksie Nota (Opsioneel)",
+    transactionNotePlaceholder: "Voeg 'n nota by vir hierdie transaksie...",
+    noteHint: "Hierdie nota sal in die PDF-verslag verskyn",
 
-    dataManagement: "Data Bestuur",
-    downloadCompleteBackup: "Stoor Volledige Inligting",
-    restoreCompleteBackup: "Herstel Volledige Inligting",
+    // Modal — cash denomination (payment)
+    enterCashReceived: "Voer Kontant Ontvang In",
+    enterTheDenominationsYouReceived: "Voer die denominasies in wat jy van die kliënt ontvang het:",
+    totalReceived: "Totaal Ontvang",
+    giveChange: "Gee Wissel",
+    changeToGive: "Wissel om te gee",
+    specifyChangeDenominations: "Spesifiseer watter denominasies as wissel gegee word:",
+    changeTotal: "Wissel Totaal",
+    mismatchChange: "Wissel totaal stem nie ooreen met verwagte wissel nie. Stoor in elk geval?",
 
+    // Settlement modal
+    giveCashBack: "Gee Kontant Terug - Kies Denominasies",
+    totalToGive: "Totaal om te Gee",
+    correctAmount: "✓ Korrek bedrag",
+    tooMuchBy: "Te veel met",
+    shortBy: "Tekort met",
+    confirmAndComplete: "Bevestig & Voltooi",
+
+    // PDF / Report
     dailyReport: "Daaglikse Verslag",
     pastReports: "Vorige Verslae",
-    totalSales: "Totale Verkope",
+    totalSalesLabel: "Totale Verkope",
     transactions: "Transaksies",
     totalTransactions: "Totale transaksies",
     dayTotal: "DAG TOTAAL",
-
     generatePDFReport: "Genereer PDF Verslag",
+    pdfLibraryError: "PDF-biblioteek nie gelaai nie.",
+    noTransactionsDay: "Geen transaksies vir hierdie dag nie",
+    pdfGenerated: "PDF-verslag suksesvol gegenereer!",
+    pdfError: "Fout tydens genereer van PDF: ",
+    person: "Persoon",
+    item: "Item",
+    toBank: "Na Bank",
 
+    // Report page headings (matching internal usage)
+    viewingReportFor: "Verslag word besigtig vir:",
+
+    // Cash Reconciliation (Report tab)
+    cashReconciliation: "Kontant Versoening",
+    totalCashSales: "Kontant Verkope",
+    startingFloat: "Aanvang Kas",
+    totalInTill: "Totaal in Kassie",
+    floatToKeep: "Kas om Te Hou",
+    expectedInTill: "Verwag in Kassie",
+    cashToBank: "Kontant na Bank",
+    countDenominations: "Tel Werklike Kontant in Kassie:",
+    calculateCashToBank: "Bereken Kontant na Bank",
+    actualCashCount: "Werklike in Kassie",
+    variance: "Afwyking",
+    over: "Oor",
+    short: "Kort",
+    correct: "Korrek",
+
+    // Float Management
+    floatManagement: "Kas Bestuur",
+    currentFloat: "Huidige Kas",
+    floatAmount: "Kas Bedrag",
+    floatDescription: "R700.00 bly in die kassie vir volgende dag se wissel",
+    floatBreakdown: "Kas Opsomming",
+    adjustFloat: "Pas Kas Bedrag Aan:",
+    updateFloat: "Werk Kas Bedrag By",
+    setupDenominations: "Stel Kas Denominasies In",
+    setupFloatDenominations: "Stel Kas Denominasies In",
+    setupFloatInstructions: "Voer in hoeveel van elke denominasie jy wil hê in jou kas:",
+    totalFloat: "Totale Kas",
+    currentTillTotal: "Huidige Kassie Totaal",
+    amountToBank: "Bedrag na Bank",
+    dailyCashReconciliation: "Daaglikse Kontant Versoening",
+    selectDateForReconciliation: "Kies Datum vir Versoening",
+    cashSales: "Kontant Verkope",
+    actualCashCountShort: "Werklike Kontant Telling",
+    reconciliationHistory: "Versoeningsgeskiedenis",
+    saveReconciliation: "Stoor Versoening",
+
+    // Data Management / Backups
+    dataManagement: "Data Bestuur",
+    downloadCompleteBackup: "Stoor Volledige Inligting",
+    restoreCompleteBackup: "Herstel Volledige Inligting",
+    downloadProductsOnly: "Laai Produkte + Kas Af",
+    importProductsOnly: "Herstel Produkte + Kas",
+    downloadSalesOnly: "Stoor Verkope Inligting",
+    importSalesOnly: "Herstel Verkope Inligting",
+    errorReadingFile: "Fout met lees van lêer: ",
+    errorReadingBackup: "Fout met lees van rugsteun: ",
+    invalidFileFormat: "Ongeldige lêerformaat",
+    invalidBackup: "Ongeldige rugsteunlêer",
+    invalidProductFile: "Ongeldige produklêer",
+    invalidReportFile: "Ongeldige verkope lêer",
+    currentDataReplaced: "Huidige data sal vervang word. Gaan voort?",
+    currentProductsReplaced: "Huidige produkte sal vervang word. Gaan voort?",
+    currentSalesReplaced: "Huidige verkope sal vervang word. Gaan voort?",
+    backupRestored: "Rugsteun herstel",
+    productsUploaded: "Produkte opgelaai",
+    salesUploaded: "Verkope opgelaai",
+
+    // Danger Zone
     dangerZone: "Gevaar Sone",
-    clearAllData: "Maak ALLE Data Skoon",
-    confirmClearAll: "Is jy REGTIG seker?",
-    dataCleared: "Alle data is skoongemaak",
+    clearAllData: "Vee ALLE Data Uit",
+    confirmClearAll: "Is jy REGTIG seker? Dit sal alle data uitvee.",
+    dataCleared: "Alle data is uitgevee",
 
-    productManagement: "Produk Bestuur",
-    categoryManagement: "Kategorie Bestuur",
+    // Help / Scanner
+    scanHelpTitle: "Hoe om die Streepkodeleser te Gebruik",
+    scanStep1Title: "1. Opstelling (Koppel Etikette)",
+    scanStep2Title: "2. Verkoop (Die Aksie)",
+    step1: "Stap 1",
+    step2: "Stap 2",
+    step3: "Stap 3",
+    step4: "Stap 4",
+    step5: "Stap 5",
+    scanStep1_1: "Maak 'n etiket met jou etiketmaker. Gee dit 'n kodenommer (bv. 1005). Druk dit en plak dit op die item.",
+    scanStep1_2: "Gaan na die Produkte-oortjie in hierdie app.",
+    scanStep1_3: "Vul die produkbesonderhede in (Naam, Prys, Eienaar).",
+    scanStep1_4: "Klik in die \"Produk Kode\" blokkie en SKANDEER die plakker. Die nommer (1005) sal outomaties verskyn.",
+    scanStep1_5: "Klik Stoor Produk.",
+    scanStep2_1: "Gaan na die Verkope-oortjie.",
+    scanStep2_2: "SKANDEER net die item met jou skandeerder.",
+    scanStep2_3: "Die stelsel sal die produk vind (bv. \"Silwer Armband\") en die prys wys.",
+    scanStep2_4: "Klik Voeg Produk By om dit by die mandjie te plaas.",
+    scanNote: "Die Kode op die Plakker MOET ooreenstem met die Kode in die Stelsel!",
+    gotIt: "Verstaan!",
 
-    page: "Bladsy",
-    of: "van",
+    // Install
+    installApp: "Installeer App",
 
-    installApp: "Installeer App"
-  }
+    // New Day / System
+    newDayDetected: "Nuwe dag bespeur. Genereer verslag vir",
+    error: "Fout",
+
+    // UI sections used in denomination UI
+    notes: "Note",
+    coins: "Muntstukke",
+    downloadCompleteInfo: "Laai Volledige Inligting Af",
+    restoreCompleteInfo: "Herstel Volledige Inligting",
+    downloadProductsFloat: "Laai Produkte + Kas Af",
+    restoreProductsFloat: "Herstel Produkte + Kas",
+    restoreSalesOnly: "Herstel Slegs Verkope",
+    tools: "Gereedskap",
+    quickAdd: "Vinnige Byvoeging",
+    scannerInfo: "Skandeerder Inligting",
+    productCodeInput: "Produk kode Invoer"
+	}
 };
 
 Object.assign(translations.en, {
   // General UI and prompts
   selectDateDropdown: "-- Select a Date --",
-  selectNameFirst: "Please select a name above to view products.",
+ // selectNameFirst: "Please select a name above to view products.",
   noProducts: "No products yet",
   addProductsImport: "Add products in Products tab or import a backup.",
   tryDifferentSearch: "Try a different search or clear filters.",
@@ -3009,7 +3297,7 @@ Object.assign(translations.en, {
 Object.assign(translations.af, {
   // General UI and prompts
   selectDateDropdown: "-- Kies 'n Datum --",
-  selectNameFirst: "Kies asseblief eers 'n naam hierbo om produkte te sien.",
+  //selectNameFirst: "Kies asseblief eers 'n naam hierbo om produkte te sien.",
   noProducts: "Geen produkte nog nie",
   addProductsImport: "Voeg produkte by in die Produkte-oortjie of voer 'n rugsteun in.",
   tryDifferentSearch: "Probeer 'n ander soektog of maak filters skoon.",
@@ -3088,26 +3376,26 @@ Object.assign(translations.af, {
   selectSavedDate: "Kies 'n Gestoorde Datum",
   viewingReportFor: "Verslag word besigtig vir",
   cashReconciliation: "Kontantversoeking",
-  totalCashSales: "Totale Kontantverkope",
-  startingFloat: "Aanvangsfloat",
+  totalCashSales: "Totale Kontant Verkope",
+  startingFloat: "Kas Begin",
   totalInTill: "Totaal in Kas",
-  floatToKeep: "Float om Te Hou",
+  floatToKeep: "Kas om Te Hou",
   cashToBank: "Kontant na Bank",
   countDenominations: "Tel Denominasies",
   calculateCashToBank: "Bereken Kontant na Bank",
 
   // Float management
-  floatManagement: "Floatubestuur",
-  currentFloat: "Huidige Float",
+  floatManagement: "Kas Bestuur",
+  currentFloat: "Huidige Kas",
   floatAmount: "Kas Bedrag",
-  floatDescription: "Floatbeskrywing",
+  floatDescription: "Kas Beskrywing",
   floatBreakdown: "Kas Onderbreking",
   adjustFloat: "Pas Kas Aan",
-  updateFloat: "Werk Float By",
+  updateFloat: "Werk Kas By",
   setupDenominations: "Stel Denominasies In",
-  setupFloatDenominations: "Stel Floatdenominasies In",
-  setupFloatInstructions: "Voer die denominasies in wat jou float uitmaak:",
-  totalFloat: "Totale Float",
+  setupFloatDenominations: "Stel Kas Denominasies In",
+  setupFloatInstructions: "Voer die denominasies in wat jou Kas uitmaak:",
+  totalFloat: "Totale Kas",
 
   // Daily reconciliation
   dailyCashReconciliation: "Daaglikse Kontantversoeking",
@@ -3131,7 +3419,7 @@ Object.assign(translations.af, {
   // General actions
   save: "Stoor",
 currentTillTotal: 'Huidige Kas Totaal',
-    floatToKeep: 'Float Bedrag (om te hou)',
+    floatToKeep: 'Kas Bedrag (om te hou)',
     amountToBank: 'Bedrag na Bank',
 
 
@@ -4503,6 +4791,13 @@ function calculateReportCashToBank() {
     }
   });
 
+  // ✅ ADD THIS CHECK HERE - BEFORE doing any calculations
+  // If no denominations have been counted yet, don't overwrite updateReport() display
+  if (actualTotal === 0) {
+    console.log('No cash counted yet - skipping calculateReportCashToBank()');
+    return; // Exit early - keep the values from updateReport()
+  }
+
   // 2) Recompute NET cash (cash - change) and settlement withdrawals for the selected day
   var day = document.getElementById('daySelect')?.value;
   var dayTrans = allTransactions.filter(t => t.date === day);
@@ -4536,7 +4831,8 @@ function calculateReportCashToBank() {
   const variance = actualTotal - expectedInTillForReport;
 
   // Actual cash to bank based on counted cash (above float kept)
-  const actualCashToBank = actualTotal - startingFloatForReport;
+// CORRECT: Cash to bank = Expected in till - Float to keep
+  const correctCashToBank = expectedInTillForReport - startingFloatForReport;
 
   // Enhanced display with settlement information (line items)
   var cashToBankDisplay = document.getElementById('cashToBankDisplay');
@@ -4545,7 +4841,12 @@ function calculateReportCashToBank() {
     if (Math.abs(variance) < 0.01) {
       varianceText = `<div style="color:#16a34a;font-size:14px;margin-top:10px;">✓ ${translations[currentLanguage].correct || "Correct"}</div>`;
     } else if (variance > 0) {
-      varianceText = `<div style="color:#ea580c;font-size:14px;margin-top:10px;">(+R${variance.toFixed(2)} ${translations[currentLanguage].over || "over"})</div>`;
+      // Don't show "over" if variance matches settlement withdrawal amount
+      if (totalCashBackForReport > 0 && Math.abs(variance - totalCashBackForReport) < 0.01) {
+        varianceText = ''; // Hide the confusing "over" message when settlement pending
+      } else {
+        varianceText = `<div style="color:#ea580c;font-size:14px;margin-top:10px;">(+R${variance.toFixed(2)} ${translations[currentLanguage].over || "over"})</div>`;
+      }
     } else {
       varianceText = `<div style="color:#dc2626;font-size:14px;margin-top:10px;">(R${Math.abs(variance).toFixed(2)} ${translations[currentLanguage].short || "short"})</div>`;
     }
@@ -4570,7 +4871,7 @@ function calculateReportCashToBank() {
 
     cashToBankDisplay.innerHTML = `
       <div data-translate="cashToBank">Cash to Bank:</div>
-      <div style="font-size:32px; font-weight: bold;" id="cashToBankAmount">R${actualCashToBank.toFixed(2)}</div>
+      <div style="font-size:32px; font-weight: bold;" id="cashToBankAmount">R${correctCashToBank.toFixed(2)}</div>
       ${varianceText}
       ${settlementInfo}
     `;
@@ -4588,7 +4889,10 @@ function calculateReportCashToBank() {
   alertMessage += `${translations[currentLanguage].expectedInTill || "Expected in Till"}: R${expectedInTillForReport.toFixed(2)}\n`;
   alertMessage += `${translations[currentLanguage].actualCashCount || "Actual in Till"}: R${actualTotal.toFixed(2)}\n`;
   alertMessage += `${translations[currentLanguage].variance || "Variance"}: R${variance.toFixed(2)}\n\n`;
-  alertMessage += `${translations[currentLanguage].cashToBank || "Cash to Bank"}: R${actualCashToBank.toFixed(2)}`;
+  const correctCashToBankCalc = expectedInTillForReport - startingFloatForReport;
+  alertMessage += `${translations[currentLanguage].cashToBank || "Cash to Bank"}: R${correctCashToBankCalc.toFixed(2)}`;
+  
+//  alertMessage += `${translations[currentLanguage].cashToBank || "Cash to Bank"}: R${actualCashToBank.toFixed(2)}`;
 
   alert(alertMessage);
 }
@@ -6480,6 +6784,13 @@ function updateReport() {
   safeSetText('reportFloatToKeep', startingFloatForReport.toFixed(2));
 
   const cashToBankForReport = expectedInTill - startingFloatForReport;
+  console.log('updateReport: cashToBankForReport =', cashToBankForReport);
+console.log('expectedInTill =', expectedInTill);
+console.log('startingFloatForReport =', startingFloatForReport);
+console.log('netCashSalesForReport =', netCashSalesForReport);
+console.log('totalCashBackForReport =', totalCashBackForReport);
+
+
 
   // Settlement lines to display under Cash To Bank block
   var cashToBankDisplay = document.getElementById('cashToBankDisplay');
@@ -6628,8 +6939,8 @@ function startNewTransaction() {
   
   console.log('Starting new transaction manually...');
   
-  currentTransactionNumber++;
-  saveTransactionNumber();
+//  currentTransactionNumber++;
+//  saveTransactionNumber();
   updateTransactionNumberDisplay();
   
   // **COMPLETE RESET - START**
@@ -7250,7 +7561,7 @@ function completeTransaction() {
       time: new Date().toLocaleString("en-GB", { hour: "2-digit", minute: "2-digit" }),
       name: name,
       items: purchasedItems.slice(),
-	  transactionNote: document.getElementById('transactionNote').value || '',
+	transactionNote: document.getElementById('transactionNote').value || '',
       totalAmount: total,
       cashAmount: cashAmount,
       cardAmount: cardAmount,
@@ -7497,7 +7808,7 @@ function saveSettlementDenomination() {
 }
 
 // Final completion of transaction (split from completeTransaction)
-function completeTransactionFinal(settlementDenoms) {
+function completeTransactionFinal(txData, settlementDenoms) {
   try {
     // Get transaction data (from pending settlement or form inputs)
     var txData;
@@ -7569,6 +7880,7 @@ function completeTransactionFinal(settlementDenoms) {
       time: new Date().toLocaleString("en-GB", { hour: "2-digit", minute: "2-digit" }),
       name: txData.name,
       items: purchasedItems.slice(),
+	  transactionNote: document.getElementById('transactionNote').value || '',
       totalAmount: txData.total,
       cashAmount: txData.cashAmount,
       cardAmount: txData.cardAmount,
@@ -7603,8 +7915,7 @@ function completeTransactionFinal(settlementDenoms) {
       // Card-only with settlement: still need to remove cash from till
       processCashTransaction(
         DenominationManager.createEmpty(), 
-        DenominationManager.createEmpty(), 
-        settlementDenoms
+       settlementDenoms
       );
     }
 
@@ -8433,8 +8744,6 @@ if (data.exportType === 'complete_backup') {
 refreshAllUIAfterDataChange();
 setTimeout(() => window.location.reload(), 200);
 		
-		
-		
     }
 }
 
@@ -8534,7 +8843,8 @@ function generatePDF(specificDate = null) {
         floatToKeep: 'Float to Keep',
         cashToBank: 'CASH TO BANK',
         page: 'Page',
-        of: 'of'
+        of: 'of',
+        note: 'Note'  // Added translation
       },
       af: {
         dailyReport: 'DAAGLIKSE VERSLAG',
@@ -8557,10 +8867,11 @@ function generatePDF(specificDate = null) {
         cashSales: 'Kontant Verkope',
         startingFloat: 'Begin Float',
         totalInTill: 'Totaal in Kas',
-        floatToKeep: 'Float om te Hou',
+        floatToKeep: 'Kas om te Hou',
         cashToBank: 'KONTANT OM TE BANK',
         page: 'Bladsy',
-        of: 'van'
+        of: 'van',
+        note: 'Nota'  // Added translation
       }
     };
 
@@ -8591,10 +8902,22 @@ function generatePDF(specificDate = null) {
       return totals;
     }
 
-    // Decide PDF summary split behavior similar to updateReport
+    // Helper function to decide card owner for Both transactions
+    function decideCardOwnerForBoth(tr) {
+      const totalCard = (tr.cardAmount || 0) + (tr.cardAmount2 || 0);
+      if (totalCard === 0) return null;
+      
+      // If there's a settlement, the card owner is the one who is NOT the recipient
+      if (tr.settlementToOtherOwner && tr.settlementToOtherOwner > 0 && tr.settlementRecipient) {
+        return tr.settlementRecipient === 'Kotie' ? 'Francois' : 'Kotie';
+      }
+      
+      // Otherwise, determine by item ownership
+      const itemTotals = ownerItemTotals(tr);
+      return itemTotals.Kotie >= itemTotals.Francois ? 'Kotie' : 'Francois';
+    }
 
-
-     // Build item table
+    // Build item table
     dayTransactions.forEach(tran => {
       var trNumber = (tran.transactionNumber || '').toString().slice(-3);
       var paymentMethod = '';
@@ -8620,12 +8943,12 @@ function generatePDF(specificDate = null) {
         ]);
       });
 
-      // Add transaction note if present
-      if (tran.transactionNote && tran.transactionNote.trim()) {
+      // Add transaction note if present - FIXED VERSION
+       if (tran.transactionNote && tran.transactionNote.trim() !== '') {
         tableData.push([
           trNumber,
-          '',
-          'Note: ' + tran.transactionNote,
+          'NOTE',  // ← Simple text instead of emoji
+          t.note + ': ' + tran.transactionNote.trim(),
           '',
           '',
           '',
@@ -8633,7 +8956,6 @@ function generatePDF(specificDate = null) {
         ]);
       }
     });
-
 
     doc.autoTable({
       startY: yPosition,
@@ -8665,7 +8987,21 @@ function generatePDF(specificDate = null) {
       didParseCell: function (data) {
         if (data.row.index > 0) {
           var owner = data.row.raw[1];
-          if (owner === 'KO') {
+          
+          // Special formatting for note rows
+if (owner === 'NOTE') {
+  data.cell.styles.fillColor = [255, 251, 235];
+  data.cell.styles.textColor = [120, 53, 15];
+  data.cell.styles.fontStyle = 'italic';
+  data.cell.styles.fontSize = 8;
+  
+  // FORCE the row to have proper height
+  data.row.height = 6;  // ← Add this line to set explicit row height
+  
+  if (data.column.index === 2) {
+    data.cell.styles.fontSize = 8;
+  }
+          } else if (owner === 'KO') {
             data.cell.styles.fillColor = [225, 245, 254];
           } else if (owner === 'FR') {
             data.cell.styles.fillColor = [232, 245, 233];
@@ -8676,7 +9012,14 @@ function generatePDF(specificDate = null) {
         }
       },
       willDrawCell: function (data) {
-        if (data.column.index === 2 && data.cell.raw) {
+        // Check if this is a NOTE row first
+        var isNoteRow = data.row.raw && data.row.raw[1] === 'NOTE';
+        
+        if (isNoteRow) {
+          // Force NOTE rows to have consistent height
+          data.row.height =6.5;  // Fixed height for note rows
+        } else if (data.column.index === 2 && data.cell.raw) {
+          // Handle long text wrapping for regular rows
           var text = data.cell.raw;
           if (typeof text === 'string' && text.length > 40) {
             var lines = doc.splitTextToSize(text, 85);
@@ -8782,7 +9125,7 @@ function generatePDF(specificDate = null) {
       body: summaryData.slice(1, 3),
       theme: 'grid',
       headStyles: {
-        illColor: [157, 192, 250],
+        fillColor: [157, 192, 250],
         textColor: [20, 20, 20],
         fontStyle: 'bold',
         fontSize: 8,
@@ -8861,9 +9204,9 @@ function generatePDF(specificDate = null) {
       }
     });
 
-    var totalCashSummary = pdfNetCash; // This is net cash in the till from sales
-    var expectedInTill = floatAmount + totalCashSummary - pdfSettlementWithdrawals; // subtract settlement withdrawals
-    var cashToBank = expectedInTill - floatAmount; // amount above float
+    var totalCashSummary = pdfNetCash;
+    var expectedInTill = floatAmount + totalCashSummary - pdfSettlementWithdrawals;
+    var cashToBank = expectedInTill - floatAmount;
 
     // Build cashData with settlement lines inserted
     const cashData = [
@@ -8871,7 +9214,7 @@ function generatePDF(specificDate = null) {
       [t.startingFloat, 'R ' + floatAmount.toFixed(2)]
     ];
 
-    // Add settlement withdrawal lines between Starting Float and Total in Till
+    // Add settlement withdrawal lines
     dayTransactions.forEach(tt => {
       if (tt.settlementToOtherOwner && tt.settlementToOtherOwner > 0 && tt.settlementRecipient) {
         var itemNames = [];
@@ -8883,7 +9226,7 @@ function generatePDF(specificDate = null) {
         if (itemNames.length === 0) {
           (tt.items || []).forEach(itm => itemNames.push(itm.product));
         }
-        var itemStr = itemNames.join(', ').substring(0, 40); // Limit length for PDF
+        var itemStr = itemNames.join(', ').substring(0, 40);
         cashData.push([
           itemStr + ' for ' + tt.settlementRecipient,
           '-R ' + tt.settlementToOtherOwner.toFixed(2)
@@ -8925,7 +9268,7 @@ function generatePDF(specificDate = null) {
     yPosition = doc.lastAutoTable.finalY;
     doc.autoTable({
       startY: yPosition,
-      body: [[cashData[3][0], cashData[3][1]]],
+      body: [[cashData[cashData.length - 2][0], cashData[cashData.length - 2][1]]],
       theme: 'plain',
       styles: {
         fontSize: 8,
@@ -8945,7 +9288,7 @@ function generatePDF(specificDate = null) {
     yPosition = doc.lastAutoTable.finalY;
     doc.autoTable({
       startY: yPosition,
-      body: [[cashData[4][0], cashData[4][1]]],
+      body: [[cashData[cashData.length - 1][0], cashData[cashData.length - 1][1]]],
       theme: 'plain',
       styles: {
         fontSize: 9,
@@ -8987,6 +9330,7 @@ function generatePDF(specificDate = null) {
     alert(translations[currentLanguage]['pdfError'] + error.message);
   }
 }
+
 
 // Clear all data function
 function clearData() {
@@ -9087,8 +9431,6 @@ function clearData() {
 }
 
 
-
-
 // Download functions
 function downloadCompleteBackup() {
  exportData('complete');
@@ -9172,17 +9514,6 @@ function loadTransactions() {
     console.error('Error loading transactions:', error);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
 
 // File upload handlers
 async function handleProductsOnlyUpload(e) {
@@ -9314,41 +9645,214 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <nav class="bottom-nav">
-  <button class="nav-item" data-tab="sales" data-translate="sales">Sales</button>
-  <button class="nav-item" data-tab="products" data-translate="products">Products</button>
-  <button class="nav-item" data-tab="report" data-translate="dailyReport">Report</button>
-  <button class="nav-item" data-tab="float" data-translate="float">Float</button>
-  <button class="nav-item" onclick="openUtilityDrawer()" data-translate="more">More</button>
+  <button class="nav-item" data-tab="sales">
+    <div style="font-size: 24px; margin-bottom: 4px;">💰</div>
+    <div style="font-size: 11px;" data-translate="sales">Sales</div>
+  </button>
+  <button class="nav-item" data-tab="products">
+    <div style="font-size: 24px; margin-bottom: 4px;">📦</div>
+    <div style="font-size: 11px;" data-translate="products">Products</div>
+  </button>
+  <button class="nav-item" data-tab="report">
+    <div style="font-size: 24px; margin-bottom: 4px;">📊</div>
+    <div style="font-size: 11px;" data-translate="dailyReport">Report</div>
+  </button>
+  <button class="nav-item" data-tab="float">
+    <div style="font-size: 24px; margin-bottom: 4px;">💵</div>
+    <div style="font-size: 11px;" data-translate="float">Float</div>
+  </button>
+  <button class="nav-item" onclick="openUtilityDrawer()">
+    <div style="font-size: 24px; margin-bottom: 4px;">☰</div>
+    <div style="font-size: 11px;" data-translate="more">More</div>
+  </button>
 </nav>
 
 </div>
-</div>
+<!--</div> -->
 
 <!-- Utility Drawer Modal -->
+<style>
+.more-list-item {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  background: #ffffff;
+  border: none;
+  border-bottom: 1px solid #f1f5f9;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 15px;
+  color: #1e293b;
+}
+
+.more-list-item:active {
+  background: #f8fafc;
+}
+
+.more-list-item .emoji {
+  font-size: 20px;
+  margin-right: 14px;
+  width: 24px;
+  text-align: center;
+}
+
+.more-list-item .text {
+  flex: 1;
+  font-weight: 500;
+}
+
+.more-list-item .arrow {
+  color: #cbd5e1;
+  font-size: 18px;
+}
+
+.more-section-header {
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  margin: 20px 16px 8px 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.more-section-header:first-child {
+  margin-top: 12px;
+}
+
+.more-list-group {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 0 12px 16px 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.more-list-item-danger {
+  color: #ef4444;
+}
+
+.close-x-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  font-size: 28px;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.close-x-btn:hover {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.close-x-btn:active {
+  background: #e2e8f0;
+}
+</style>
+
 <div class="modal" id="utilityDrawer">
-  <div class="modal-content">
-    <div class="modal-title">Tools & Settings</div>
+  <div class="modal-content" style="padding: 0; max-height: 80vh; overflow-y: auto;">
+    <div style="position: sticky; top: 0; background: #ffffff; z-index: 10; padding: 20px 16px; border-bottom: 1px solid #f1f5f9;">
+      <div class="modal-title" style="margin: 0; padding-right: 40px;">⚙️ More Options</div>
+      <button class="close-x-btn" onclick="closeUtilityDrawer()">✕</button>
+    </div>
 
     <!-- Language selection -->
-    <div style="display:flex; gap:10px; margin-bottom:18px;">
-      <button class="lang-btn active" onclick="setLanguage('en')">English</button>
-      <button class="lang-btn inactive" onclick="setLanguage('af')">Afrikaans</button>
+    <div style="padding: 16px 16px 0 16px;">
+      <div style="display:flex; gap:10px;">
+        <button class="lang-btn active" onclick="setLanguage('en')" style="flex: 1;">🌐 English</button>
+        <button class="lang-btn inactive" onclick="setLanguage('af')" style="flex: 1;">🌐 Afrikaans</button>
+      </div>
     </div>
 
-    <!-- Utility actions -->
-    <div class="utility-buttons">
-      <button class="button btn-green full-width" onclick="openQuickInfoModal()">➕ Quick Add</button>
-      <button class="button btn-purple full-width" onclick="closeUtilityDrawer(); openScannerHelp();">Scanner Info</button>
-      <button class="button btn-orange full-width" onclick="openModalAfterDrawer('productCodeInfoModal')">Product Code Input</button>	
-      <button class="button btn-blue full-width" onclick="openModalAfterDrawer('quantityInfoModal')">Quantity Management</button>
-    </div>
-
-    <!-- Close -->
-    <div class="modal-buttons">
-      <button class="button btn-blue" onclick="closeUtilityDrawer()">Close</button>
-    </div>
-  </div>
+    <!-- Data Management Section -->
+<div class="more-section-header">💾 <span data-translate="dataManagement">Data Management</span></div>
+<div class="more-list-group">
+  <button class="more-list-item" onclick="downloadCompleteBackup()">
+    <span class="emoji">📦</span>
+    <span class="text" data-translate="downloadCompleteInfo">Download Complete Information</span>
+    <span class="arrow">›</span>
+  </button>
+  <button class="more-list-item" onclick="importCompleteBackup()">
+    <span class="emoji">📥</span>
+    <span class="text" data-translate="restoreCompleteInfo">Restore Complete Information</span>
+    <span class="arrow">›</span>
+  </button>
+  <button class="more-list-item" onclick="downloadProductsAsText()">
+    <span class="emoji">🏷️</span>
+    <span class="text" data-translate="downloadProductsFloat">Download Products + Float</span>
+    <span class="arrow">›</span>
+  </button>
+  <button class="more-list-item" onclick="importProductsOnly()">
+    <span class="emoji">📤</span>
+    <span class="text" data-translate="restoreProductsFloat">Restore Products + Float</span>
+    <span class="arrow">›</span>
+  </button>
+  <button class="more-list-item" onclick="downloadSalesData()">
+    <span class="emoji">💰</span>
+    <span class="text" data-translate="downloadSalesOnly">Download Sales Only</span>
+    <span class="arrow">›</span>
+  </button>
+  <button class="more-list-item" onclick="importSalesOnly()">
+    <span class="emoji">📊</span>
+    <span class="text" data-translate="restoreSalesOnly">Restore Sales Only</span>
+    <span class="arrow">›</span>
+  </button>
 </div>
+
+<div class="more-section-header">🛠️ <span data-translate="tools">Tools</span></div>
+<div class="more-list-group">
+  <button class="more-list-item" onclick="openQuickInfoModal()">
+    <span class="emoji">➕</span>
+    <span class="text" data-translate="quickAdd">Quick Add</span>
+    <span class="arrow">›</span>
+  </button>
+  <button class="more-list-item" onclick="closeUtilityDrawer(); openScannerHelp();">
+    <span class="emoji">📷</span>
+    <span class="text" data-translate="scannerInfo">Scanner Info</span>
+    <span class="arrow">›</span>
+  </button>
+  <button class="more-list-item" onclick="openModalAfterDrawer('productCodeInfoModal')">
+    <span class="emoji">🔢</span>
+    <span class="text" data-translate="productCodeInput">Product Code Input</span>
+    <span class="arrow">›</span>
+  </button>
+  <button class="more-list-item" onclick="openModalAfterDrawer('quantityInfoModal')">
+    <span class="emoji">📋</span>
+    <span class="text" data-translate="quantityManagement">Quantity Management</span>
+    <span class="arrow">›</span>
+  </button>
+</div>
+
+<div class="more-section-header" style="color: #ef4444;">⚠️ <span data-translate="dangerZone">Danger Zone</span></div>
+<div class="more-list-group" style="margin-bottom: 20px;">
+  <button class="more-list-item more-list-item-danger" onclick="clearData()">
+    <span class="emoji">🗑️</span>
+    <span class="text" data-translate="clearAllData">Clear ALL Data</span>
+    <span class="arrow">›</span>
+  </button>
+</div>
+
+
+    <!-- Hidden file inputs -->
+    <input type="file" id="completeBackupInput" style="display: none;" accept=".json" onchange="handleCompleteBackupUpload(event)">
+    <input type="file" id="productsOnlyInput" style="display: none;" accept=".json" onchange="handleProductsOnlyUpload(event)">
+    <input type="file" id="salesOnlyInput" style="display: none;" accept=".json" onchange="handleSalesOnlyUpload(event)">
+  </div>
+</div>/div>
 
 <!-- Product Code Info Modal (OUTSIDE drawer) -->
 <div class="modal" id="productCodeInfoModal">
@@ -9434,4 +9938,3 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </body>
 </html>
-
