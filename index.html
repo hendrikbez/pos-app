@@ -9292,6 +9292,15 @@ function calculateSummary() {
     return summary;
 }
 
+
+
+
+
+
+
+
+
+
 function generatePDF(specificDate = null) {
   try {
     if (typeof window.jspdf === 'undefined') return alert(translations[currentLanguage]['pdfLibraryError']);
@@ -9856,6 +9865,20 @@ function generatePDF(specificDate = null) {
   }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Clear all data function
 function clearData() {
   if (!confirm(translations[currentLanguage]['confirmClearAll'])) return;
@@ -9954,6 +9977,7 @@ function clearData() {
   });
 }
 
+
 // Download functions
 function downloadCompleteBackup() {
  exportData('complete');
@@ -10010,6 +10034,8 @@ function openModalAfterDrawer(modalId) {
   }, 150);
 }
 
+
+
 function switchTab(tabId) {
   // Hide all tab contents
   document.querySelectorAll('.tab-content').forEach(tab => {
@@ -10033,6 +10059,13 @@ function switchTab(tabId) {
     targetBtn.classList.add('active');
   }
 }
+
+
+
+
+
+
+
 function saveTransactions() {
   try {
     localStorage.setItem('allTransactions', JSON.stringify(allTransactions));
@@ -10442,6 +10475,8 @@ function displayFormattedDate(elementId, dateValue) {
   </button>
 </div>
 
+
+
     <!-- Hidden file inputs -->
     <input type="file" id="completeBackupInput" style="display: none;" accept=".json" onchange="handleCompleteBackupUpload(event)">
     <input type="file" id="productsOnlyInput" style="display: none;" accept=".json" onchange="handleProductsOnlyUpload(event)">
@@ -10535,6 +10570,7 @@ function displayFormattedDate(elementId, dateValue) {
 <script>
 // Global refund items array
 
+
 // Render products for refund selection (reuse sales logic)
 function renderRefundProducts() {
   const container = document.getElementById('refundProductList');
@@ -10581,6 +10617,11 @@ function filterRefundProducts() {
     container.appendChild(div);
   });
 }
+
+
+
+
+
 
 // Add item to refund
 function addRefundItem(code, name, price, owner) {
@@ -10633,6 +10674,10 @@ let refundItems = [];
 let refundRecords = JSON.parse(localStorage.getItem('refundRecords')) || [];
 
 processRefund
+
+
+
+
 // ENHANCED processRefund
 function processRefund() {
   try {
@@ -10747,6 +10792,11 @@ function validateRefundTillAvailability(refundDenoms) {
   return true;
 }
 
+
+
+// GLOBAL REFUND VARIABLES
+
+
 // 1. TOGGLE OWNER CUSTOM INPUT
 function toggleRefundOwnerCustom() {
   var select = document.getElementById('refundOwner');
@@ -10831,6 +10881,14 @@ function displayRefundHistory() {
   container.innerHTML = html;
 }
 
+
+
+
+
+
+
+
+
 </script>
 
 <script>
@@ -10906,6 +10964,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });                                                                                                                                                        
 
+
 // Single global click listener for closing autocomplete lists (keep as-is)
 document.addEventListener('click', function (e) {
   // Only close if not clicking on any category input or autocomplete item
@@ -10923,5 +10982,8 @@ document.addEventListener('click', function (e) {
   }
 });
 </script>
+
+
+
 </body>
 </html>
